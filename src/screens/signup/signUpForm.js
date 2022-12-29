@@ -1,0 +1,252 @@
+import React from "react";
+import InputBox from 'react-native-floating-label-inputbox';
+import { useState, useEffect } from 'react';
+import {
+    StyleSheet,
+    SafeAreaView,
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+} from 'react-native';
+import Toast from 'react-native-simple-toast';
+import  FontAwesome5  from  'react-native-vector-icons/FontAwesome5'
+import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
+import LinearGradient from 'react-native-linear-gradient';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from "@react-navigation/native";
+import { unwrapResult } from '@reduxjs/toolkit';
+import { signUpHanlder } from "../../store/redux/signup";
+import useForm from "../../components/validate/useForm";
+import validate from "../../components/validate/validate";
+import FaIcon from "react-native-vector-icons/FontAwesome"
+import { RFC_2822 } from "moment";
+import { RFValue } from "react-native-responsive-fontsize";
+const Form = () => {
+    const navigation=useNavigation()
+    const dispatch = (useDispatch());
+    const [errorLogin, setErrorLogin] = useState(null);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [userName, setUserName] = useState("");
+    const [phone, setPhone] = useState("");
+    const[loader,setLoader]=useState(false);
+    const { handleChange, details, handleSubmit, formErrors, data } = useForm(validate);
+
+    useEffect(() => {
+        console.log(data == undefined ? true : false)
+        if (!!data || (data != null)) {
+            setLoader(true);
+            console.log("hello", data)
+            const SignupForm={"firstName":data.firstName,
+            "lastName":data.lastName,
+            "userName":data.userName,
+            "email":data.email,
+            "password":data.password,
+            "phoneNumber":data.phoneNumber,
+            "bio":"Defaut Bio...",
+            "role":"2"}
+            dispatch(signUpHanlder(SignupForm))
+                .then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    console.log("successfully returned to login with response ", originalPromiseResult);
+                    if(!originalPromiseResult.erroCode){
+                        setErrorLogin("")
+                        Toast.show(originalPromiseResult.message, Toast.LONG);
+                        setLoader(false);
+                        console.log(originalPromiseResult.errorCode,"hello")
+                        navigation.navigate("OtpPage")
+                      }else{
+                        setLoader(false);
+                        Toast.show(originalPromiseResult.errormessage,"Please Verify the link in your email and try to login", Toast.LONG);
+                      }
+                }
+                )
+                .catch((rejectedValueOrSerializedError) => {
+                    setLoader(false);
+                    Toast.show("Something went wrong please try after some time!", Toast.LONG);
+                    console.log(" Inside catch", rejectedValueOrSerializedError);
+                })
+        }else{
+           console.log("No Data")
+        }
+    }, [data]);
+
+    const [checked, setChecked] = React.useState('3');
+
+    return (
+        <View style={{ width: "100%",alignItems:"center" }}>
+
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'First Name'}
+                    value={firstName}
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    name={"FirstName"}
+                    onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
+                />
+                 {formErrors&& formErrors.firstName ?<View style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.firstName}</Text></View>:null}
+            </View>
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'Last Name'}
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    value={lastName}
+                    name={"LastName"}
+                    onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
+                />
+                {formErrors&& formErrors.lastName ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.lastName}</Text></View>:null}
+            </View>
+
+
+
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'Email'}
+                    value={email}
+                    name={"Email"}
+                    customLabelStyle={{...FONTS.robotoregular}}
+
+                    onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
+                />
+                 {formErrors&& formErrors.email ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.email}</Text></View>:null}
+            </View>
+
+
+
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'Password'}
+                    value={password}
+                    name={"Password"}
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    required
+                    rightIcon={<FontAwesome5  name={'eye'}  size={18} />}
+                    passHideIcon={<FontAwesome5  name={'eye-slash'} size={18}/>}
+                    secureTextEntry={true}
+                    // rightIcon={<Image
+                    //     source={icons.Edusitylogo}
+                    //     resizeMode="contain"
+                    //     style={{
+                    //         width: '5%',
+                    //         height: '5%',
+                    //     }}
+                    // />}
+                    // passHideIcon={<FontAwesome  name={'eye-slash'} size={5}/>}
+                    onChangeText={e => { handleChange(e, "password"), setPassword(e) }}
+                />
+                 {formErrors&& formErrors.password ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.password }</Text></View>:null}
+            </View>
+            <View style={{ width: "85%" ,marginTop:"2%"}}>
+                <InputBox
+                    inputOutline
+                    label={' Confirm Password'}
+                    value={confirmPassword}
+                    secureTextEntry={true}
+                    required
+                    rightIcon={<FontAwesome5  name={'eye'}  size={18}/>}
+                    passHideIcon={<FontAwesome5  name={'eye-slash'} size={18}/>}
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
+                />
+                 {formErrors&& formErrors.password2 ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.password2 }</Text></View>:null}
+            </View>
+
+
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'UserName'}
+                    value={userName}
+                    required
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
+                />
+                     {formErrors&& formErrors.userName ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.userName}</Text></View>:null}
+            </View>
+            <View style={{ width: "85%",marginTop:"2%" }}>
+                <InputBox
+                    inputOutline
+                    label={'Phone'}
+                    value={phone}
+                    maxLength={10}
+                    customLabelStyle={{...FONTS.robotoregular}}
+                    onChangeText={e => { handleChange(e, "phonenumber"), setPhone(e) }}
+                />
+                    {formErrors&& formErrors.phonenumber ?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.phonenumber}</Text></View>:null}
+            </View>
+            {/* <Text  style={{color: COLORS.black ,fontSize:RFValue(13),...FONTS.robotomedium, marginHorizontal: "10%",marginTop:"2%"}}>Choose your Role:</Text>
+            <View style={{ width: "85%",borderWidth:0, flexDirection: "row", height: "10%", alignItems: "center", justifyContent: "space-around" }}>
+           
+                <TouchableOpacity style={{ ...styles.checkbox, ...{ backgroundColor: (checked=="3")?COLORS.primary:COLORS.lightGray } }} onPressIn={()=>setChecked("3")}>
+                    <Text style={{ ...{ color: (checked=="3")?COLORS.white:COLORS.black, }, ...styles.checkboxText }}>Student</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ ...styles.checkbox, ...{ backgroundColor: (checked=="4")?COLORS.primary:COLORS.lightGray  } }} onPressIn={()=>setChecked("4")}>
+                    <Text style={{ ...{ color: (checked=="4")?COLORS.white:COLORS.black, }, ...styles.checkboxText }}>Instructor</Text>
+                </TouchableOpacity >
+            </View> */}
+
+            {formErrors && formErrors.signundef?<View  style={{...styles.ErrorCont}}><Text style={{...styles.ErrorText}}>{formErrors.signundef}</Text></View>:null}
+
+            <TouchableOpacity
+                style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%" }]}
+                onPress={e =>{handleSubmit(e,2)}}
+            >
+                <LinearGradient
+                    style={{ height: '100%', width: '30%', alignItems: 'center', justifyContent: 'center', borderRadius: 20 }}
+                    colors={['#46aeff', '#5884ff']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
+                    <Text style={{ color: COLORS.white, ...FONTS.body3 }}>Sign Up</Text>
+                </LinearGradient>
+            </TouchableOpacity>
+
+        </View>
+
+    )
+}
+const styles = StyleSheet.create({
+
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
+    },
+    checkbox: {
+        flexDirection: "column",
+        width: "30%",
+        borderWidth: 1,
+        borderColor:"#FFF",
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "space-around"
+    },
+    checkboxText: {
+        fontSize: 16, padding: "8%",
+        ...FONTS.robotoregular,
+    },
+    // ErrorCont:{
+    //     marginVertical:"1%"
+
+    // },
+    ErrorText:{
+        color:"red",
+        ...FONTS.robotoregular,
+        fontSize:RFValue(10),
+    }
+})
+export default Form;

@@ -1,0 +1,39 @@
+{
+    "project_info": {
+      "project_number": "476777511515",
+      "project_id": "EdusityMobi-70a4b",
+      "storage_bucket": "EdusityMobi-70a4b.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:476777511515:android:5614e6b31e30ba26529d7e",
+          "android_client_info": {
+            "package_name": "com.EdusityMobi.app"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "476777511515-3t56svvblbrpmd9045ui9iao4tjv6qbq.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyAa0sqjwrjvoekTEVSu6ryAyXIb3BuqK_M"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "476777511515-3t56svvblbrpmd9045ui9iao4tjv6qbq.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
