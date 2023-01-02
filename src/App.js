@@ -23,7 +23,7 @@ import ViPlayer from "./screens/videoPlayer";
 import Tabs from "./navigation/tabs";
 import Cart from "./screens/cart";
 import NetworkError from "./screens/Exceptions/noNetworkPage"
-
+import RazorPay from "./screens/razorPay";
 import CheckoutComplete from "./screens/checkoutComplete";
 // import GeolocationFetcher from "./screens/geoLocation";
 
@@ -167,7 +167,11 @@ const App = () => {
                     component={ViPlayer}
                     options={{ headerShown: false }}
                 />
-
+                    < Stack.Screen
+                    name="Razor"
+                    component={RazorPay}
+                    options={{ headerShown: false }}
+                />
 
 
             </Stack.Navigator>

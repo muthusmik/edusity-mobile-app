@@ -80,6 +80,9 @@ const ViewCourse = () => {
     const goToCart=()=>{
         navigation.navigate("Cart");
     }
+// const handleWishlist=()=>{
+//       let wishlistedData = await wishListApi(Data[index].ID, key).then(data => { console.log("wishlisted",data) })
+// }
 
     return (
         <>

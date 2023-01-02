@@ -21,6 +21,7 @@ import useForm from "../../components/validate/useForm";
 import validate from "../../components/validate/validate";
 import FaIcon from "react-native-vector-icons/FontAwesome"
 import { RFC_2822 } from "moment";
+import axios from "axios";
 import { RFValue } from "react-native-responsive-fontsize";
 const Form = () => {
     const navigation=useNavigation()
@@ -74,6 +75,17 @@ const Form = () => {
            console.log("No Data")
         }
     }, [data]);
+
+    const sendOtpApi=async()=>{
+            let payload={
+                "email":"buusha.br@gmail.com"
+            }
+            let url="http://127.0.0.1:3200/sign-up"
+            console.log("url",url)
+            await axios.post(url,payload).then(response =>(
+                console.log("Forgot api",response.data)
+            )).catch(err=> console.log("error",err))
+        }
 
     const [checked, setChecked] = React.useState('3');
 
@@ -197,7 +209,7 @@ const Form = () => {
 
             <TouchableOpacity
                 style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%" }]}
-                onPress={e =>{handleSubmit(e,2)}}
+                onPress={()=>sendOtpApi()}
             >
                 <LinearGradient
                     style={{ height: '100%', width: '30%', alignItems: 'center', justifyContent: 'center', borderRadius: 20 }}

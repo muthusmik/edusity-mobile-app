@@ -15,10 +15,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { cartHandler } from '../store/redux/cart';
 import { Colors } from 'react-native-paper';
-import {
-    formatCurrency,
-    getSupportedCurrencies,
-} from "react-native-format-currency";
 import { useNavigation } from '@react-navigation/native';
 import { viewCourseHandler } from '../store/redux/viewCourse';
 import { deleteItemUrl, cartListUrl } from '../services/constant';
@@ -30,15 +26,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RazorpayCheckout from 'react-native-razorpay';
 import Toast from 'react-native-simple-toast';
 import NoData from './noCartData';
-
+import { useIsFocused } from '@react-navigation/native';
 
 const Cart = () => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
+    const isFocused=useIsFocused();
   
     const[Token,setToken]=useState("");
     const cartData = useSelector((state) => state.cartList.data)
-    console.log("thor....",cartData)
+    // console.log("thor....",cartData)
     // const loader=useSelector((state) => state.loginHandle.loading)
     // const carValueData = useSelector((state) => state.cartList)
     const [showloader, SetLoader] = useState(false);
@@ -65,10 +62,10 @@ const Cart = () => {
             .then((originalPromiseResult) => {
                 setData(originalPromiseResult.data.Courses);
          
-                console.log(originalPromiseResult.data.Courses,"Courses")
+                // console.log(originalPromiseResult.data.Courses,"Courses")
             })
             .catch((rejectedValueOrSerializedError) => {
-                console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
+                // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
                 setLoader(false);
             })
         }else{
@@ -89,18 +86,18 @@ const Cart = () => {
                 navigation.navigate("ViewCourse");
             })
             .catch((rejectedValueOrSerializedError) => {
-                console.log(" Inside catch", rejectedValueOrSerializedError);
+                // console.log(" Inside catch", rejectedValueOrSerializedError);
             })
         // SetLoader(false);
     }
     const callCart = () => {
         dispatch(cartHandler(Token)).then(unwrapResult)
             .then((originalPromiseResult) => {
-                console.log("CartList ", originalPromiseResult);
+                // console.log("CartList ", originalPromiseResult);
                 setData(originalPromiseResult.data.Courses);
             })
             .catch((rejectedValueOrSerializedError) => {
-                console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
+                // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
             })
     }
 
@@ -110,7 +107,7 @@ const Cart = () => {
         const session = Data[0].SessionID;
         setDataSession(session);
         console.log("iam inside search value of cartvalueData", session);
-
+        console.log("iam inside search value of cartvalueData", Data[0].SessionID);
         setOverlay("razorpay");
         // if (user.country_code === "IN") {
         //   setOverlay("razorpay");
@@ -118,12 +115,15 @@ const Cart = () => {
         //   // stripe
         //   setOverlay("stripe");
         //   return;}
-        setModalVisible(true);
+        // setModalVisible(true);
     };
-    // useEffect(() => {
-    //     console.log("Im theoverlay", overlay)
-    // }, [overlay]
-    // )
+   useEffect(() => {
+        if(isFocused){
+            setOverlay(null);
+        }
+        console.log("Im theoverlay", overlay)
+    }, [isFocused]
+    )
     const renderOverlay = (source) => {
         console.log("Im inisde the surc..........", source)
         switch (source) {
@@ -135,15 +135,17 @@ const Cart = () => {
                     ></StripePopup>
                 );
             case "razorpay":
-
-                return <RazorpayOverlay onClose={setOverlay} data={dataSession} pricing={totalValue} />;
+                    console.log("inside case razor")
+                    // navigation.navigate("Razor",{dataSession,totalValue})
+                return <RazorpayOverlay onClose={popupCloseHandler} data={dataSession} pricing={totalValue} />;
             default:
+                console.log("inside case null")
                 return null;
         }
     };
     const RazorpayOverlay = (onClose, data, pricing) => {
 
-        //{console.log("im the price of total amount................",totalValue)}
+        {console.log("im the price of total amount................",totalValue)}
         var options = {
             name: "Edusity",
             amount: "1000",
@@ -152,6 +154,11 @@ const Cart = () => {
             currency: 'INR',
             key: "rzp_test_0YBgt6YFSNUirq",
             order_id: data,
+            modal: {
+                ondismiss: () => {
+                  onClose((state) => !state);
+                },
+              },
             prefill: {
                 name: LoginData.data.userName,
                 email: LoginData.data.email,
@@ -188,14 +195,14 @@ const Cart = () => {
                 },
             })
             .then((response) => {
-                console.log("im th Removal item token..................", Token)
+                // console.log("im th Removal item token..................", Token)
                 callCart();
-                console.log("........................................response", response.data)
+                // console.log("........................................response", response.data)
                 return response.data;
             }).catch(err => { console.log(err, "error listed") })
     }
     const deleteCart = async () => {
-        const deleteCart = await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
+        await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
             .then(response => {
                 console.log(response.data);
                 callCart()
@@ -203,10 +210,10 @@ const Cart = () => {
             .catch(err => { console.log(err, "error listed") })
     }
     useEffect(() => {
-        console.log(cartData,"cartData2");
+        // console.log(cartData,"cartData2");
         let cartValue = 0
         let course = cartData?.data?.Courses;
-        console.log(course,"course detail")
+        // console.log(course,"course detail")
         setData(cartData);
         for (let i = 0; i < course?.length; i++) {
             cartValue = cartValue + course[i].enrollmentFee;
@@ -233,12 +240,12 @@ const Cart = () => {
     return (
         <>
             <KeyboardAvoidingView style={styles.mainContainer}>
-                {console.log(loader, ".......................loader")}
+               
                 {(!loader) ?
 
                     (Data.length > 0) ?
                         <>
-                            {console.log("hello", Data)}
+                          
                             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
                                 <TouchableOpacity style={{ marginLeft: "4%" }} onPress={()=>navigation.goBack()}>
                                     <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />

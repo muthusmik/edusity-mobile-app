@@ -37,7 +37,7 @@ const CourseList = ({ allCourses, cartData}) => {
     // console.log("iam inside search redxitemss", allCourses.data[0].isWishlisted);
     const [flalistRefresh, setFlatListRefresh] = useState(false);
     const [showHeart, setShowHeart] = useState([]);
-    const [Data, setData] = useState();
+    const [Data, setData] = useState("ttt");
     const [loader, SetLoader] = useState(false);
     const [cartLoad, setCartLoad] = useState(true);
     const [currentId, setCurrentId] = useState("");
@@ -198,7 +198,7 @@ const CourseList = ({ allCourses, cartData}) => {
                     setData(newdata);
                     setShowHeart(newdata.map(a => a.isWishlisted))
                     setFilterPageNo(1);
-                    SetLoader(false); allCourses
+                    SetLoader(false); 
                     setRefreshList(false);
                     if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
                     return response.data
@@ -220,6 +220,9 @@ const CourseList = ({ allCourses, cartData}) => {
 
         }
     }, [submission])
+    useEffect(()=>{
+        console.log("changed",Data)
+    },[Data])
 
     const [key, setKey] = useState("")
     useEffect(() => {
@@ -228,14 +231,16 @@ const CourseList = ({ allCourses, cartData}) => {
             setRefreshList(true);
             SetLoader(true)
             let newToken = await AsyncStorage.getItem("loginToken")
-            console.log(newToken,"nijiuujjujiujuunju''''''''''njunij");
+            console.log("ffff",allCourses,newToken,"gggg");
             if (newToken) { 
             setKey(newToken); 
             setData(allCourses.data)
             setShowHeart(allCourses.data.map(a => a.isWishlisted))
+            console.log("there........................",Data)
             setRefreshList(false);
             SetLoader(false)
             console.log("there........................",allCourses.data.map(a => a.isWishlisted))
+            console.log("there........................",Data)
             }else{
                 console.log("helooo not working ",allCourses.data)
                 setKey(null); 
@@ -243,6 +248,9 @@ const CourseList = ({ allCourses, cartData}) => {
                 setRefreshList(false);
                 SetLoader(false)
             }
+      setFlatListRefresh(!flalistRefresh)
+      console.log("there........................",Data)
+
         }
         initial()
 
@@ -347,10 +355,10 @@ const CourseList = ({ allCourses, cartData}) => {
                             keyExtractor={item => item.ID}
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
-                                (!item.isPurchased) ?
+                                // (!item.isPurchased) ?
                                     <View onPress={() => handleViewNavigation(item)} style={styles.mainTouchable}>
-                                        {/* {console.log("Dataaaaaaa",Data[0].isPurchased)}
-                                       {console.log("GTfrfrfrfrfrfrfr",item)} */}
+                                       {console.log("Dataaaaaaa",Data[0].CourseName)}
+                                       {/* {console.log("GTfrfrfrfrfrfrfr",item)} */} 
                                         <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
                                             <View style={{ width: "100%", flexDirection: "row" }}>
                                                 <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
@@ -433,6 +441,7 @@ const CourseList = ({ allCourses, cartData}) => {
                                                 </View>
                                             </View>
                                             {/* <Divider /> */}
+                                           { (!item.isPurchased) ?
                                             <View style={{ flexDirection: "row", marginVertical: "2%" }}>
                                                 <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
 
@@ -463,10 +472,14 @@ const CourseList = ({ allCourses, cartData}) => {
                                                         </TouchableOpacity>
                                                     }
                                                 </View>
-                                            </View>
+                                            </View>: 
+                                             <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
+                                                            <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
+                                                        </View>}
 
                                         </View>
-                                    </View> : null
+                                    </View> 
                             )
                             }
                             onEndReachedThreshold={0.2}

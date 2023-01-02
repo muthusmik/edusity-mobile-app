@@ -12,10 +12,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { RFValue } from 'react-native-responsive-fontsize';
 import { TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useIsFocused } from '@react-navigation/native'
 Feather.loadFont()
 
 const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
+    const isFocused=useIsFocused();
     useEffect(() => {
         console.log(selectedItem, "selected item")
     }, [selectedItem])
@@ -36,7 +37,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
     const [totalValue, setTotalValue] = useState(0);
 
     useEffect(() => {
-
+        if(isFocused){
         const initialLoading = async () => {
             let newToken = await AsyncStorage.getItem("loginToken");
             // console.log("new token", newToken);
@@ -52,7 +53,6 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                     }
                     setTotalValue(cartValue);
                 }
-        
                 setKeyToken(newToken);
             }else{
                 setKeyToken(null);
@@ -60,9 +60,9 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
            
         }
         initialLoading();
-        // console.log(cartData, "cartData2");
-       
-    }, [cartData,cartCount])
+        console.log("cartData2.........................................................................");
+    }
+    }, [cartData,cartCount,isFocused])
 
     const handleSelelction = (data) => {
         setIsSearchLoader(true)
@@ -225,7 +225,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                             borderWidth: 1,
                             borderColor: "red"
                         }}>
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.robotomedium, }}>{(Data.Courses).length}</Text>
+                            <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.robotomedium, }}>{(Data?.Courses)?.length}</Text>
                         </View> : null}
                     </TouchableOpacity>
                 </View>
