@@ -66,7 +66,7 @@ const Profile = () => {
     const createTwoButtonAlert = () =>
         Alert.alert(
             "Signout",
-            "Are you Sure you want to sign out? you will lose all your data!",
+            "Are you sure you want to sign out, you will lose your data if you continue!",
             [
                 {
                     text: "Cancel",

@@ -13,31 +13,51 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONTS, images, icons } from '../../constants';
 import { RFValue } from 'react-native-responsive-fontsize';
+import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
 import OTPTextView from 'react-native-otp-textinput';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
+import { setConstantValue } from 'typescript';
 
-//Api Call
-// const ForgotApi=async(data)=>{
-//     let payload={
-//         "email":data
-//     }
-//     let url="https://newlogin.edusity.com/send-otp"
-//     let forgot = await axios.post(url,payload).then(response =>(
-//         console.log("Forgot api",response.data)
-//     )).catch(err=> console.log("error",err))
-// }
+// Api Call
 
-const OtpPage = () => {
+
+const OtpPage = ({route}) => {
     const [otp, setOtp] = useState();
     const navigation=useNavigation();
     const containerStyle = { width: 40, borderBottomWidth: 4, ...FONTS.robotoregular }
-
+    console.log("reddddddddddddddd",route.params)
     const handleChange = (value) => {
         setOtp(value)
     }
-
+    const verifyApi=async()=>{
+        let payload={
+            "email": route.params.emailforOtp,
+            "otp": otp
+        }
+        let url="https://backend-linux-login.azurewebsites.net/verify-otp"
+        await axios.post(url,payload).then(response =>{
+            console.log("Forgot api",response.data)
+            console.log("Forgot api",payload)
+            if (response.data.message=='Email verified successfully.'){
+                Alert.alert(
+                    "Signup Success",
+                    "User have been added successfully!,you can now Login",
+                    [
+                        {
+                            text:"ok",
+                            onPress:()=>navigation.navigate("Login")
+                        }
+                    ]
+                )
+                // Toast.show(response.data.message,"User successfully created ,you can now login using your email and password", Toast.LONG);
+            }else{
+                Toast.show(response.data.message, Toast.LONG);
+            }
+            
+    }).catch(err=> console.log("error",err))
+    }
     const verifyOtpFunction=()=>{
         console.log("I am working!!!!!");
         Alert.alert(
@@ -74,7 +94,7 @@ const OtpPage = () => {
                 </View>
                 <View style={{ flex: 0.1, top: "20%", width: "50%", alignSelf: "center" }}>
                     <OTPTextView
-                        handleTextChange={(e) => { }}
+                        handleTextChange={(value) => {setOtp(value) }}
                         textInputStyle={containerStyle}
                         inputCount={4}
                         inputCellLength={1}
@@ -83,7 +103,7 @@ const OtpPage = () => {
                 </View>
                 <TouchableOpacity
                     style={{ width: '32%', height: 40, alignSelf: 'center', top: "25%" }}
-                    onPress={()=>{verifyOtpFunction(),console.log("okok")}}
+                    onPress={()=>{verifyApi(),console.log("okok")}}
                 >
                     <LinearGradient
                         style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 25 }}

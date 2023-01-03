@@ -166,7 +166,7 @@ const General = () => {
         >
             <View style={{ margin: "3%" }}>
                 <Text style={{ color: COLORS.primary, fontSize: RFValue(14), ...FONTS.robotoregular }}>Public Profile</Text>
-                <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular }}>Add short description about yourself</Text>
+                <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular }}>Tell Us Something About Yourself..</Text>
             </View>
             <View style={{ flexDirection: "row", margin: "2%" }}>
                 <View style={{ flexDirection: "column", width: "50%" }}>
@@ -191,7 +191,7 @@ const General = () => {
                     <ProfileInput placeholder="City" value={city} settedValue={setCity} />
                 </View>
                 <View style={{ flexDirection: "column", width: "50%" }}>
-                    <ProfileInput placeholder="state Province" value={province} settedValue={setProvince} />
+                    <ProfileInput placeholder="State/Province" value={province} settedValue={setProvince} />
                 </View>
             </View>
             {/* <View style={{ margin: "3%" }}>

@@ -190,7 +190,7 @@ const Login = ({ navigation }) => {
                                 selectionColor={COLORS.blue} */}
                                 <InputBox
                                     inputOutLine
-                                    label={"Email/Username"}
+                                    label={"  Email / Username"}
                                     value={email}
                                     customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
                                     onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }} />
