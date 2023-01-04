@@ -79,25 +79,29 @@ const Cart = () => {
     }, [])
 
     const handleViewNavigation = (item) => {
-        // SetLoader(true);
+        SetLoader(true);
         dispatch(viewCourseHandler(item)).then(unwrapResult)
             .then((originalPromiseResult) => {
-
+                SetLoader(false);
                 navigation.navigate("ViewCourse");
             })
             .catch((rejectedValueOrSerializedError) => {
                 // console.log(" Inside catch", rejectedValueOrSerializedError);
+                SetLoader(false);
             })
-        // SetLoader(false);
+        
     }
     const callCart = () => {
+        SetLoader(true);
         dispatch(cartHandler(Token)).then(unwrapResult)
             .then((originalPromiseResult) => {
                 // console.log("CartList ", originalPromiseResult);
                 setData(originalPromiseResult.data.Courses);
+                SetLoader(false);
             })
             .catch((rejectedValueOrSerializedError) => {
                 // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
+                SetLoader(false);
             })
     }
 
@@ -187,6 +191,7 @@ const Cart = () => {
     }
     const removeItem = async (id) => {
         console.log(id, "............................id")
+        SetLoader(true);
         let removeUrl = `https://backend-linux-payment.azurewebsites.net/v2/cart/${id}?country=IN&isBundle=0`
         return axios
             .delete(removeUrl, {
@@ -198,16 +203,18 @@ const Cart = () => {
                 // console.log("im th Removal item token..................", Token)
                 callCart();
                 // console.log("........................................response", response.data)
+                SetLoader(false);
                 return response.data;
-            }).catch(err => { console.log(err, "error listed") })
+            }).catch(err => { console.log(err, "error listed"), SetLoader(false); })
     }
     const deleteCart = async () => {
+        
         await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
             .then(response => {
                 console.log(response.data);
                 callCart()
             })
-            .catch(err => { console.log(err, "error listed") })
+            .catch(err => { console.log(err, "error listed"), SetLoader(false)})
     }
     useEffect(() => {
         // console.log(cartData,"cartData2");
@@ -300,7 +307,7 @@ const Cart = () => {
                                 </View>
                                 <View style={{ flexDirection: "row", height: "35%", width: "100%", }}>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.gray, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => deleteCart()}>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.gray, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => {deleteCart(),SetLoader(true)}}>
                                             <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Empty the Cart</Text>
                                         </TouchableOpacity>
                                     </View>

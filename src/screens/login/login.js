@@ -14,7 +14,7 @@ import {
     KeyboardAvoidingView,
     Pressable,
     Keyboard,
-    
+
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import InputBox from 'react-native-floating-label-inputbox';
@@ -70,12 +70,12 @@ const Login = ({ navigation }) => {
             setLoader(true);
             dispatch(loginHanlder(data))
                 .then(unwrapResult)
-                .then(async(originalPromiseResult) => {
+                .then(async (originalPromiseResult) => {
                     console.log("successfully returned to login with response ", originalPromiseResult.data);
                     if (originalPromiseResult.data) {
                         setErrorLogin("");
                         await AsyncStorage.setItem('loginToken', originalPromiseResult.data);
-                        console.log(  await AsyncStorage.getItem('loginToken'),"helloooo")  
+                        console.log(await AsyncStorage.getItem('loginToken'), "helloooo")
                         console.log(originalPromiseResult.data)
                         setToken(originalPromiseResult.data)
                     } else {
@@ -105,7 +105,7 @@ const Login = ({ navigation }) => {
     }, [data]);
 
     useEffect(() => {
-        console.log( AsyncStorage.getItem("loginToken"), "token value on disptach")
+        console.log(AsyncStorage.getItem("loginToken"), "token value on disptach")
         if (token) {
             dispatch(userLoginHanlder(token)).then(unwrapResult)
                 .then((originalPromiseResult) => {
@@ -113,7 +113,7 @@ const Login = ({ navigation }) => {
                     if (originalPromiseResult.data) {
                         setEmail("");
                         setPassword("");
-                        
+
                         const param = originalPromiseResult.data;
                         navigation.navigate('Home', {
                             screen: 'Dashboard',
@@ -195,7 +195,9 @@ const Login = ({ navigation }) => {
                                     customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
                                     onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }} />
                             </Pressable>
-                            {formErrors && formErrors.emailorusername ? <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text> : null}
+                            {formErrors && formErrors.emailorusername ?
+                                <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
+                                : null}
                         </View>
 
                         <View style={{ width: "80%", marginTop: "5%" }}>
@@ -219,7 +221,9 @@ const Login = ({ navigation }) => {
                                     labelStyle={{ ...FONTS.robotoregular }}
                                     customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
                                     onChangeText={e => { handleChange(e, "loginpassword"), setErrorLogin(""), setPassword(e), setErrorPassword(null) }} />
-                                {formErrors && formErrors.loginpassword ? <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text> : null}
+                                {formErrors && formErrors.loginpassword ?
+                                    <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
+                                    : null}
                             </Pressable>
 
                             <TouchableOpacity style={{ left: "62%", marginVertical: "1%" }} onPress={() => forgothandler()}>
@@ -228,7 +232,10 @@ const Login = ({ navigation }) => {
                         </View>
                         <View style={{ marginTop: "1%" }}>
                             {/* {console.log("vvbyuybybybyy",errorlogin)} */}
-                            {errorLogin ? (<View><Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{errorLogin}</Text></View>) : null}
+                            {errorLogin ? (
+                                <View>
+                                    <Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{errorLogin}</Text>
+                                </View>) : null}
                             {formErrors && formErrors.loginundef ? (<View><Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{formErrors.loginundef}</Text></View>) : null}
                         </View>
 
@@ -323,12 +330,12 @@ const styles = StyleSheet.create({
         width: "41%",
         ...FONTS.robotoregular,
     },
-    textPassword:{
+    textPassword: {
         color: COLORS.black,
         backgroundColor: COLORS.white,
         width: "26%",
         ...FONTS.robotoregular,
-        borderWidth:0
+        borderWidth: 0
     },
     shadow: {
         shadowColor: "#000",

@@ -104,13 +104,16 @@ const MyCourse = () => {
 
     const handleViewNavigation = (item) => {
         console.log(item, "ID")
-        dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
+        setLoader(true)
+        dispatch(viewCourseHandler(item)).then(unwrapResult)
             .then((originalPromiseResult) => {
                 console.log("successfully returned to login with response CourseList ", originalPromiseResult);
+                setLoader(false)
                 navigation.navigate("ViewCourse");
             })
             .catch((rejectedValueOrSerializedError) => {
                 console.log(" Inside catch", rejectedValueOrSerializedError);
+                setLoader(false)
             })
 
     };
@@ -124,10 +127,10 @@ const MyCourse = () => {
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
                     <>
-                    {console.log(CoursesCount)}
+                    {console.log("CourseCount",CoursesCount)}
                         <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
                     </>
-                    {(CoursesCount >= 0) ? 
+                    {(CoursesCount > 0) ? 
                     <FlatList
                         data={Data}
                         // ref={ScrollRef}

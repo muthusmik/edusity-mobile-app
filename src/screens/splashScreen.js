@@ -1,23 +1,52 @@
 import React, {useState} from 'react';
-import {View, StyleSheet,Text,Image} from 'react-native';
+import {View, StyleSheet,Text,Image, PermissionsAndroid,} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {useEffect} from 'react';
 import { COLORS, FONTS, icons, images } from '../constants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo';
+import { useIsFocused } from '@react-navigation/native';
 
 const SplashScreen = props => {
   const [authLoaded, setAuthLoaded] = useState(false);
   const [animationLoaded, setAnimationLoaded] = useState(false);
-  const navigation=useNavigation();
+  const navigation = useNavigation();
+  const [network, setNetwork] = useState('')
+  const [loading, setLoading] = useState(false)
+  const isFocused =useIsFocused();
 
 
+
+  const unsubscribe=()=> {
+    NetInfo.refresh().then(state => {
+      setNetwork(state)
+        if (state.isConnected) {
+          setAuthLoaded(true);
+          setAnimationLoaded(true);
+        }
+        else {
+          navigation.navigate("NetworkError");
+        }
+    })
+  }
   useEffect(() => {
+    if(isFocused){
     setTimeout(() => {
-      setAuthLoaded(true);
-      setAnimationLoaded(true);
+      const PermissionLocation=async()=>{
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Access Required',
+            message: 'This App needs to Access your location',
+          },
+        );
+        unsubscribe();
+     
+        }
+        PermissionLocation()
     }, 4000);
-  }, []);
+  }}, [isFocused]);
 
   const onAnimationFinish = () => {
     setAnimationLoaded(true);

@@ -5,6 +5,7 @@ export const SignupBgImage=require("../assets/images/globalReachBg.png")
 export const backdrop=require("../assets/images/coursebackdrop.png")
 export const NoData=require("../assets/images/NoData.png")
 export const emptyCart=require("../assets/images/empty-cart.png")
+export const heart=require("../assets/images/heart.gif")
 export const chip=require("../assets/images/chip.png")
 export const noCourseGif=require("../assets/images/noCourse.gif")
 export const noNetworkGif=require("../assets/images/wifi.png")
@@ -18,6 +19,7 @@ export default {
     NoData,
     emptyCart,
     chip,
+    heart,
     noCourseGif,
     noNetworkGif
 }

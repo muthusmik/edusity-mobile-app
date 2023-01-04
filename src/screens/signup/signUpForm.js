@@ -64,15 +64,15 @@ const Form = () => {
                         setLoader(false);
                         console.log(originalPromiseResult.errorCode, "hello")
                         if (originalPromiseResult.errorCode == "") {
-                            var emailforOtp=data.email;
+                            var emailforOtp = data.email;
                             let url = "https://backend-linux-login.azurewebsites.net/send-otp"
                             await axios.post(url, { "email": data.email }).then(response => (
                                 console.log("Forgot api", response.data),
-                        
-                                navigation.navigate("OtpPage",{emailforOtp})
+
+                                navigation.navigate("OtpPage", { emailforOtp })
                             )).catch(err =>
                                 console.log("error", err))
-                        }else{
+                        } else {
                             Toast.show(originalPromiseResult.message, Toast.LONG);
                         }
                     } else {
@@ -92,20 +92,23 @@ const Form = () => {
         }
     }, [data]);
 
-  
+
 
 
 
     return (
         <View style={{ width: "100%", alignItems: "center" }}>
-            loader?<> <LoaderKit
-                                style={{ height: 25 }}
-                                name={'Pacman'} // Optional: see list of animations below
-                                size={10} // Required on iOS
-                                color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
-                            />
-</>:
-            <View style={{ width: "85%", marginTop: "2%" }}>
+          {  loader ?
+            <> 
+            <LoaderKit
+                style={{ height: 25 }}
+                name={'Pacman'} // Optional: see list of animations below
+                size={10} // Required on iOS
+                color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
+            />
+            </>:
+            <>
+           <View style={{ width: "85%", marginTop: "2%" }}>
                 <InputBox
                     inputOutline
                     label={'First Name'}
@@ -114,7 +117,11 @@ const Form = () => {
                     name={"FirstName"}
                     onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
                 />
-                {formErrors && formErrors.firstName ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.firstName}</Text></View> : null}
+                {formErrors && formErrors.firstName ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.firstName}
+                        </Text>
+                    </View> : null}
             </View>
             <View style={{ width: "85%", marginTop: "2%" }}>
                 <InputBox
@@ -125,7 +132,10 @@ const Form = () => {
                     name={"LastName"}
                     onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
                 />
-                {formErrors && formErrors.lastName ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.lastName}</Text></View> : null}
+                {formErrors && formErrors.lastName ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.lastName}</Text>
+                    </View> : null}
             </View>
 
 
@@ -140,7 +150,10 @@ const Form = () => {
 
                     onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
                 />
-                {formErrors && formErrors.email ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.email}</Text></View> : null}
+                {formErrors && formErrors.email ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.email}</Text>
+                    </View> : null}
             </View>
 
 
@@ -167,7 +180,10 @@ const Form = () => {
                     // passHideIcon={<FontAwesome  name={'eye-slash'} size={5}/>}
                     onChangeText={e => { handleChange(e, "password"), setPassword(e) }}
                 />
-                {formErrors && formErrors.password ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.password}</Text></View> : null}
+                {formErrors && formErrors.password ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.password}</Text>
+                    </View> : null}
             </View>
             <View style={{ width: "85%", marginTop: "2%" }}>
                 <InputBox
@@ -181,7 +197,10 @@ const Form = () => {
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
                 />
-                {formErrors && formErrors.password2 ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.password2}</Text></View> : null}
+                {formErrors && formErrors.password2 ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.password2}</Text>
+                    </View> : null}
             </View>
 
 
@@ -194,7 +213,10 @@ const Form = () => {
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
                 />
-                {formErrors && formErrors.userName ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.userName}</Text></View> : null}
+                {formErrors && formErrors.userName ?
+                    <View style={{ ...styles.ErrorCont }}>
+                        <Text style={{ ...styles.ErrorText }}>{formErrors.userName}</Text>
+                    </View> : null}
             </View>
             <View style={{ width: "85%", marginTop: "2%" }}>
                 <InputBox
@@ -218,7 +240,10 @@ const Form = () => {
                 </TouchableOpacity >
             </View> */}
 
-            {formErrors && formErrors.signundef ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.signundef}</Text></View> : null}
+            {formErrors && formErrors.signundef ?
+                <View style={{ ...styles.ErrorCont }}>
+                    <Text style={{ ...styles.ErrorText }}>{formErrors.signundef}</Text>
+                </View> : null}
 
             <TouchableOpacity
                 style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%" }]}
@@ -233,7 +258,8 @@ const Form = () => {
                     <Text style={{ color: COLORS.white, ...FONTS.body3 }}>Sign Up</Text>
                 </LinearGradient>
             </TouchableOpacity>
-
+            </>
+}
         </View>
 
     )

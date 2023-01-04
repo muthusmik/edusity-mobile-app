@@ -42,6 +42,7 @@ const Search = ({ navigation }) => {
     useEffect(() => {
         if (isFocused) {
             console.log("done n search")
+            setIsSearchLoader(true);
             const initialLoading = async () => {
                 let token = await AsyncStorage.getItem("loginToken");
                 if (token) {
@@ -64,13 +65,17 @@ const Search = ({ navigation }) => {
                 dispatch(courseListHandler(token)).then(unwrapResult)
                     .then((originalPromiseResult) => {
                         console.log("successfully returned to login with response CourseList ", )
+                        setIsSearchLoader(false);
                     })
                     .catch((rejectedValueOrSerializedError) => {
                         // console.log(" course list failed Inside catch", rejectedValueOrSerializedError);
+                        setIsSearchLoader(false);
                     })
+                   
 
             }
             initialLoading()
+            // setIsSearchLoader(false);
         }
 
     }, [isFocused])
