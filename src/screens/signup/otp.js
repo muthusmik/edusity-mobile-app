@@ -27,7 +27,7 @@ const OtpPage = ({route}) => {
     const [otp, setOtp] = useState();
     const navigation=useNavigation();
     const containerStyle = { width: 40, borderBottomWidth: 4, ...FONTS.robotoregular }
-    console.log("reddddddddddddddd",route.params)
+    // console.log("reddddddddddddddd",route.params)
     const handleChange = (value) => {
         setOtp(value)
     }
@@ -38,8 +38,8 @@ const OtpPage = ({route}) => {
         }
         let url="https://backend-linux-login.azurewebsites.net/verify-otp"
         await axios.post(url,payload).then(response =>{
-            console.log("Forgot api",response.data)
-            console.log("Forgot api",payload)
+            // console.log("Forgot api",response.data)
+            // console.log("Forgot api",payload)
             if (response.data.message=='Email verified successfully.'){
                 Alert.alert(
                     "Signup Success",
@@ -59,7 +59,7 @@ const OtpPage = ({route}) => {
     }).catch(err=> console.log("error",err))
     }
     const verifyOtpFunction=()=>{
-        console.log("I am working!!!!!");
+        // console.log("I am work/ing!!!!!");
         Alert.alert(
             "Signup Success",
             "User have been added successfully!",
@@ -74,7 +74,7 @@ const OtpPage = ({route}) => {
     }
 
     const loginData = useSelector(state => state.loginHandle);
-    console.log(loginData, "loginData")
+    // console.log(loginData, "loginData")
     return (
         <KeyboardAvoidingView style={styles.container}>
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>

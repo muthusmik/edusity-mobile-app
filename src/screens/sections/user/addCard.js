@@ -28,12 +28,12 @@ const AddCard = () => {
         )
     }
 
-    const onFocus = () => {
-        console.log("hello")
-    }
-    const onChange = () => {
-        console.log("hebrews")
-    }
+    // const onFocus = () => {
+    //     console.log("hello")
+    // }
+    // const onChange = () => {
+    //     console.log("hebrews")
+    // }
     return (
         <View style={{paddingBottom:"35%"}}>
 

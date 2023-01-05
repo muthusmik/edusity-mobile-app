@@ -57,10 +57,10 @@ const SplashScreen = props => {
     if (authLoaded && animationLoaded) {
       let Token=await  AsyncStorage.getItem("loginToken");
       if(Token){
-        console.log("data iruku",Token);
+        // console.log("data iruku",Token);
         props.navigation.replace('Home',{screen:'DashBoard'});
       }else{
-        console.log("illa data illa set aggamateenguthu da payale");
+        // console.log("illa data illa set aggamateenguthu da payale");
         props.navigation.replace('Home',{screen:'Search'});
       }
 

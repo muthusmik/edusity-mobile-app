@@ -9,7 +9,7 @@ export const cartHandler = createAsyncThunk('posts/cartListcall', async (data, t
     // console.log(headers,"headers  yes")
     return  await axios.get(cartListUrl,{ headers: headers }).then(response=> {
         // console.log("success cart List",response.data.data)
-        console.log("success cart List")
+        // console.log("success cart List")
         return response.data })
         .catch((err)=>{
         console.log(err)
@@ -27,10 +27,10 @@ export const cartListSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
-        console.log(cartHandler, "search response")   
+        // console.log(cartHandler, "search response")   
         builder.addCase(cartHandler.pending,(state) => {
             state.loading =true ;
-            console.log("hello status pending ",state.loading)
+            // console.log("hello status pending ",state.loading)
         }),
         builder.addCase(cartHandler.fulfilled, (state, action) => {
             state.data = action.payload;

@@ -27,9 +27,11 @@ const NoNetworkError = () => {
     // useEffect(()=>{
     const unsubscribe = () => {
         NetInfo.fetch().then(state => {
-            console.log("Network error page", state.isConnected);
             if (state.isConnected) {
                 navigation.goBack();
+            }
+            else{
+                alert("Please Check your network connection!");
             }
         })
     }

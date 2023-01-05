@@ -17,7 +17,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 const ProfileInput = (props) => {
     const { placeholder, value, settedValue } = props;
 
-    console.log(value, placeholder)
+    // console.log(value, placeholder)
     return (
         <View style={{ borderBottomWidth: 1, width: "90%", borderRadius: 20, justifyContent: "center", }}>
             <TextInput
@@ -51,9 +51,9 @@ const General = () => {
     }, [])
 
     useEffect(() => {
-        console.log(ProfileDetails, "hhhh")
+        // console.log(ProfileDetails, "hhhh")
         setUserDetails([ProfileDetails?.data?.data])
-        console.log("data success", [ProfileDetails?.data?.data][0].phoneNumber)
+        // console.log("data success", [ProfileDetails?.data?.data][0].phoneNumber)
     }, [ProfileDetails])
     
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
@@ -99,7 +99,7 @@ const General = () => {
                 youtubeProfile: youtube,
             }
             let updateprofile = await updateProfile(Token, Payload).then(data => {
-                console.log(data.data, "hello");
+                // console.log(data.data, "hello");
                 // setError("");
                 dispatch(userLoginHanlder(Token)).then(unwrapResult).then((originalPromiseResult) => {
                     if(!originalPromiseResult.erroCode){

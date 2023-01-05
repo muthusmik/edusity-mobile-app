@@ -28,7 +28,7 @@ const NoData = ({data}) => {
             </View>
             <KeyboardAvoidingView style={styles.mainContainer}>
 
-                <Image source={images.emptyCart} resizeMode="contain" style={{ height: 200, width: 200 }} />
+                <Image source={images.noCartGif} resizeMode="contain" style={{ height: 200, width: 200 }} />
                 <View style={{ width: "80%", margin: "5%" }}>
                     <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Shopping Cart is currently empty!</Text>
                     <Pressable onPressIn={() => navigation.navigate("Home")}>
@@ -41,10 +41,11 @@ const NoData = ({data}) => {
 }
 const styles = StyleSheet.create({
     mainContainer: {
-        height: "80%",
+        height: "93%",
         width: "100%",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor:COLORS.white,
     },
     mainTouchable: {
         margin: "2%",

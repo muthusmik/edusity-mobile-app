@@ -38,9 +38,9 @@ const Security = () => {
 
     const [updatePassword, setUpdatePassword] = useState();
     const [error, setError] = useState();
-    useEffect(() => {
-        console.log(updatePassword, "updatePassword")
-    }, [updatePassword])
+    // useEffect(() => {
+    //     // console.log(updatePassword, "updatePassword")
+    // }, [updatePassword])
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const handleUpdate = () => {
@@ -51,7 +51,7 @@ const Security = () => {
                 let data = { "forgotemail": updatePassword }
                 setError("");
                 dispatch(forgotPasswordHanlder(data)).then(unwrapResult).then((originalPromiseResult) => {
-                    console.log("update response............. ", originalPromiseResult)
+                    // console.log("update response............. ", originalPromiseResult)
                     if (!originalPromiseResult?.errorCode) {
                         navigation.navigate('Login')
                     }

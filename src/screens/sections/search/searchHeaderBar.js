@@ -12,7 +12,7 @@ import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import { useNavigation } from '@react-navigation/native';
 const SearchBar = () => {
-    console.log("iam inside SearchBar");
+    // console.log("iam inside SearchBar");
     const [selectedItem, setSelectedItem] = useState(null);
     const navigation = useNavigation();
     return (

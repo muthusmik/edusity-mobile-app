@@ -12,11 +12,30 @@ import { COLORS } from '../constants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/core";
+import NetInfo from '@react-native-community/netinfo';
+
 const ViPlayer = ({ route }) => {
 
     const videoLink = route.params;
-    console.log(videoLink, "LINk");
+    // console.log(videoLink, "LINk");
     const navigation = useNavigation();
+    const isFocused = useIsFocused();
+    const [network, setNetwork] = useState('')
+
+    useEffect(()=>{
+        if (isFocused) {
+            NetInfo.refresh().then(state => {
+                setNetwork(state.isConnected)
+                if (!state.isConnected) {
+                    navigation.navigate("NetworkError");
+                }
+                // else {
+                //     navigation.navigate("NetworkError");
+                // }
+            })
+        }
+    },[isFocused,network])
 
     return (
         <View style={{ backgroundColor: COLORS.black }}>

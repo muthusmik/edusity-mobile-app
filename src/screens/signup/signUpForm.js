@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 import LoaderKit from 'react-native-loader-kit'
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
 import LinearGradient from 'react-native-linear-gradient';
 import { useDispatch } from 'react-redux';
@@ -85,7 +86,7 @@ const Form = () => {
                 .catch((rejectedValueOrSerializedError) => {
                     setLoader(false);
                     Toast.show("Something went wrong please try after some time!", Toast.LONG);
-                    console.log(" Inside catch", rejectedValueOrSerializedError);
+                    // console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
         } else {
             console.log("No Data")
@@ -99,14 +100,14 @@ const Form = () => {
     return (
         <View style={{ width: "100%", alignItems: "center" }}>
           {  loader ?
-            <> 
+            <View> 
             <LoaderKit
                 style={{ height: 25 }}
                 name={'Pacman'} // Optional: see list of animations below
                 size={10} // Required on iOS
                 color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
             />
-            </>:
+            </View>:
             <>
            <View style={{ width: "85%", marginTop: "2%" }}>
                 <InputBox
@@ -115,6 +116,7 @@ const Form = () => {
                     value={firstName}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     name={"FirstName"}
+                    leftIcon={<MCI name={'format-letter-case-lower'} size={18} style={{color:COLORS.primary}} />}
                     onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
                 />
                 {formErrors && formErrors.firstName ?
@@ -130,6 +132,7 @@ const Form = () => {
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     value={lastName}
                     name={"LastName"}
+                    leftIcon={<MCI name={'format-letter-case-lower'} size={18} style={{color:COLORS.primary}} />}
                     onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
                 />
                 {formErrors && formErrors.lastName ?
@@ -147,7 +150,7 @@ const Form = () => {
                     value={email}
                     name={"Email"}
                     customLabelStyle={{ ...FONTS.robotoregular }}
-
+                    leftIcon={<MCI name={'email'} size={18} style={{color:COLORS.primary}} />}
                     onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
                 />
                 {formErrors && formErrors.email ?
@@ -165,9 +168,9 @@ const Form = () => {
                     value={password}
                     name={"Password"}
                     customLabelStyle={{ ...FONTS.robotoregular }}
-                    required
-                    rightIcon={<FontAwesome5 name={'eye'} size={18} />}
-                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} />}
+                    // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
+                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
+                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
                     secureTextEntry={true}
                     // rightIcon={<Image
                     //     source={icons.Edusitylogo}
@@ -191,9 +194,9 @@ const Form = () => {
                     label={' Confirm Password'}
                     value={confirmPassword}
                     secureTextEntry={true}
-                    required
-                    rightIcon={<FontAwesome5 name={'eye'} size={18} />}
-                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} />}
+                    // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
+                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
+                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
                 />
@@ -209,7 +212,7 @@ const Form = () => {
                     inputOutline
                     label={'UserName'}
                     value={userName}
-                    required
+                    leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
                 />
@@ -224,6 +227,7 @@ const Form = () => {
                     label={'Phone'}
                     value={phone}
                     maxLength={10}
+                    leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "phonenumber"), setPhone(e) }}
                 />

@@ -116,7 +116,7 @@ const Tabs = () => {
                 options={{
                     title: <Text>MyCourses <Text style={{fontSize:8}}>and</Text> WishLists</Text>,
                     headerLeft: () => (
-                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0}} onPress={() => navigation.goBack()}>
+                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0}} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
                     ),
@@ -142,7 +142,7 @@ const Tabs = () => {
                 options={{
                     title: "Profile",
                     headerLeft: () => (
-                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0 }} onPress={() => navigation.goBack()}>
+                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0 }} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
                     ),

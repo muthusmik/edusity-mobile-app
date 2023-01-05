@@ -27,10 +27,10 @@ export const PopUpFilterModal = forwardRef((props, ref) => {
     let [ShowComment, setShowModelComment] = useState(false);
     let [animateModal, setanimateModal] = useState(false);
 useEffect(()=>{
-    console.log(selectedCategory,"category on filter modal")
+    // console.log(selectedCategory,"category on filter modal")
 },[selectedCategory])
 const handleProceed=()=>{
-    console.log(submission,"submission")
+    // console.log(submission,"submission")
      setShowModelComment(false),
      setanimateModal(false),
      setSubmission(!submission)

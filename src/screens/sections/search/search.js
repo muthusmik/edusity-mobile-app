@@ -19,11 +19,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { courseListHandler } from '../../../store/redux/courseList';
 import { cartHandler } from '../../../store/redux/cart';
 import { useIsFocused } from "@react-navigation/core";
+import NetInfo from '@react-native-community/netinfo';
 
 
 const Search = ({ navigation }) => {
     // console.log("iam inside search", Token);
-     console.log("iam inside search");
+    //  console.log("iam inside search");
     const dispatch = useDispatch();
     const Token = useSelector((state) => state.loginHandle.data)
     const allCourses = useSelector((state) => state.courseList.data.data)
@@ -33,16 +34,27 @@ const Search = ({ navigation }) => {
     const cartCount= useSelector((state) => state.cartList.data.data);
     //console.log(allCourses, "isSearchLoader")
     const [Data, setData] = useState([]);
+    const [network, setNetwork] = useState('')
     const [totalValue, setTotalValue] = useState(0);
     const isFocused = useIsFocused();
 
-
-
-
+    // console.log("Network connection ",network);
     useEffect(() => {
         if (isFocused) {
-            console.log("done n search")
-            setIsSearchLoader(true);
+        setIsSearchLoader(true);
+            NetInfo.refresh().then(state => {
+                setNetwork(state.isConnected)
+                if (state.isConnected) {
+                    initialLoading();
+                    
+                }
+                else {
+                setIsSearchLoader(false);
+                    navigation.navigate("NetworkError");
+                }
+            })
+            // console.log("done n search")
+            
             const initialLoading = async () => {
                 let token = await AsyncStorage.getItem("loginToken");
                 if (token) {
@@ -61,10 +73,10 @@ const Search = ({ navigation }) => {
                             // console.log(" Inside catch", rejectedValueOrSerializedError);
                         })
                 }
-                console.log("Search.............................")
+                // console.log("Search.............................")
                 dispatch(courseListHandler(token)).then(unwrapResult)
                     .then((originalPromiseResult) => {
-                        console.log("successfully returned to login with response CourseList ", )
+                        // console.log("successfully returned to login with response CourseList ", )
                         setIsSearchLoader(false);
                     })
                     .catch((rejectedValueOrSerializedError) => {
@@ -74,11 +86,10 @@ const Search = ({ navigation }) => {
                    
 
             }
-            initialLoading()
-            // setIsSearchLoader(false);
+
         }
 
-    }, [isFocused])
+    }, [isFocused, network])
 
 
     // useEffect(() => {
@@ -121,7 +132,7 @@ const Search = ({ navigation }) => {
                             <SearchScreen isSearchLoader={isSearchLoader} setIsSearchLoader={setIsSearchLoader} cartCount={cartCount} />
                         </View>
                         <View style={{ width: "100%", paddingBottom: "6%", zIndex: -10, height: "92%" }}>
-                            {console.log("carrrrrrarrt", wishListed)}
+                            {/* {console.log("carrrrrrarrt", wishListed)} */}
                  
                             <CourseList allCourses={allCourses} cartData={cartData}  />
                         </View>

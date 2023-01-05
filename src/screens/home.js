@@ -15,7 +15,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 const Home = () => {
 
         const loginData=useSelector(state=>state.loginHandle);
-        console.log(loginData,"loginData")
+        // console.log(loginData,"loginData")
     return (
         <SafeAreaView style={styles.container}>
 

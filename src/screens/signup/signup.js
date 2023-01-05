@@ -25,7 +25,7 @@ const SignUp = ({ navigation }) => {
     return (
         <View style={{ backgroundColor: COLORS.white }}>
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }} >
-                <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "26%" }}>
+                
                     <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%", borderWidth: 0,marginTop:"5%" }}>
                         <Image
                             source={icons.Edusitylogo}
@@ -36,9 +36,10 @@ const SignUp = ({ navigation }) => {
                             }}
                         />
                     </View>
-                    <View style={{ alignItems: 'center' }}>
+                    <View style={{ alignItems: 'center',paddingBottom:"1%" }}>
                         <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22),marginTop:"8%" }}>Sign Up</Text>
                     </View>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "72%" }}>
                     <View style={{ width: "100%", alignItems: "center" }}>
                         <Form />
                         <Pressable style={{ borderWidth: 0 }} onPress={() => navigation.navigate("Login")}>

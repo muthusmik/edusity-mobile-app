@@ -41,11 +41,12 @@ export const CategoryFilter = (props) => {
                     data={CategoryList}
                     defaultValue={selectedCategory}
                     onSelect={(selectedItem, index) => {
-                        setSelectedCategory(selectedItem);console.log(selectedItem,"selected item");
+                        setSelectedCategory(selectedItem);
+                        // console.log(selectedItem,"selected item");
                         setIndex(index)
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        console.log(selectedItem.url,"url")
+                        // console.log(selectedItem.url,"url")
                         // text represented after item is selected
                         // if data array is an array of objects then return selectedItem.property to render after item is selected
                         return selectedItem.label

@@ -18,7 +18,7 @@ import axios from 'axios';
 
 const NoCourse = ({data}) => {
     const navigation = useNavigation();
-    console.log("insideno course")
+
     return (
         <>
             {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%" , borderBottomStartRadius: 30, borderBottomEndRadius: 30}}>

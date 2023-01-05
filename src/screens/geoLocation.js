@@ -60,7 +60,7 @@ const GeolocationFetcher =props=> {
               } else {
                 setLocationStatus('Permission Denied');
                 // navigation.navigate('Login');
-                console.log("cancelled")
+                // console.log("cancelled")
               }
             } catch (err) {
               console.warn(err);
@@ -79,7 +79,7 @@ const GeolocationFetcher =props=> {
         Geolocation.getCurrentPosition(
           //Will give you the current location
           (position) => {
-            console.log("inside getlocation")
+            // console.log("inside getlocation")
             dispatch(longitudeSet(position.coords.longitude));
             dispatch(latitudeSet(position.coords.latitude));
             setLocationStatus('You are Here');
@@ -118,7 +118,7 @@ const GeolocationFetcher =props=> {
             //Will give you the location on location change
             
             setLocationStatus('You are Here');
-            console.log(position);
+            // console.log(position);
      
             //getting the Longitude from the location json        
             const currentLongitude =

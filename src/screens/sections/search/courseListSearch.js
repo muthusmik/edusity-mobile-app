@@ -51,6 +51,7 @@ const CourseList = ({ allCourses, cartData}) => {
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [submission, setSubmission] = useState(false);
+    const [cartBtnLoader, setCartBtnLoader] = useState(null);
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
     // const token = useSelector((state) => state.loginHandle.data)
     
@@ -71,7 +72,10 @@ const CourseList = ({ allCourses, cartData}) => {
 
         // console.log("new token", key);
         if (key) {
-            let result = await addtoCart(id, key);
+            setCartBtnLoader(id)
+            let result = await addtoCart(id, key).then(response=>{
+                setCartBtnLoader(null)
+            });
             // console.log(result, "hello");
             dispatch(cartHandler(key));
         }
@@ -220,9 +224,9 @@ const CourseList = ({ allCourses, cartData}) => {
 
         }
     }, [submission])
-    useEffect(()=>{
-        console.log("changed",Data)
-    },[Data])
+    // useEffect(()=>{
+    //     console.log("changed",Data)
+    // },[Data])
 
     const [key, setKey] = useState("")
     useEffect(() => {
@@ -231,25 +235,25 @@ const CourseList = ({ allCourses, cartData}) => {
             setRefreshList(true);
             SetLoader(true)
             let newToken = await AsyncStorage.getItem("loginToken")
-            console.log("ffff",allCourses,newToken,"gggg");
+            // console.log("ffff",allCourses,newToken,"gggg");
             if (newToken) { 
             setKey(newToken); 
             setData(allCourses.data)
             setShowHeart(allCourses.data.map(a => a.isWishlisted))
-            console.log("there........................",Data)
+            // console.log("there........................",Data)
             setRefreshList(false);
             SetLoader(false)
-            console.log("there........................",allCourses.data.map(a => a.isWishlisted))
-            console.log("there........................",Data)
+            // console.log("there........................",allCourses.data.map(a => a.isWishlisted))
+            // console.log("there........................",Data)
             }else{
-                console.log("helooo not working ",allCourses.data)
+                // console.log("helooo not working ",allCourses.data)
                 setKey(null); 
                 setData(allCourses.data);
                 setRefreshList(false);
                 SetLoader(false)
             }
       setFlatListRefresh(!flalistRefresh)
-      console.log("there........................",Data)
+    //   console.log("there........................",Data)
 
         }
         initial()
@@ -357,7 +361,7 @@ const CourseList = ({ allCourses, cartData}) => {
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
                                     <View onPress={() => handleViewNavigation(item)} style={styles.mainTouchable}>
-                                       {console.log("Dataaaaaaa",Data[0].CourseName)}
+                                       {/* {console.log("Dataaaaaaa",Data[0].CourseName)} */}
                                        {/* {console.log("GTfrfrfrfrfrfrfr",item)} */} 
                                         <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
                                             <View style={{ width: "100%", flexDirection: "row" }}>
@@ -454,18 +458,23 @@ const CourseList = ({ allCourses, cartData}) => {
                                                 <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
                                                     {/* {console.log(item.isPurchased)} */}
                                                     {!(cartArray.includes(`${item.ID}`)) ?
-                                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
-                                                            {(cartLoad && currentId != item.Id) ? <><MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                                <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text></> :
-                                                                <>
+                                                        <>
+                                                            {(cartBtnLoader != item.ID) ?
+                                                                <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
+                                                                    <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                                                    <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
+                                                                </TouchableOpacity> :
+                                                                <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent:"center" ,padding: "4%", alignItems: "center", borderRadius: 10 }} >
+                                                                    {console.log("working", cartBtnLoader)}
                                                                     <LoaderKit
-                                                                        style={{ width: 50, height: 50 }}
+                                                                        style={{ width: RFValue(20), height: RFValue(20) }}
                                                                         name={'BallPulse'} // Optional: see list of animations below
                                                                         size={50} // Required on iOS
-                                                                        color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                                                                        color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
                                                                     />
-                                                                </>}
-                                                        </TouchableOpacity> :
+                                                                </View>}
+                                                        </>
+                                                        :
                                                         <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
                                                             <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                                             <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View cart</Text>

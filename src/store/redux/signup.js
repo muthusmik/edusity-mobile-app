@@ -6,12 +6,12 @@ import { signupUrl } from '../../services/constant';
 
 
 export const signUpHanlder = createAsyncThunk('posts/signupPostcall', async (data, thunkAPI) => {
-    console.log("Inside the api call", data);
+    // console.log("Inside the api call", data);
     const headers = {'Content-Type': 'application/json',}
 
     return  await axios.post(signupUrl, data, { headers: headers }).then(response=> {
-     console.log("response")
-     console.log("finalData", response.data.error)
+    //  console.log("response")
+    //  console.log("finalData", response.data.error)
      return response.data
     //  if(response.data.error===false){
     //     return response.data
@@ -37,10 +37,10 @@ export const signUpHandleSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
-        console.log(signUpHanlder, "search response")
+        // console.log(signUpHanlder, "search response")
         builder.addCase(signUpHanlder.fulfilled, (state, action) => {
             state.data = action.payload;
-            console.log("data in reducer", state);
+            // console.log("data in reducer", state);
         })
     },
 })

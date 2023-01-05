@@ -36,8 +36,9 @@ const MyCourseWishListTab = () => {
             indicatorStyle={{
                 backgroundColor:COLORS.primary,  
             }}
+            contentContainerStyle={{width:"100%"}}
             labelStyle={{ ...FONTS.robotoregular }}
-            style={{ backgroundColor: COLORS.white }}
+            style={{ backgroundColor: COLORS.white}}
             // tabStyle={styles.tab}
         />
     )

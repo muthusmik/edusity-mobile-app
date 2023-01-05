@@ -4,10 +4,10 @@ import { courseListUrl } from '../../services/constant';
 
 
 export const courseListHandler = createAsyncThunk('posts/courseListcall', async (data, thunkAPI) => {
-    console.log("Inside the api call courseList", data);
+    // console.log("Inside the api call courseList", data);
     const headers = {'Content-Type': 'application/json','Authorization':"Bearer "+data}
     return  await axios.get(courseListUrl, { headers: headers }).then(response=> {
-        console.log("success for listing initial",response.data.data)
+        // console.log("success for listing initial",response.data.data)
         // console.log("success for listing initial")
         return response.data })
         .catch((err)=>{

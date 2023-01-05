@@ -26,12 +26,12 @@ export const addtoCart=async(id,Token)=>{
       }
     )
         .then(response => {
-        console.log(response.data,"addcart response")
+        // console.log(response.data,"addcart response")
         // dispatch(cartHandler(Token));
         return response.data
     })
         .catch((err) => {
-            console.log(err,"error");
+            // console.log(err,"error");
             return  err;
         })
 

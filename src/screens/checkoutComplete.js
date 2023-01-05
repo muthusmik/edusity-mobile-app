@@ -16,30 +16,39 @@ import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { cartListUrl } from '../services/constant';
-const CheckoutComplete=()=>{
+const CheckoutComplete = () => {
+    const navigation = useNavigation();
     const Token = useSelector((state) => state.loginHandle.data)
     useEffect(()=>{
         const cartDelete=async()=>{
-            console.log("deleted")
-            return await axios.delete(cartListUrl,{headers:{
-                Authorization: `Bearer +${Token.data}`
-               
-            }}).then(response=>{
-                console.log(response.data,"data recieved")
-        }).catch(err=>{
-            console.log(err,"error")
-        })
+            // console.log("deleted")
+            return await axios.delete(cartListUrl, {
+                headers: {
+                    Authorization: `Bearer +${Token.data}`
+
+                }
+            }).then(response => {
+                // console.log(response.data, "data recieved")
+            }).catch(err => {
+                console.log(err, "error")
+            })
         }
         cartDelete();
 
     },[])
-console.log("inside Success Page")
+// console.log("inside Success Page")
     return (
         <>
+            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home',{screen:'MyCourse',})}>
+                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
+                </TouchableOpacity>
+                <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Checkout</Text>
+            </View>
             <KeyboardAvoidingView style={styles.mainContainer}>
                     <Image source={images.emptyCart} resizeMode="contain" style={{height:50,width:50}} />
                     <Text>successfullyPurchased </Text>
-                    <Text>Find your Course on Your Dashboard</Text>
+                    <Text>Find your Course on My Courses</Text>
             </KeyboardAvoidingView>
         </>
     );

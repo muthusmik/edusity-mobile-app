@@ -15,11 +15,11 @@ import FA5 from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 const ViewInstructorProfile = ({ route }) => {
-    console.log("iam inside Instructor Page");
+    // console.log("iam inside Instructor Page");
     const dispatch = useDispatch();
     const Data=route.params
     const Link=Data.introductionLink
-    console.log(Data,"Data")
+    // console.log(Data,"Data")
     // console.log(allCourses,"allCourses")
 
     return (

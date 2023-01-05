@@ -20,11 +20,11 @@ export const updateProfile=async(Token,Payload)=>{
       }
     )
         .then(response => {
-        console.log(response.data,"user Update response")
+        // console.log(response.data,"user Update response")
         return response.data
     })
         .catch((err) => {
-            console.log(err,"error");
+            // console.log(err,"error");
             return  err;
         })
 

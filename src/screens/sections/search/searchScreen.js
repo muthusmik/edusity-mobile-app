@@ -17,9 +17,9 @@ Feather.loadFont()
 
 const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
     const isFocused=useIsFocused();
-    useEffect(() => {
-        console.log(selectedItem, "selected item")
-    }, [selectedItem])
+    // useEffect(() => {
+    //     // console.log(selectedItem, "selected item")
+    // }, [selectedItem])
     // console.log("iam inside SearchBar");
     const dispatch = useDispatch();
     const navigation = useNavigation();
@@ -60,7 +60,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
            
         }
         initialLoading();
-        console.log("cartData2.........................................................................");
+        // console.log("cartData2.........................................................................");
     }
     }, [cartData,cartCount,isFocused])
 
@@ -210,7 +210,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                 ]}>
                     <TouchableOpacity style={{ alignItems: 'center', flexDirection: "row", borderWidth: 0, justifyContent: "center", borderColor: COLORS.white, borderRadius: 10 }} onPress={() => handlecart()}>
                         <FontAwesome name="shopping-cart" size={RFValue(35)} color="white" style={{ flexDirection: "column" }} />
-                        {console.log("hi,",keyToken)}
+                        {/* {console.log("hi,",keyToken)} */}
                         {(Data && keyToken) ? <View style={{
                             flexDirection: "column", borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
                             width: Dimensions.get('window').width * 0.05,

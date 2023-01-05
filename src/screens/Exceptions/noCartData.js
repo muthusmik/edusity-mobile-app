@@ -28,9 +28,9 @@ const NoData = ({data}) => {
             </View>
             <KeyboardAvoidingView style={styles.mainContainer}>
 
-                <Image source={images.emptyCart} resizeMode="contain" style={{ height: 200, width: 200 }} />
+                <Image source={images.noCartGif} resizeMode="contain" style={{ height: 200, width: 200 }} />
                 <View style={{ width: "80%", margin: "5%" }}>
-                    <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Shopping Cart is currently empty!</Text>
+                    <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium }}>Hello<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Shopping Cart is currently empty!</Text>
                     <Pressable onPressIn={() => navigation.navigate("Home")}>
                         <Text style={{ color: COLORS.primary, fontSize: RFValue(10), ...FONTS.robotoregular }}>Here's where you might find something interesting!!!</Text>
                     </Pressable>

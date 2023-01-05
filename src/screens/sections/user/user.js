@@ -24,6 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useIsFocused } from "@react-navigation/core";
+import NetInfo from '@react-native-community/netinfo';
 
 const { width } = Dimensions.get("screen");
 const FirstRoute = () => <General />;
@@ -36,21 +37,31 @@ const Profile = () => {
     const LoginDetails = useSelector(state => state.userLoginHandle)
     const [userDetails, setUserDetails] = useState([])
     const navigation = useNavigation();
-    console.log("LoginDetails......", userDetails)
+    // console.log("LoginDetails......", userDetails)
     const [active, setActive] = useState(0)
     const [index, setIndex] = React.useState(0);
     const layout = useWindowDimensions();
     const isFocused = useIsFocused();
+    const [network, setNetwork] = useState('')
     useEffect(() => {
         if (isFocused) {
-            console.log("Data in deed")
+            // console.log("Data in deed")
+            NetInfo.refresh().then(state => {
+                setNetwork(state.isConnected)
+                if (state.isConnected) {
+                    initialLoading();
+                }
+                else {
+                    navigation.navigate("NetworkError");
+                }
+            })
             const initialLoading = async () => {
                 let token = await AsyncStorage.getItem("loginToken");
                 // console.log("new token", Token);
                 if (LoginDetails.data && token) {
-                    console.log(LoginDetails)
+                    // console.log(LoginDetails)
                     setUserDetails([LoginDetails?.data?.data])
-                    console.log("data success", userDetails)
+                    // console.log("data success", userDetails)
                 } else {
                     navigation.replace('Login');
                     BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
@@ -59,9 +70,9 @@ const Profile = () => {
                     };
                 }
             }
-            initialLoading()
+            
         }
-    }, [LoginDetails, isFocused])
+    }, [LoginDetails, isFocused,network])
 
     const createTwoButtonAlert = () =>
         Alert.alert(
@@ -70,7 +81,7 @@ const Profile = () => {
             [
                 {
                     text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
+                    // onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 { text: "OK", onPress: () => handleLogout() }
@@ -80,12 +91,12 @@ const Profile = () => {
         //setLoader(true)
         await AsyncStorage.removeItem("loginToken").then(
             // setLoader(false),
-            console.log("done removing"),
+            // console.log("done removing"),
             navigation.navigate("Home", { screen: "Search" })
         )
     }
     function handleBackButtonClick() {
-        console.log("navigation done")
+        // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
         return true;
     }

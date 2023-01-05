@@ -18,9 +18,10 @@ import { useNavigation } from '@react-navigation/native';
 import WebView from 'react-native-webview';
 import { useIsFocused } from "@react-navigation/core";
 import NoCourse from '../Exceptions/noPurchasedCourse';
+import NetInfo from '@react-native-community/netinfo';
 
 const MyCourse = () => {
-    console.log("MyCourse");
+    // console.log("MyCourse");
     const dispatch = useDispatch();
     const navigation = useNavigation();
     // const Token = useSelector(state => state.loginHandle?.data?.data);
@@ -34,19 +35,29 @@ const MyCourse = () => {
     const [CoursesCount, setCourseCount] = useState(0);
     const [page, setPage] = useState(1);
     const isFocused = useIsFocused();
+    const [network, setNetwork] = useState('')
     const LoginData = useSelector(state => state.userLoginHandle.data)
 
     const username = LoginData?.data?.userName;
 
     useEffect(() => {
         if (isFocused) {
+            NetInfo.refresh().then(state => {
+                setNetwork(state.isConnected)
+                if (state.isConnected) {
+                    getPurchased();
+                }
+                else {
+                    navigation.navigate("NetworkError");
+                }
+            })
             const getPurchased = async () => {
                 setLoader(true);
                 let token = await AsyncStorage.getItem("loginToken");
                 setLoginToken(token);
                 if (token) {
                     let purchasedData = await purchasedCourses(token, page).then(data => {
-                        console.log(data.data, "hello");
+                        // console.log(data.data, "hello");
                         setData(data?.data?.data);
                         setTotalCourse(data?.data.total);
                         setTotalPage(data?.data.total_page)
@@ -63,25 +74,25 @@ const MyCourse = () => {
                     };
                 }
             }
-            getPurchased();
+
         }
-    }, [isFocused])
+    }, [isFocused, network])
 
     function handleBackButtonClick() {
-        console.log("navigation done")
+        // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
         return true;
     }
     useEffect(() => {
         // if (token) {
-        console.log("HII");
+        // console.log("HII");
         const getPurchased = async () => {
             if (page > 1) {
                 let purchasedData = await purchasedCourses(loginToken, page).then(data => {
-                    console.log(data.data, "onpage change");
+                    // console.log(data.data, "onpage change");
                     let newdata = data?.data?.data
                     setData(Data.concat(newdata));
-                    console.log(Data.length, "length of Data")
+                    // console.log(Data.length, "length of Data")
                     setRefreshList(false);
                 })
             }
@@ -103,16 +114,16 @@ const MyCourse = () => {
 
 
     const handleViewNavigation = (item) => {
-        console.log(item, "ID")
+        // console.log(item, "ID")
         setLoader(true)
         dispatch(viewCourseHandler(item)).then(unwrapResult)
             .then((originalPromiseResult) => {
-                console.log("successfully returned to login with response CourseList ", originalPromiseResult);
+                // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
                 setLoader(false)
                 navigation.navigate("ViewCourse");
             })
             .catch((rejectedValueOrSerializedError) => {
-                console.log(" Inside catch", rejectedValueOrSerializedError);
+                // console.log(" Inside catch", rejectedValueOrSerializedError);
                 setLoader(false)
             })
 
@@ -127,7 +138,7 @@ const MyCourse = () => {
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
                     <>
-                    {console.log("CourseCount",CoursesCount)}
+                    {/* {console.log("Course/Count",CoursesCount)} */}
                         <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
                     </>
                     {(CoursesCount > 0) ? 

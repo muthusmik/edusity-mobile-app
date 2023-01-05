@@ -71,11 +71,11 @@ const ForgotPassword = ({ navigation }) => {
     //              })
     //   }
     const ForgotApi=async(data)=>{
-        console.log("uhuuuhuhuuhuuhuhu",data);
+        // console.log("uhuuuhuhuuhuuhuhu",data);
         let email=data.forgotemail
         let payload={
             "email":email}
-        console.log("payload",payload)
+        // console.log("payload",payload)
         let url="https://newlogin.edusity.com/send-otp";
         let forgot = await axios.post(url,payload).then(response =>{
             navigation.navigate("OtpPage"),
