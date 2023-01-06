@@ -53,7 +53,7 @@ const ViewCourse = () => {
                 setToken(newToken);
             }
             
-            NetInfo.refresh().then(state => {
+            NetInfo.addEventListener(state => {
                 setNetwork(state.isConnected)
                 if (state.isConnected) {
                     initialLoading();
@@ -67,7 +67,8 @@ const ViewCourse = () => {
     }, [isFocused, network])
 
     const handleAddCart = async (id) => {
-        // console.log("new token", newToken);
+        // console.log("new token", network);
+        if(network){
         if (token) {
             //let result = await addtoCart(id, Token.data);
             let result = await addtoCart(id, token);
@@ -77,6 +78,10 @@ const ViewCourse = () => {
         else {
             navigation.navigate("Login");
         }
+    }
+    else{
+        navigation.navigate("NetworkError");
+    }
     }
     // console.log("buuuuu",token);
     const handleNavigation = () => {
@@ -255,8 +260,8 @@ const ViewCourse = () => {
                                         <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Wishlist</Text>
                                     </TouchableOpacity>
                                     {(Data.data.recordsets[0][0].isPurchased === false) ? (cartArray.includes(`${listData?.recordsets[0][0].ID}`)) ?
-                                        <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleNavigation()}>
-                                            <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
+                                        <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center",backgroundColor:COLORS.gray, margin: "1%", borderWidth: 1,borderColor:COLORS.gray, padding: "3%" }} onPress={() => handleNavigation()}>
+                                            <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
                                         </TouchableOpacity> :<TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
                                             <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Cart</Text>
                                         </TouchableOpacity> :

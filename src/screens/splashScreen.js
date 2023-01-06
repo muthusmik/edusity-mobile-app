@@ -80,7 +80,7 @@ const SplashScreen = props => {
           height: '10%',
         }}
       />
-        <Text style={{color:COLORS.black,fontSize:RFValue(15),fontFamily:"Roboto-Black"}}>Edusity for Greater Learning...</Text>
+        <Text style={{color:COLORS.black,fontSize:RFValue(15),fontFamily:"Roboto-Black"}}>Edusity-Virtual for Greater Learning...</Text>
 
     </View>
   );

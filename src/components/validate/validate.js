@@ -78,8 +78,8 @@ const validate = (details) => {
   if (details.userName !== undefined) {
     if (details.userName.length == 0) {
       formErrors.userName = "User Name is required!";
-    } else if (details.userName.length > 8) {
-      formErrors.userName = "User Name should not be more than 9 characters";
+    } else if (!/^(?=.*?[a-z])(?=.*?[0-9]).{5,}$/.test(details.userName)) {
+      formErrors.userName = "User Name should contain lower case alphabets only and atleast 1 numeric value";
     }
   }
 

@@ -23,7 +23,10 @@ import { FloatingAction } from "react-native-floating-action";
 import { addtoCart } from '../../../services/cartService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { wishListApi, wishListRemoverApi } from '../../../services/wishlist';
-const CourseList = ({ allCourses, cartData}) => {
+import NetInfo from "@react-native-community/netinfo";
+import { useIsFocused } from "@react-navigation/core";
+
+const CourseList = ({ allCourses, cartData }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const childRef = useRef(null);
@@ -41,46 +44,67 @@ const CourseList = ({ allCourses, cartData}) => {
     const [loader, SetLoader] = useState(false);
     const [cartLoad, setCartLoad] = useState(true);
     const [currentId, setCurrentId] = useState("");
-
+    const [network, setNetwork] = useState('')
     const [refreshList, setRefreshList] = useState(false);
     const [totalFilterPage, setTotalFilterPage] = useState(0);
     const [filterPageNo, setFilterPageNo] = useState(0);
     const [filteredCount, setFilterdCourse] = useState(null);
-
+    const isFocused = useIsFocused();
     const [page, setPage] = useState(1);
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [submission, setSubmission] = useState(false);
-    const [cartBtnLoader, setCartBtnLoader] = useState(null);
+    const [cartBtnLoader, setCartBtnLoader] = useState("");
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
     // const token = useSelector((state) => state.loginHandle.data)
-    
 
-    const handleWishlist = async (index) => {
-        if (showHeart[index] == 0) {
-            showHeart[index] = 1;
-            setShowHeart(showHeart)
-            let wishlistedData = await wishListApi(Data[index].ID, key).then(data => { console.log("wishlisted",data) })
-        } else {
-            showHeart[index] = 0;
-            setShowHeart(showHeart)
-            let wishlistedData = await wishListRemoverApi(Data[index].ID, key).then(data => { console.log("wishlisted",data) })
+    useEffect(() => {
+        if (isFocused) {
+            NetInfo.addEventListener(networkState => {
+                console.log("Is connected? - ", networkState.isConnected);
+                // if ((networkState.isConnected) === "true") {
+                setNetwork(networkState.isConnected);
+                // }
+            });
         }
-        setFlatListRefresh(!flalistRefresh);
+    }, [isFocused])
+    const handleWishlist = async (index) => {
+        if (network) {
+            if (showHeart[index] == 0) {
+                showHeart[index] = 1;
+                setShowHeart(showHeart)
+                let wishlistedData = await wishListApi(Data[index].ID, key).then(data => { console.log("wishlisted", data) })
+            } else {
+                showHeart[index] = 0;
+                setShowHeart(showHeart)
+                let wishlistedData = await wishListRemoverApi(Data[index].ID, key).then(data => { console.log("wishlisted", data) })
+            }
+            setFlatListRefresh(!flalistRefresh);
+        }
+        else {
+            navigation.navigate("NetworkError");
+        }
     }
     const handleAddCart = async (id) => {
 
         // console.log("new token", key);
+   if (network) {
         if (key) {
-            setCartBtnLoader(id)
+            // let arry=cartBtnLoader.push(id)
+            setCartBtnLoader(id);
             let result = await addtoCart(id, key).then(response=>{
-                setCartBtnLoader(null)
+                
+                setCartBtnLoader( null)
             });
             // console.log(result, "hello");
             dispatch(cartHandler(key));
         }
         else {
             navigation.navigate("Login");
+}
+        }
+        else {
+            navigation.navigate("NetworkError");
         }
     }
     const refresh = () => {
@@ -203,7 +227,7 @@ const CourseList = ({ allCourses, cartData}) => {
                     setShowHeart(newdata.map(a => a.isWishlisted))
                     setFilterPageNo(1);
                     SetLoader(false); 
-                    setRefreshList(false);
+                    setRefreshList(false)
                     if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
                     return response.data
                 })
@@ -459,13 +483,13 @@ const CourseList = ({ allCourses, cartData}) => {
                                                     {/* {console.log(item.isPurchased)} */}
                                                     {!(cartArray.includes(`${item.ID}`)) ?
                                                         <>
-                                                            {(cartBtnLoader != item.ID) ?
+                                                            {(cartBtnLoader!=item.ID) ?
                                                                 <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
                                                                     <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                                                     <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
                                                                 </TouchableOpacity> :
                                                                 <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent:"center" ,padding: "4%", alignItems: "center", borderRadius: 10 }} >
-                                                                    {console.log("working", cartBtnLoader)}
+                                                                    {/* {console.log("working", cartBtnLoader)} */}
                                                                     <LoaderKit
                                                                         style={{ width: RFValue(20), height: RFValue(20) }}
                                                                         name={'BallPulse'} // Optional: see list of animations below

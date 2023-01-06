@@ -151,6 +151,7 @@ const MyCourse = () => {
                         scrollEnabled={true}
                         keyExtractor={item => item.ID}
                         extraData={flalistRefresh}
+                        overScrollMode={'never'}
                         renderItem={({ item }) => (
                             <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
                                 <View style={{ width: "100%", flexDirection: "row" }}>
