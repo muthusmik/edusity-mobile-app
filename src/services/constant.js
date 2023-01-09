@@ -2,9 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 
-
-
+//newlogin.edusity.com
 export const baseUrl="https://backend-linux-login.azurewebsites.net/";
+// export const baseUrl="http://localhost:3200/";
 export const baseUrl_payment="https://backend-linux-payment.azurewebsites.net/";
 export const loginUrl=baseUrl+"login";
 export const signupUrl=baseUrl+"sign-up";

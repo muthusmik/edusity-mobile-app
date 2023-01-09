@@ -86,15 +86,15 @@ const CourseList = ({ allCourses, cartData }) => {
         }
     }
     const handleAddCart = async (id) => {
-
+       
         // console.log("new token", key);
    if (network) {
         if (key) {
             // let arry=cartBtnLoader.push(id)
-            setCartBtnLoader(id);
+            setCartBtnLoader(cartBtnLoader.push(id));
             let result = await addtoCart(id, key).then(response=>{
                 
-                setCartBtnLoader( null)
+                setCartBtnLoader([])
             });
             // console.log(result, "hello");
             dispatch(cartHandler(key));
