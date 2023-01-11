@@ -19,7 +19,7 @@ import OTPTextView from 'react-native-otp-textinput';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { setConstantValue } from 'typescript';
-
+import { verifyUrl } from '../../services/constant';
 // Api Call
 
 
@@ -36,8 +36,8 @@ const OtpPage = ({route}) => {
             "email": route.params.emailforOtp,
             "otp": otp
         }
-        let url="https://backend-linux-login.azurewebsites.net/verify-otp"
-        await axios.post(url,payload).then(response =>{
+        //let url="https://backend-linux-login.azurewebsites.net/verify-otp"
+        await axios.post(verifyUrl,payload).then(response =>{
             // console.log("Forgot api",response.data)
             // console.log("Forgot api",payload)
             if (response.data.message=='Email verified successfully.'){

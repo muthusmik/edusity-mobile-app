@@ -35,105 +35,38 @@ const CheckoutComplete = () => {
         }
         cartDelete();
 
-    },[])
-// console.log("inside Success Page")
+    }, [])
+    // console.log("inside Success Page")
     return (
-        <>
+        <View style={{ backgroundColor: COLORS.white }}>
             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home',{screen:'MyCourse',})}>
+                <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate("Cart")}>
                     <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
                 </TouchableOpacity>
                 <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Checkout</Text>
             </View>
             <KeyboardAvoidingView style={styles.mainContainer}>
-                    <Image source={images.emptyCart} resizeMode="contain" style={{height:50,width:50}} />
-                    <Text>successfullyPurchased </Text>
-                    <Text>Find your Course on My Courses</Text>
+                <Image source={images.checkoutGif} resizeMode="cover" style={{ height: 300, width: 300 }} />
+                <Text style={{ ...FONTS.robotomedium, fontSize: RFValue(18), color: COLORS.black }}>Hurray! Successfully Purchased</Text>
+                <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontSize: RFValue(14), ...FONTS.robotoregular, flexDirection: "column" }}>Your Purchased Course will be shown in</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: 'MyCourse' })}>
+                        <Text style={{ color: "red",fontSize: RFValue(14), ...FONTS.robotoregular,flexDirection:"column" }}> MyCourses</Text>
+                    </TouchableOpacity>
+                    
+                </View>
             </KeyboardAvoidingView>
-        </>
+        </View>
     );
 }
 const styles = StyleSheet.create({
     mainContainer: {
         height: "100%",
         width: "100%",
-        justifyContent:"center",
-        alignItems:"center"
-    },
-    mainTouchable: {
-        margin: "2%",
-        borderRadius: 10,
-        backgroundColor: Colors.white,
-        shadowColor: COLORS.primary,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 2.25,
-        shadowRadius: 3.84,
-    },
-    listItem: {
-        flex: 1,
-        marginTop: ".5%",
-        padding: 22,
-        backgroundColor: COLORS.white,
-        width: '100%',
-        flexDirection: 'row',
-        height: 130,
-        lineHeight: "1.5",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderColor: "#FFF",
-        paddingTop: 2,
-        borderWidth: 1,
-        borderRadius: 10,
-    },
-    centeredView: {
-        flex: 1,
-        marginTop: 22,
-        justifyContent: "center",
+        // justifyContent:"center",
+        marginTop: "35%",
         alignItems: "center",
+        backgroundColor: COLORS.white
     },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
-    },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2
-    },
-    buttonOpen: {
-        backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-        backgroundColor: "#2196F3",
-        marginTop:20
-    },
-    textStyle: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center"
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: "center"
-    }
 });
 export default CheckoutComplete;

@@ -62,7 +62,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (isFocused) {
             // console.log("dashbord return")
-            NetInfo.refresh().then(state => {
+            NetInfo.fetch().then(state => {
                 setNetwork(state.isConnected)
                 if (state.isConnected) {
                     initialLoading();

@@ -16,8 +16,6 @@ const SplashScreen = props => {
   const [loading, setLoading] = useState(false)
   const isFocused =useIsFocused();
 
-
-
   const unsubscribe=()=> {
     NetInfo.refresh().then(state => {
       setNetwork(state)
@@ -30,6 +28,7 @@ const SplashScreen = props => {
         }
     })
   }
+
   useEffect(() => {
     if(isFocused){
     setTimeout(() => {

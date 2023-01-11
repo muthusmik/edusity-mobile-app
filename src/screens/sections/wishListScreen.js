@@ -57,11 +57,17 @@ const WishListScreen = () => {
                 setLoginToken(token);
                 if (token) {
                     let purchasedData = await getWishListedCourses(token).then(data => {
-                        // console.log(data, "hellosegwrgwrgwr");
+                        console.log(data, "hellosegwrgwrgwr");
+                        setLoader(false);
+                        if(data.data){
                         setData(data?.data);
                         setTotalCourse(data?.data.length);
-                        setLoader(false);
+                        }
                     })
+                    .catch(err)
+                    {
+                        console.log("Error in handling the data");
+                    }
                 }
                 else {
                     setLoader(false);

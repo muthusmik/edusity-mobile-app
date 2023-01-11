@@ -12,7 +12,7 @@ import MyCourse from "../sections/myCourse";
 import WishListScreen from "../sections/wishListScreen";
 
 const MyCourseRoute = () => <MyCourse />
-const WishList = () => <ScrollView><WishListScreen /></ScrollView>
+const WishList = () => <WishListScreen />
 
 const MyCourseWishListTab = () => {
     const [index, setIndex] = React.useState(0);

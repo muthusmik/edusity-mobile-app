@@ -19,6 +19,10 @@ const store=configureStore({
         cartList:cartListReducer,
 
     },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        immutableCheck: false,
+        serializableCheck: false,
+      })
 })
 
 export default store;

@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useEffect, useState}from "react";
 import {
     Image,
     TouchableOpacity
@@ -25,6 +25,7 @@ import Cart from "./screens/cart";
 import NetworkError from "./screens/Exceptions/noNetworkPage"
 import RazorPay from "./screens/razorPay";
 import CheckoutComplete from "./screens/checkoutComplete";
+import ServerErrorPage from "./screens/Exceptions/serverDown";
 // import GeolocationFetcher from "./screens/geoLocation";
 
 
@@ -69,6 +70,11 @@ const App = () => {
                     name="NetworkError"
                     options={{ animationEnabled: false, header: () => null }}
                     component={NetworkError}
+                />
+                <Stack.Screen
+                    name="ServerError"
+                    options={{ animationEnabled: false, header: () => null }}
+                    component={ServerErrorPage}
                 />
                 <Stack.Screen
                     name="Login"

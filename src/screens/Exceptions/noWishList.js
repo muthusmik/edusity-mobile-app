@@ -28,9 +28,9 @@ const NoWishList = ({data}) => {
             </View> */}
             <KeyboardAvoidingView style={styles.mainContainer}>
 
-                <Image source={images.emptyCart} resizeMode="contain" style={{ height: 200, width: 200 }} />
-                <View style={{ width: "80%", margin: "5%" }}>
-                    <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Wish List is currently empty!</Text>
+                <Image source={images.noWishlist} resizeMode="contain" style={{ height: 200, width: 200 }} />
+                <View style={{ width: "80%", margin: "5%",alignItems:"center" }}>
+                    <Text style={{ color: COLORS.black,textAlign:"center", fontSize: RFValue(16), ...FONTS.robotomedium }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Wish List is currently empty!</Text>
                     <Pressable onPressIn={() => navigation.navigate("Home")}>
                         <Text style={{ color: COLORS.primary, fontSize: RFValue(10), ...FONTS.robotoregular }}>Here's where you might find something you like!!!</Text>
                     </Pressable>
@@ -41,13 +41,12 @@ const NoWishList = ({data}) => {
 }
 const styles = StyleSheet.create({
     mainContainer: {
-        height: "95%",
+        height: "100%",
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        // borderWidth:2,
-        paddingBottom:"20%",
-        marginTop:"14%"
+        // paddingBottom:"35%",
+        backgroundColor:COLORS.white,
     },
     
 });

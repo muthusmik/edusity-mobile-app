@@ -28,7 +28,7 @@ const NoCourse = ({data}) => {
                 <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
             </View> */}
             <KeyboardAvoidingView style={styles.mainContainer}>
-                <Image source={images.noCourseGif} resizeMode="contain" style={{ height: 200, width: 200 }} />
+                <Image source={images.noCourseGif} resizeMode="cover" style={{ height: 200, width: 200 }} />
                 <View style={{ width: "80%", margin: "5%", alignItems:"center" }}>
                     <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium,textAlign:"center" }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Course List is currently empty!</Text>
                     <Pressable onPress={() => navigation.navigate("Home",{screen:'Search'})}>
@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor:"white",
-        borderWidth:0
     }
     
 });

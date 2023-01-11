@@ -25,6 +25,7 @@ import FaIcon from "react-native-vector-icons/FontAwesome"
 import { RFC_2822 } from "moment";
 import axios from "axios";
 import { RFValue } from "react-native-responsive-fontsize";
+import { OTPUrl } from '../../services/constant';
 const Form = () => {
     const navigation = useNavigation()
     const dispatch = (useDispatch());
@@ -66,8 +67,8 @@ const Form = () => {
                         console.log(originalPromiseResult.errorCode, "hello")
                         if (originalPromiseResult.errorCode == "") {
                             var emailforOtp = data.email;
-                            let url = "https://backend-linux-login.azurewebsites.net/send-otp"
-                            await axios.post(url, { "email": data.email }).then(response => (
+                            //let url = "https://backend-linux-login.azurewebsites.net/send-otp"
+                            await axios.post(OTPUrl, { "email": data.email }).then(response => (
                                 console.log("Forgot api", response.data),
 
                                 navigation.navigate("OtpPage", { emailforOtp })

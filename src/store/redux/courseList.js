@@ -4,14 +4,19 @@ import { courseListUrl } from '../../services/constant';
 
 
 export const courseListHandler = createAsyncThunk('posts/courseListcall', async (data, thunkAPI) => {
-    // console.log("Inside the api call courseList", data);
-    const headers = {'Content-Type': 'application/json','Authorization':"Bearer "+data}
-    return  await axios.get(courseListUrl, { headers: headers }).then(response=> {
-        // console.log("success for listing initial",response.data.data)
+    // try {
+      const headers =  {
+       'Content-Type': 'application/json; charset=utf-8', 
+       'Authorization':'Bearer '+data
+     }
+     let courseUrl = courseListUrl + "?page=1";
+     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    return await axios.get(courseUrl,{headers:headers}).then((response) => {
+        console.log("success for listing initial")
         // console.log("success for listing initial")
         return response.data })
         .catch((err)=>{
-        console.log(err)
+        console.log("error in axios : ",err)
         })
 })
 
@@ -28,6 +33,7 @@ export const courseListSlice = createSlice({
         // Add reducers for additional action types here, and handle loading state as needed
        // console.log(courseListHandler, "search response")
         builder.addCase(courseListHandler.fulfilled, (state, action) => {
+            console.log("state action",state);
             state.data = action.payload;
         })
     },

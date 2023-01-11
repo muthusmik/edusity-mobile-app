@@ -54,20 +54,20 @@ const CourseList = ({ allCourses, cartData }) => {
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [submission, setSubmission] = useState(false);
-    const [cartBtnLoader, setCartBtnLoader] = useState("");
+    const [cartBtnLoader, setCartBtnLoader] = useState([]);
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
     // const token = useSelector((state) => state.loginHandle.data)
 
     useEffect(() => {
         if (isFocused) {
             NetInfo.addEventListener(networkState => {
-                console.log("Is connected? - ", networkState.isConnected);
+                // console.log("Is connected? - ", networkState.isConnected);
                 // if ((networkState.isConnected) === "true") {
                 setNetwork(networkState.isConnected);
                 // }
             });
         }
-    }, [isFocused])
+    }, [isFocused,network])
     const handleWishlist = async (index) => {
         if (network) {
             if (showHeart[index] == 0) {
@@ -149,7 +149,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     return response.data
                 })
                     .catch((err) => {
-                        // console.log(err);
+                        navigation.navigate("ServerError");
                         setRefreshList(false);
                     })
             }
@@ -185,7 +185,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     return response.data
                 })
                     .catch((err) => {
-                        // console.log(err);
+                        navigation.navigate("ServerError");
                         setRefreshList(false);
                     })
             }
@@ -232,7 +232,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     return response.data
                 })
                     .catch((err) => {
-                        console.log(err);
+                        navigation.navigate("ServerError");
                     })
 
                 setRefreshList(false);
@@ -314,6 +314,7 @@ const CourseList = ({ allCourses, cartData }) => {
         },
     ]
     const handleViewNavigation = (item) => {
+        if(network){
         SetLoader(true);
         dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
             .then((originalPromiseResult) => {
@@ -323,10 +324,13 @@ const CourseList = ({ allCourses, cartData }) => {
 
             })
             .catch((rejectedValueOrSerializedError) => {
-                // console.log(" Inside catch", rejectedValueOrSerializedError);
+                navigation.navigate("ServerError");
                 SetLoader(false);
             })
-
+        }
+        else{
+            navigation.navigate("NetworkError");
+        }
     }
 
     const popUpFilter = () => {
@@ -384,7 +388,7 @@ const CourseList = ({ allCourses, cartData }) => {
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
-                                    <View onPress={() => handleViewNavigation(item)} style={styles.mainTouchable}>
+                                    <View style={styles.mainTouchable}>
                                        {/* {console.log("Dataaaaaaa",Data[0].CourseName)} */}
                                        {/* {console.log("GTfrfrfrfrfrfrfr",item)} */} 
                                         <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>

@@ -57,7 +57,7 @@ const MyCourse = () => {
                 setLoginToken(token);
                 if (token) {
                     let purchasedData = await purchasedCourses(token, page).then(data => {
-                        // console.log(data.data, "hello");
+                        console.log(data.data, "hello");
                         setData(data?.data?.data);
                         setTotalCourse(data?.data.total);
                         setTotalPage(data?.data.total_page)
@@ -138,7 +138,7 @@ const MyCourse = () => {
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
                     <>
-                    {/* {console.log("Course/Count",CoursesCount)} */}
+                    {console.log("Course/Count",CoursesCount)}
                         <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
                     </>
                     {(CoursesCount > 0) ? 

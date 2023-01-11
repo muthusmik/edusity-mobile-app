@@ -84,14 +84,15 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
     }
 
     const suggestionCallApi = async (data) => {
-        const searchUrl = "https://backend-linux-login.azurewebsites.net/search/course?search=" + data;
+        // const searchUrl = "https://backend-linux-login.azurewebsites.net/search/course?search=" + data;
+        const searchUrl =`https://livelogin.edusity.com/search/course?search=${data}`;
         const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + Token }
         return await axios.get(searchUrl, { headers: headers }).then(response => {
             const suggestions = response.data.data
                 .filter(item => item.CourseName.toLowerCase().includes(data))
                 .map(item => ({
                     id: item.ID,
-                    title: <View style={{ justifyContent: "space-between", }}><Text style={{ ...FONTS.robotoregular, color: COLORS.black }}>{item.CourseName}</Text><Text style={{ ...FONTS.robotomedium }}>({item.Category})</Text></View>
+                    title: <View style={{ justifyContent: "space-between" }}><Text style={{ ...FONTS.robotoregular, color: COLORS.black }}>{item.CourseName}</Text><Text style={{ ...FONTS.robotomedium }}>({item.Category})</Text></View>
                 }))
             setSuggestionsList(suggestions)
             // console.log("success", suggestions)
@@ -161,7 +162,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                         useFilter={false} // set false to prevent rerender twice
                         textInputProps={{
 
-                            placeholder: 'Search Courses',
+                            placeholder: 'Search for Courses',
                             placeholderTextColor: COLORS.black,
                             autoCorrect: false,
                             autoCapitalize: 'none',
@@ -187,11 +188,12 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                             backgroundColor: COLORS.white,
                             marginTop: "0%",
                             borderWidth: 1,
-                            borderColor: COLORS.black
-
+                            borderColor: COLORS.black,
+                            // height:(item.length)*60
                         }}
+                        // suggestionsListMaxHeight=50
                         containerStyle={{ justifyContent: "space-around", marginTop: "5%", marginHorizontal: "5%" }}
-                        renderItem={(item, text) => <Text style={{ color: COLORS.black, padding: 10, ...FONTS.robotoregular }}>{item.title}</Text>}
+                        renderItem={(item, text) => <Text style={{ color: COLORS.black, padding: 10, ...FONTS.robotoregular,height:60}}>{item.title}</Text>}
                         ChevronIconComponent={<Feather name="chevron-down" size={20} color="red" />}
                         ClearIconComponent={<Feather name="x-circle" size={18} color="red" />}
                         inputHeight={40}
