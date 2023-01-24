@@ -39,6 +39,17 @@ const CheckoutComplete = () => {
     // console.log("inside Success Page")
     return (
         <View style={{ backgroundColor: COLORS.white }}>
+             <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
+            <View style={{ width: "100%", height: "5%", top: "3%" }}>
+                <TouchableOpacity style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
+                    onPress={() => navigation.navigate('Cart')}
+                    >
+                    <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
+                </TouchableOpacity>
+            </View>
             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
                 <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate("Cart")}>
                     <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />

@@ -26,6 +26,7 @@ import { RFC_2822 } from "moment";
 import axios from "axios";
 import { RFValue } from "react-native-responsive-fontsize";
 import { OTPUrl } from '../../services/constant';
+import { height } from "deprecated-react-native-prop-types/DeprecatedImagePropType";
 const Form = () => {
     const navigation = useNavigation()
     const dispatch = (useDispatch());
@@ -110,7 +111,7 @@ const Form = () => {
             />
             </View>:
             <>
-           <View style={{ width: "85%", marginTop: "2%" }}>
+           <View style={{ width: "85%" }}>
                 <InputBox
                     inputOutline
                     label={'First Name'}
@@ -119,6 +120,7 @@ const Form = () => {
                     name={"FirstName"}
                     leftIcon={<MCI name={'format-letter-case-lower'} size={18} style={{color:COLORS.primary}} />}
                     onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
+                    containerStyles={{padding:"5%"}}
                 />
                 {formErrors && formErrors.firstName ?
                     <View style={{ ...styles.ErrorCont }}>
@@ -126,7 +128,7 @@ const Form = () => {
                         </Text>
                     </View> : null}
             </View>
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%"}}>
                 <InputBox
                     inputOutline
                     label={'Last Name'}
@@ -144,7 +146,7 @@ const Form = () => {
 
 
 
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%" }}>
                 <InputBox
                     inputOutline
                     label={'Email'}
@@ -162,7 +164,7 @@ const Form = () => {
 
 
 
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%"}}>
                 <InputBox
                     inputOutline
                     label={'Password'}
@@ -189,7 +191,7 @@ const Form = () => {
                         <Text style={{ ...styles.ErrorText }}>{formErrors.password}</Text>
                     </View> : null}
             </View>
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%"}}>
                 <InputBox
                     inputOutline
                     label={' Confirm Password'}
@@ -208,7 +210,7 @@ const Form = () => {
             </View>
 
 
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%",}}>
                 <InputBox
                     inputOutline
                     label={'UserName'}
@@ -222,7 +224,7 @@ const Form = () => {
                         <Text style={{ ...styles.ErrorText }}>{formErrors.userName}</Text>
                     </View> : null}
             </View>
-            <View style={{ width: "85%", marginTop: "2%" }}>
+            <View style={{ width: "85%", }}>
                 <InputBox
                     inputOutline
                     label={'Phone'}

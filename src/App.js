@@ -26,6 +26,7 @@ import NetworkError from "./screens/Exceptions/noNetworkPage"
 import RazorPay from "./screens/razorPay";
 import CheckoutComplete from "./screens/checkoutComplete";
 import ServerErrorPage from "./screens/Exceptions/serverDown";
+import MyWebinars from "./screens/myWebinars";
 // import GeolocationFetcher from "./screens/geoLocation";
 
 
@@ -75,6 +76,11 @@ const App = () => {
                     name="ServerError"
                     options={{ animationEnabled: false, header: () => null }}
                     component={ServerErrorPage}
+                />
+                   <Stack.Screen
+                    name="MyWebinars"
+                    options={{ headerShown: false }}
+                    component={MyWebinars}
                 />
                 <Stack.Screen
                     name="Login"

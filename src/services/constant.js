@@ -1,14 +1,13 @@
-import React from "react";
-import { useSelector } from "react-redux";
+
 
 
 //dev
-//export const baseUrl="https://backend-linux-login.azurewebsites.net/";
-//export const baseUrl_payment="https://backend-linux-payment.azurewebsites.net/";
+export const baseUrl="https://backend-linux-login.azurewebsites.net/";
+export const baseUrl_payment="https://backend-linux-payment.azurewebsites.net/";
 
 //live
-export const baseUrl="https://livelogin.edusity.com/";
-export const baseUrl_payment="https://livepayment.edusity.com/";
+// export const baseUrl="https://livelogin.edusity.com/";
+// export const baseUrl_payment="https://livepayment.edusity.com/";
 
 //newlogin.edusity.com
 //export const baseUrl="http://newlogin.edusity.com/";
@@ -33,3 +32,6 @@ export const verifyUrl = baseUrl+"verify-otp";
 export const searchUrl = baseUrl+"search/course?search=";
 export const updateProfileUrl=baseUrl+"user/profile";
 export const checkoutUrl = baseUrl_payment + "v2/checkout";
+export const webinarListUrl = baseUrl+"webinar/all?startDate=2023%2001,01&endDate=2023%2001,31";
+export const generateWebinarTokenUrl=baseUrl+"webinar/join?webinarId=";
+

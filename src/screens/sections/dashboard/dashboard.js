@@ -21,7 +21,7 @@ import { cartHandler } from '../../../store/redux/cart';
 import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
 import { ActivityIndicator } from 'react-native-paper';
 import StudentDashboard from './studentDashboard';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useIsFocused } from "@react-navigation/core";

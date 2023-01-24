@@ -26,6 +26,7 @@ import { forgotPasswordHanlder } from '../../store/redux/forgotPassword';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Toast from 'react-native-simple-toast';
 import axios from 'axios';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const ForgotPassword = ({ navigation }) => {
     const { handleChange, details, handleSubmit, formErrors,data } = useForm(validate);
@@ -92,7 +93,16 @@ const ForgotPassword = ({ navigation }) => {
 
 return (
         <KeyboardAvoidingView style={styles.container}>
+              <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
+                            <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                        </TouchableOpacity>
+                    </View>
                 <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
                     <Image
                         source={icons.Edusitylogo}

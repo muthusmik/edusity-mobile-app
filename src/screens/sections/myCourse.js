@@ -19,7 +19,8 @@ import WebView from 'react-native-webview';
 import { useIsFocused } from "@react-navigation/core";
 import NoCourse from '../Exceptions/noPurchasedCourse';
 import NetInfo from '@react-native-community/netinfo';
-
+import FeatherIcon from "react-native-vector-icons/Feather"
+import { colorsDark } from 'react-native-elements/dist/config';
 const MyCourse = () => {
     // console.log("MyCourse");
     const dispatch = useDispatch();
@@ -137,10 +138,21 @@ const MyCourse = () => {
                     backgroundColor={COLORS.primary}
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
-                    <>
+                    <View style={{flexDirection:"row",padding:"2%"}}>
+                        <View style={{width:"70%" ,flexDirection:'column'}}>
                     {console.log("Course/Count",CoursesCount)}
+                    
                         <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
-                    </>
+                        </View>
+                        <View style={{width:"30%" ,flexDirection:'column',alignItems:"center",justifyContent:"center"}}>
+                            <TouchableOpacity style={{ flexDirection: "row",backgroundColor:COLORS.primary,marginHorizontal:"2%",padding:"4%",borderRadius:5}} onPress={()=>navigation.navigate("MyWebinars")}>
+                                {console.log("Course/Count", CoursesCount)}
+                                <FeatherIcon name="play-circle" size={18} style={{ marginHorizontal: "1%" }} color={"white"} />
+                                <Text style={{ color: COLORS.white, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>
+                                    My Webinars</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     {(CoursesCount > 0) ? 
                     <FlatList
                         data={Data}

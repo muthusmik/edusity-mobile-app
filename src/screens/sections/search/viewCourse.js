@@ -14,6 +14,7 @@ import FA5 from 'react-native-vector-icons/FontAwesome5'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import OctIcon from 'react-native-vector-icons/Octicons'
+import WebView from 'react-native-webview';
 
 // import StarRating from 'react-native-star-rating-widget';
 import { viewCourseHandler } from '../../../store/redux/viewCourse';
@@ -143,7 +144,7 @@ const ViewCourse = () => {
                             <ActivityIndicator size="large" />
                         </ImageBackground>
                     </View> :
-                    <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: "5%" }}>
+                    <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: "5%", }} overScrollMode="never">
                         <View style={{ backgroundColor: "#e9ddf1",paddingBottom:"15%" }}>
                             <View style={{ width: "100%", flexDirection: "row", backgroundColor: COLORS.primary, borderBottomStartRadius: 35, borderBottomEndRadius: 35,paddingVertical:"3%" }}>
                                 <Pressable style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
@@ -316,7 +317,11 @@ const ViewCourse = () => {
                                         </Text>
                                     </View>
                                     <View style={{ width: "90%", left: "8%" }}>
-                                        <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular, }}><AntIcon name="checkcircleo" size={13} color={COLORS.primary} /> {listData?.recordsets[0][0].Description} </Text>
+                                    <WebView style={{ height:350, width: "100%", }}
+                                            source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${listData?.recordsets[0][0].Description}` }}
+                                            scalesPageToFit={false}
+                                        />
+                                     {/* <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular, }}><AntIcon name="checkcircleo" size={13} color={COLORS.primary} /> {listData?.recordsets[0][0].Description} </Text> */}
                                     </View>
                                 </View> : null}
 

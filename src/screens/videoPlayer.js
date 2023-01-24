@@ -39,6 +39,10 @@ const ViPlayer = ({ route }) => {
 
     return (
         <View style={{ backgroundColor: COLORS.black }}>
+             <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
             <View style={{ width: "100%", height: "5%",top:"3%" }}>
                 <TouchableOpacity style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
                     onPress={() => navigation.goBack()}

@@ -39,7 +39,7 @@ const RazorpayOverlay=({data,pricing}) => {
             let Token=await AsyncStorage.getItem("loginToken");
             var sessionId = { "sessionId": result.razorpay_payment_id }
             // console.log("Im inisde the data of Cart page....", result)
-            let cartremoval = `https://backend-linux-payment.azurewebsites.net/v2/checkout?country=IN`;
+            let cartremoval = `https://livelogin.edusity.com/checkout?country=IN`;
             const response = await axios.post(cartremoval, sessionId, {
                 headers: {
                     Authorization: `Bearer ${Token}`,

@@ -8,7 +8,8 @@ import {
     ImageBackground,
     Image,
     TouchableOpacity,
-    Alert
+    Alert,
+    StatusBar
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONTS, images, icons } from '../../constants';
@@ -20,6 +21,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import { setConstantValue } from 'typescript';
 import { verifyUrl } from '../../services/constant';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 // Api Call
 
 
@@ -27,7 +29,6 @@ const OtpPage = ({route}) => {
     const [otp, setOtp] = useState();
     const navigation=useNavigation();
     const containerStyle = { width: 40, borderBottomWidth: 4, ...FONTS.robotoregular }
-    // console.log("reddddddddddddddd",route.params)
     const handleChange = (value) => {
         setOtp(value)
     }
@@ -77,7 +78,16 @@ const OtpPage = ({route}) => {
     // console.log(loginData, "loginData")
     return (
         <KeyboardAvoidingView style={styles.container}>
+             <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
+            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                <TouchableOpacity style={{ marginLeft: "4%"}} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
+                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                </TouchableOpacity>
+            </View>
                 <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
                     <Image
                         source={icons.Edusitylogo}

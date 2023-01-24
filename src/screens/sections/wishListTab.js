@@ -44,6 +44,7 @@ const MyCourseWishListTab = () => {
     )
     return (
         <View style={{ height: "100%" }}>
+         
             <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}

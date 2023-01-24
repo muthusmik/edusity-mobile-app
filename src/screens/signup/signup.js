@@ -9,7 +9,8 @@ import {
     Image,
     ImageBackground,
     Pressable,
-    Dimensions
+    Dimensions,
+    StatusBar,TouchableOpacity
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -17,6 +18,7 @@ import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
 import Form from './signUpForm';
 import useForm from '../../components/validate/useForm';
 import validate from '../../components/validate/validate';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
 const SignUp = ({ navigation }) => {
@@ -24,8 +26,18 @@ const SignUp = ({ navigation }) => {
 
     return (
         <View style={{ backgroundColor: COLORS.white }}>
+            <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
+            
+
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }} >
-                
+            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                <TouchableOpacity style={{ marginLeft: "4%"}} onPress={() => navigation.goBack()}>
+                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                </TouchableOpacity>
+            </View>
                     <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%", borderWidth: 0,marginTop:"5%" }}>
                         <Image
                             source={icons.Edusitylogo}

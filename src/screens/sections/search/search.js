@@ -114,7 +114,10 @@ const Search = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView style={styles.mainContainer}>
-
+              <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
             {
                 (!allCourses || isSearchLoader) ?
                     <View style={{ height: "100%", width: "100%", }}>

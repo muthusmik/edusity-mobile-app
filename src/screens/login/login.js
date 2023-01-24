@@ -14,6 +14,7 @@ import {
     KeyboardAvoidingView,
     Pressable,
     Keyboard,
+    StatusBar
 
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,10 +34,12 @@ import { loginHanlder } from '../../store/redux/login';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { userLoginHanlder } from '../../store/redux/userLogin';
 import { ActivityIndicator } from 'react-native-paper';
-const Login = ({ navigation }) => {
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+
+const Login = () => {
     const { handleChange, details, handleSubmit, formErrors, data, formValues } = useForm(validate);
     const dispatch = (useDispatch());
-
+    const navigation=useNavigation();
     const [errorLogin, setErrorLogin] = useState(null);
     const [errorEmail, setErrorEmail] = useState(null);
     const [errorPassword, setErrorPassword] = useState(null);
@@ -156,6 +159,10 @@ const Login = ({ navigation }) => {
 
 
         <KeyboardAvoidingView style={styles.container}>
+              <StatusBar
+                        animated={true}
+                        backgroundColor={COLORS.primary}
+                    />
             {(loader) ?
                 <View style={{ height: "100%", width: "100%", }}>
                     <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
@@ -165,6 +172,11 @@ const Login = ({ navigation }) => {
 
                 :
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home',{screen:"Search"})}>
+                            <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                        </TouchableOpacity>
+                    </View>
                     <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
                         <Image
                             source={icons.Edusitylogo}
@@ -179,7 +191,7 @@ const Login = ({ navigation }) => {
                         <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 23 }}>Sign In</Text>
                     </View>
                     <View style={{ flex: 0.5, alignItems: 'center', }}>
-                        <View style={{ width: "80%", marginTop: "22%" }}>
+                        <View style={{ width: "80%" }}>
                             {/* <Text style={styles.label}>Email</Text> */}
                             {/* */}
                             <Pressable onPressIn={() => handleEmailBox()}>
@@ -196,14 +208,15 @@ const Login = ({ navigation }) => {
                                     value={email}
                                     rightIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
                                     customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
-                                    onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }} />
+                                    onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }} 
+                                    containerStyles={{margin:"20%"}}/>
                             </Pressable>
                             {formErrors && formErrors.emailorusername ?
                                 <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
                                 : null}
                         </View>
 
-                        <View style={{ width: "80%", marginTop: "5%" }}>
+                        <View style={{ width: "80%", }}>
                             {/* <Text style={styles.label}>Password</Text> */}
                             <Pressable
                                 // style={{ ...styles.textView, ...{ borderColor: (errorLogin || errorPassword) ? "red" : "gray", shadowColor: (errorLogin) ? "red" : COLORS.primary, } }}
