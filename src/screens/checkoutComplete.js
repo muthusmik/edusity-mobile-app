@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
     View,
-    Text, Image,
+    Text, 
+    Image,
     TouchableOpacity,
     Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView,
+    Pressable, 
+    FlatList, 
+    StyleSheet, 
+    KeyboardAvoidingView,
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LoaderKit from 'react-native-loader-kit';
