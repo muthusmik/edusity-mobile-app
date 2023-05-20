@@ -9,7 +9,8 @@ import {
     Image,
     TouchableOpacity,
     Alert,
-    StatusBar
+    StatusBar,
+    Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONTS, images, icons } from '../../constants';
@@ -44,7 +45,7 @@ const OtpPage = ({route}) => {
             if (response.data.message=='Email verified successfully.'){
                 Alert.alert(
                     "Signup Success",
-                    "User have been added successfully!,you can now Login",
+                    "User have been added successfully! You can now Login",
                     [
                         {
                             text:"ok",
@@ -82,6 +83,7 @@ const OtpPage = ({route}) => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
+                    {Platform.OS=='ios'?<View style={{height:"5%"}}/>:null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
                 <TouchableOpacity style={{ marginLeft: "4%"}} onPress={() => navigation.navigate('Home',{screen:'Search'})}>

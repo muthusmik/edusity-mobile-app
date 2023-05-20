@@ -28,11 +28,11 @@ const validate = (details) => {
     }
   }
   //Sign Up phone number
-  if (details.phonenumber !== undefined) {
-    if (details.phonenumber.length == 0) {
-      formErrors.phonenumber = "Mobile Number is required!";
-    } else if (!/^(\+\d{1,3}[- ]?)?\d{10}$/.test(details.phonenumber)) {
-      formErrors.phonenumber = "This is not a valid mobile number!";
+  if (details.phoneNumber !== undefined) {
+    if (details.phoneNumber.length == 0) {
+      formErrors.phoneNumber = "Mobile Number is required!";
+    } else if (!/^(\+\d{1,3}[- ]?)?\d{10}$/.test(details.phoneNumber)) {
+      formErrors.phoneNumber = "This is not a valid mobile number!";
     }
   }
   //login password loginpassword
@@ -64,14 +64,20 @@ const validate = (details) => {
   }
   
   if (details.firstName !== undefined) {
-    if (details.firstName.length == 0) {
-      formErrors.firstName = "First Name is required!";
+    if (details.firstName.length < 3) {
+      formErrors.firstName = "First Name must have minimun 3 characters!";
+    }
+    if (details.firstName.length >15 ) {
+      formErrors.firstName = "First Name must not exceed more than 15 characters!";
     }
   }
 
  if (details.lastName !== undefined) {
-    if (details.lastName.length == 0) {
-      formErrors.lastName = "Last Name is required!";
+    if (details.lastName.length <3 ) {
+      formErrors.lastName = "Last Name must have minimun 3 characters!";
+    }
+    if (details.lastName.length >15 ) {
+      formErrors.lastName = "Last Name must not exceed more than 15 characters!";
     }
   }
 
@@ -82,6 +88,7 @@ const validate = (details) => {
       formErrors.userName = "User Name should contain lower case alphabets only and atleast 1 numeric value";
     }
   }
+
 
   return formErrors;
 };

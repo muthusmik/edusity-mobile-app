@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
-    StatusBar, TouchableOpacity, FlatList, Image, StyleSheet,BackHandler
+    StatusBar, TouchableOpacity, FlatList, Image, StyleSheet, BackHandler
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import LoaderKit from 'react-native-loader-kit'
@@ -138,94 +138,95 @@ const MyCourse = () => {
                     backgroundColor={COLORS.primary}
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
-                    <View style={{flexDirection:"row",padding:"2%"}}>
-                        <View style={{width:"70%" ,flexDirection:'column'}}>
-                    {console.log("Course/Count",CoursesCount)}
-                    
-                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
+                    <View style={{ flexDirection: "row", padding: "2%" }}>
+                        <View style={{ width: "70%", flexDirection: 'column' }}>
+                            <Text style={{ color: COLORS.primary, marginHorizontal: "5%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
                         </View>
-                        <View style={{width:"30%" ,flexDirection:'column',alignItems:"center",justifyContent:"center"}}>
-                            <TouchableOpacity style={{ flexDirection: "row",backgroundColor:COLORS.primary,marginHorizontal:"2%",padding:"4%",borderRadius:5}} onPress={()=>navigation.navigate("MyWebinars")}>
-                                {console.log("Course/Count", CoursesCount)}
+                        <View style={{ width: "30%", flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
+                            <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.primary, marginHorizontal: "2%", padding: "4%", borderRadius: 5 }} onPress={() => navigation.navigate("MyWebinars")}>
+                                {/* {console.log("Course/Count", CoursesCount)} */}
                                 <FeatherIcon name="play-circle" size={18} style={{ marginHorizontal: "1%" }} color={"white"} />
                                 <Text style={{ color: COLORS.white, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>
                                     My Webinars</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    {(CoursesCount > 0) ? 
-                    <FlatList
-                        data={Data}
-                        // ref={ScrollRef}
-                        // onScroll={event => {
-                        //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
-                        // }}
-                        scrollEnabled={true}
-                        keyExtractor={item => item.ID}
-                        extraData={flalistRefresh}
-                        overScrollMode={'never'}
-                        renderItem={({ item }) => (
-                            <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
-                                <View style={{ width: "100%", flexDirection: "row" }}>
-                                    <View style={styles.coulmnImage}>
-                                        {(item.imageFiles.length > 0) ?
-                                            <Image
-                                                source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
-                                                resizeMode="contain"
+                    {(CoursesCount > 0) ?
+                        <FlatList
+                            data={Data}
+                            
+                            // ref={ScrollRef}
+                            // onScroll={event => {
+                            //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
+                            // }}
+                            scrollEnabled={true}
+                            keyExtractor={item => item.ID}
+                            extraData={flalistRefresh}
+                            overScrollMode={'never'}
+                            renderItem={({ item }) => (
+                                <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
+                                    <View style={{ width: "100%", flexDirection: "row" }}>
+                                        <View style={styles.coulmnImage}>
+                                        {/* {console.log("Data inside myCourse.........",Data)} */}
+                                            {(item.imageFiles.length > 0) ?
+                                                <Image
+                                                    source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
+                                                    resizeMode="contain"
 
-                                                style={{
-                                                    width: "100%",
-                                                    height: 120,
-                                                    margin: "1%",
-                                                    borderRadius: 8,
-                                                }}
-                                            /> : <Image
-                                                source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
-                                                resizeMode="contain"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: 120,
+                                                        margin: "1%",
+                                                        borderRadius: 8,
+                                                    }}
+                                                /> : <Image
+                                                    source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
+                                                    resizeMode="contain"
 
-                                                style={{
-                                                    width: "98%",
-                                                    height: 100,
-                                                    margin: "1%",
-                                                    borderRadius: 8,
-                                                }}
-                                            />}
+                                                    style={{
+                                                        width: "98%",
+                                                        height: 100,
+                                                        margin: "1%",
+                                                        borderRadius: 8,
+                                                    }}
+                                                />}
+                                        </View>
+                                        <View style={{ flexDirection: "column", width: "45%", marginVertical: "5%", marginHorizontal: "2%" }}>
+                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
+                                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
+                                            <TouchableOpacity style={{
+                                                width: "50%",
+                                                backgroundColor: COLORS.primary,
+                                                padding: "5%",
+                                                marginHorizontal: "10%",
+                                                marginVertical: "15%",
+                                                borderRadius: 10,
+                                                alignItems: "center"
+                                            }}
+                                                onPressIn={() => { handleViewNavigation(item.ID) }}>
+                                                <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> Start Now</Text>
+                                            </TouchableOpacity>
+
+                                        </View>
                                     </View>
-                                    <View style={{ flexDirection: "column", width: "45%", marginVertical: "5%", marginHorizontal: "2%" }}>
-                                        <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
-                                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
-                                        <TouchableOpacity style={{
-                                            width: "50%",
-                                            backgroundColor: COLORS.primary,
-                                            padding: "5%",
-                                            marginHorizontal: "10%",
-                                            marginVertical: "15%",
-                                            borderRadius: 10,
-                                            alignItems: "center"
-                                        }}
-                                            onPressIn={() => { handleViewNavigation(item.ID) }}>
-                                            <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> Start Now</Text>
-                                        </TouchableOpacity>
-
+                                    <View style={{ paddingHorizontal: "2%" }}>
+                                        <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10) }}>Description:</Text>
+                                        <WebView style={{ height: 200, width: "100%" }}
+                                            scalesPageToFit={false}
+                                            source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${item.Description}` }}
+                                        />
+                                        {/* <Text style={{color:COLORS.black,fontWeight:"800",fontSize:RFValue(8)}}>{item.Description}</Text> */}
                                     </View>
                                 </View>
-                                <View style={{ paddingHorizontal: "2%" }}>
-                                    <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10) }}>Description:</Text>
-                                    <WebView style={{ height: 200, width: "100%" }}
-                                        source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${item.Description}` }}
-                                    />
-                                    {/* <Text style={{color:COLORS.black,fontWeight:"800",fontSize:RFValue(8)}}>{item.Description}</Text> */}
-                                </View>
+                            )}
+                            onEndReachedThreshold={0.2}
+                            onEndReached={refresh}
+                        /> :
+                        <>
+                            <View>
+                                <NoCourse data={username} />
                             </View>
-                        )}
-                        onEndReachedThreshold={0.2}
-                        onEndReached={refresh}
-                    /> :
-                    <>
-                    <View>
-                        <NoCourse data={username} />
-                    </View>
-                    </>
+                        </>
                     }
                     <View style={{ height: "3%", width: "100%" }}>
                         {(!refreshList) ? null

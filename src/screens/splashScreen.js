@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet,Text,Image, PermissionsAndroid,} from 'react-native';
+import {View, StyleSheet,Text,Image, PermissionsAndroid, Platform,} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {useEffect} from 'react';
 import { COLORS, FONTS, icons, images } from '../constants';
@@ -7,7 +7,11 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo';
 import { useIsFocused } from '@react-navigation/native';
-
+import Geolocation from 'react-native-geolocation-service';
+import * as RNLocalize from "react-native-localize";
+import { latitudeSet,longitudeSet,countryCodeSet,currencyTypeSet } from '../store/redux/geoLocation';
+import { useDispatch } from 'react-redux';
+import { getModeForUsageLocation } from 'typescript';
 const SplashScreen = props => {
   const [authLoaded, setAuthLoaded] = useState(false);
   const [animationLoaded, setAnimationLoaded] = useState(false);
@@ -15,6 +19,7 @@ const SplashScreen = props => {
   const [network, setNetwork] = useState('')
   const [loading, setLoading] = useState(false)
   const isFocused =useIsFocused();
+  const dispatch=useDispatch();
 
   const unsubscribe=()=> {
     NetInfo.refresh().then(state => {
@@ -29,22 +34,65 @@ const SplashScreen = props => {
     })
   }
 
+
+
+  const getLocation=()=>{
+    Geolocation.getCurrentPosition(
+      (position) => {
+        dispatch(latitudeSet(position.coords.latitude));
+        dispatch(longitudeSet(position.coords.longitude));
+        console.log("Position..............................",position.coords.latitude,position.coords.longitude);
+        dispatch(countryCodeSet(RNLocalize.getLocales()[1] ? RNLocalize.getLocales()?.[1]?.countryCode :RNLocalize.getLocales()?.[0]?.countryCode));
+        dispatch(currencyTypeSet(RNLocalize.getCurrencies()[1]?RNLocalize.getCurrencies()?.[1] : RNLocalize.getCurrencies()?.[0]));
+        console.log( "Positionrr..............................",RNLocalize.getLocales()?.[1]?.countryCode);
+        console.log("Positionjj..............................",RNLocalize.getCurrencies()?.[1]);
+        unsubscribe();
+      },
+      (error) => {
+        // See error code charts below.
+        console.log("mmm",error.code, error.message);
+        console.log( "Positionrr..............................",RNLocalize.getLocales()[1] ? RNLocalize.getLocales()?.[1]?.countryCode :RNLocalize.getLocales()?.[0]?.countryCode);
+        console.log("Positionjj..............................",RNLocalize.getCurrencies()[1]?RNLocalize.getCurrencies()?.[1] : RNLocalize.getCurrencies()?.[0]);
+        dispatch(countryCodeSet(RNLocalize.getLocales()[1] ? RNLocalize.getLocales()?.[1]?.countryCode :RNLocalize.getLocales()?.[0]?.countryCode));
+        dispatch(currencyTypeSet(RNLocalize.getCurrencies()[1]?RNLocalize.getCurrencies()?.[1] : RNLocalize.getCurrencies()?.[0]));
+        unsubscribe();
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+  );
+  }
   useEffect(() => {
     if(isFocused){
     setTimeout(() => {
       const PermissionLocation=async()=>{
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location Access Required',
-            message: 'This App needs to Access your location',
-          },
-        );
-        unsubscribe();
+
+        // if(Platform.OS='android'){
+        // const granted = await PermissionsAndroid.request(
+        //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        //   {
+        //     title: 'Location Access Required',
+        //     message: 'This App needs to Access your location',
+        //   },
+        // );
+        // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        //   //To Check, If Permission is granted
+        //    console.log("Location Access provided");
+        //   getLocation();
+        // } else {
+        //   unsubscribe();
+        //   // navigation.navigate('Login');
+        //    console.log("cancelled")
+        // }
+        // }else if(Platform.OS='ios'){
+          console.log("Location Access provided");
+          getLocation();
+        //}
      
         }
         PermissionLocation()
     }, 4000);
+
+
+    
   }}, [isFocused]);
 
   const onAnimationFinish = () => {
@@ -53,8 +101,9 @@ const SplashScreen = props => {
 
   useEffect(() => {
     const navigateHandler=async()=>{
+    // await  AsyncStorage.removeItem("loginToken");
     if (authLoaded && animationLoaded) {
-      let Token=await  AsyncStorage.getItem("loginToken");
+      let Token= await  AsyncStorage.getItem("loginToken");;
       if(Token){
         // console.log("data iruku",Token);
         props.navigation.replace('Home',{screen:'DashBoard'});

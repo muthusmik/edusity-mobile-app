@@ -25,6 +25,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
+import { DeactivateProfile, DeleteProfile } from '../../../services/userService';
 
 const { width } = Dimensions.get("screen");
 const FirstRoute = () => <General />;
@@ -36,6 +37,7 @@ const Profile = () => {
     const Token = useSelector(state => state.loginHandle.data.data);
     const LoginDetails = useSelector(state => state.userLoginHandle)
     const [userDetails, setUserDetails] = useState([])
+    const [key, setKey] = useState("")
     const navigation = useNavigation();
     // console.log("LoginDetails......", userDetails)
     const [active, setActive] = useState(0)
@@ -56,9 +58,11 @@ const Profile = () => {
                 }
             })
             const initialLoading = async () => {
+                
                 let token = await AsyncStorage.getItem("loginToken");
-                // console.log("new token", Token);
+                console.log("token.......................",token)
                 if (LoginDetails.data && token) {
+                    setKey(token)
                     // console.log(LoginDetails)
                     setUserDetails([LoginDetails?.data?.data])
                     // console.log("data success", userDetails)
@@ -87,6 +91,30 @@ const Profile = () => {
                 { text: "OK", onPress: () => handleLogout() }
             ]
         );
+       
+        const deactivateTwoButtonAlert = () =>
+        Alert.alert(
+            "Deactivate Account",
+            "Are you sure? you want to Deactivate  your Account, your account will be temporarily kept inactive if you continue!",
+            [
+                {
+                    text: "Cancel",
+                    // onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => handleDeactivate() }
+            ]
+        );
+
+        const handleDeactivate = async () => {
+            //setLoader(true)
+            await DeactivateProfile(key).then(
+                    //  AsyncStorage.removeItem("loginToken").then(
+                     navigation.navigate("Home", { screen: "Search" })
+                // )
+                )
+        }
+
     const handleLogout = async () => {
         //setLoader(true)
         await AsyncStorage.removeItem("loginToken").then(
@@ -104,15 +132,15 @@ const Profile = () => {
     const [routes] = React.useState([
         { key: 'first', title: 'General' },
         { key: 'second', title: 'Security' },
-        { key: 'third', title: 'Add Card' },
+        // { key: 'third', title: 'Add Card' },
         { key: 'fourth', title: 'Payments' },
         { key: 'fifth', title: 'Notifications' }
     ]);
 
-    const renderScene = SceneMap({
+    const renderScene = SceneMap({ 
         first: FirstRoute,
         second: SecondRoute,
-        third: ThirdRoute,
+        // third: ThirdRoute,
         fourth: FourthRoute,
         fifth: FifthRoute,
 
@@ -137,18 +165,26 @@ const Profile = () => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
+                     {/* {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null} */}
                     <View style={{ flexDirection: 'row', justifyContent: "center", paddingBottom: "5%", position: "relative", backgroundColor: COLORS.primary }}>
                         <View style={{ backgroundColor: COLORS.primary, width: '100%', position: 'absolute' }} />
                         <LinearGradient colors={["#bfe9ff", "#bfe9ff"]} style={{ marginVertical: "4%", flexDirection: 'row', width: "90%", borderRadius: 10, justifyContent: "space-around", padding: "6%" }}>
-                            <View style={{ borderColor: "red", flexDirection: "column", alignItems: "center", width: "30%", justifyContent: "center" }}>
+                            <View style={{ borderColor: "red", flexDirection: "column", alignItems: "center", width: "40%", justifyContent: "center" }}>
                                 <Avatar
-                                    size={88}
+                                    size={80}
                                     rounded
                                     title={userDetails[0].firstName.charAt(0).toUpperCase() + userDetails[0].lastName.charAt(0).toUpperCase()}
                                     containerStyle={{ backgroundColor: "red", fontFamily: 'Roboto-Regular', }}
                                 />
+                                 {/* <TouchableOpacity onPress={() =>  deactivateTwoButtonAlert()} style={{ marginTop: "5%", flexDirection: "row" }} >
+                                    <MCIcon name="broadcast-off" size={RFValue(18)} color={COLORS.primary} />
+                                    <Text  style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10), alignSelf: "center", marginHorizontal: "2%" }}>Deactivate Account</Text>
+                                </TouchableOpacity> */}
                             </View>
-                            <View style={{ flexDirection: "column", alignItems: "flex-end", width: "70%" }}>
+                            <View style={{ flexDirection: "column", alignItems: "flex-end", width: "60%" }}>
                                 <Text style={{ padding: "1%", fontSize: RFValue(16, 580), color: COLORS.black, fontFamily: 'Roboto-Medium' }}>{userDetails[0].firstName} {userDetails[0].lastName}</Text>
                                 <Text style={{ padding: "1%", fontSize: RFValue(10, 580), color: COLORS.black, fontFamily: 'Roboto-Regular', }}>{userDetails[0].phoneNumber}</Text>
                                 <Text style={{ padding: "1%", fontSize: RFValue(10, 580), color: COLORS.black, fontFamily: 'Roboto-Regular', }}>{userDetails[0].email}</Text>

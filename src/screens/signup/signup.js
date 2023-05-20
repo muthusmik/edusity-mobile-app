@@ -30,7 +30,10 @@ const SignUp = ({ navigation }) => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
-            
+                 {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null}
 
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }} >
             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
@@ -38,9 +41,9 @@ const SignUp = ({ navigation }) => {
                     <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
                 </TouchableOpacity>
             </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%", borderWidth: 0,marginTop:"5%" }}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%", borderWidth: 0, }}>
                         <Image
-                            source={icons.Edusitylogo}
+                            source={icons.Edusitylogo} 
                             resizeMode="contain"
                             style={{
                                 width: '50%',
@@ -49,7 +52,7 @@ const SignUp = ({ navigation }) => {
                         />
                     </View>
                     <View style={{ alignItems: 'center',paddingBottom:"1%" }}>
-                        <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22),marginTop:"8%" }}>Sign Up</Text>
+                        <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22),marginTop:"5%" }}>Sign Up</Text>
                     </View>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "72%" }}>
                     <View style={{ width: "100%", alignItems: "center" }}>

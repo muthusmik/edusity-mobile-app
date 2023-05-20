@@ -14,7 +14,8 @@ import {
     KeyboardAvoidingView,
     Pressable,
     Keyboard,
-    StatusBar
+    StatusBar,
+    Platform
 
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,7 +40,7 @@ import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 const Login = () => {
     const { handleChange, details, handleSubmit, formErrors, data, formValues } = useForm(validate);
     const dispatch = (useDispatch());
-    const navigation=useNavigation();
+    const navigation = useNavigation();
     const [errorLogin, setErrorLogin] = useState(null);
     const [errorEmail, setErrorEmail] = useState(null);
     const [errorPassword, setErrorPassword] = useState(null);
@@ -76,11 +77,12 @@ const Login = () => {
                 .then(async (originalPromiseResult) => {
                     // console.log("successfully returned to login with response ", originalPromiseResult.data);
                     if (originalPromiseResult.data) {
+                        console.log("After that Login success.......", originalPromiseResult.data)
                         setErrorLogin("");
-                        await AsyncStorage.setItem('loginToken', originalPromiseResult.data);
+                        await AsyncStorage.setItem('loginToken', originalPromiseResult.data.token);
                         // console.log(await AsyncStorage.getItem('loginToken'), "helloooo")
                         // console.log(originalPromiseResult.data)
-                        setToken(originalPromiseResult.data)
+                        setToken(originalPromiseResult.data.token)
                     } else {
                         setLoader(false);
                         // console.log(originalPromiseResult.errormessage, "error")
@@ -132,7 +134,7 @@ const Login = () => {
                 .catch((rejectedValueOrSerializedError) => {
                     // console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
-        } 
+        }
         // else {
         //     console.log("No Token")
         //     // Toast.show("Please fill the laid details to proceed!", Toast.LONG);
@@ -159,10 +161,14 @@ const Login = () => {
 
 
         <KeyboardAvoidingView style={styles.container}>
-              <StatusBar
-                        animated={true}
-                        backgroundColor={COLORS.primary}
-                    />
+            <StatusBar
+                animated={true}
+                backgroundColor={COLORS.primary}
+            />
+            {Platform.OS == 'ios' ?
+                <View style={{ height: "5%" }}>
+
+                </View> : null}
             {(loader) ?
                 <View style={{ height: "100%", width: "100%", }}>
                     <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
@@ -171,13 +177,15 @@ const Login = () => {
                 </View>
 
                 :
+
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
+
                     <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home',{screen:"Search"})}>
+                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
                             <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
+                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', }}>
                         <Image
                             source={icons.Edusitylogo}
                             resizeMode="contain"
@@ -187,14 +195,15 @@ const Login = () => {
                             }}
                         />
                     </View>
-                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
+                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', }}>
                         <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 23 }}>Sign In</Text>
                     </View>
                     <View style={{ flex: 0.5, alignItems: 'center', }}>
-                        <View style={{ width: "80%" }}>
+                        <View style={{ width: "80%", }}>
                             {/* <Text style={styles.label}>Email</Text> */}
                             {/* */}
-                            <Pressable onPressIn={() => handleEmailBox()}>
+                            {/* <Text style={{color: COLORS.black, fontSize: RFValue(15) }}>Email / Username</Text> */}
+                            <Pressable onPressIn={() => handleEmailBox()} style={{ height: 100 }}>
                                 {/* style={{ ...styles.textView, ...{ borderColor: (errorLogin || errorEmail) ? "red" : "gray", shadowColor: (errorLogin) ? "red" : COLORS.primary, } }} */}
 
                                 {/* <TextInput placeholder='Enter your Email'
@@ -204,12 +213,14 @@ const Login = () => {
                                 selectionColor={COLORS.blue} */}
                                 <InputBox
                                     inputOutLine
-                                    label={"Email / Username"}
+                                    label={"Email"}
                                     value={email}
-                                    rightIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
-                                    customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
-                                    onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }} 
-                                    containerStyles={{margin:"20%"}}/>
+
+                                    // labelStyle={{ fontSize:RFValue(18), }}
+                                    rightIcon={<FontAwesome5 name={'user-graduate'} size={20} style={{ color: COLORS.primary }} />}
+                                    customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
+                                    onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }}
+                                    containerStyles={{ margin: "5%" }} />
                             </Pressable>
                             {formErrors && formErrors.emailorusername ?
                                 <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
@@ -218,9 +229,10 @@ const Login = () => {
 
                         <View style={{ width: "80%", }}>
                             {/* <Text style={styles.label}>Password</Text> */}
+                            {/* <Text style={{color: COLORS.black, fontSize: RFValue(15) }}>Password</Text> */}
                             <Pressable
                                 // style={{ ...styles.textView, ...{ borderColor: (errorLogin || errorPassword) ? "red" : "gray", shadowColor: (errorLogin) ? "red" : COLORS.primary, } }}
-                                onPressIn={() => handlePasswordBox()}>
+                                onPressIn={() => handlePasswordBox()} >
                                 {/* <TextInput name="Password" placeholder='Enter Password'
                                 placeholderTextColor={COLORS.gray}
                                 value={password}
@@ -232,10 +244,12 @@ const Login = () => {
                                     label={"Password"}
                                     value={password}
                                     secureTextEntry={errorPassword ? false : true}
-                                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
-                                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
-                                    labelStyle={{ ...FONTS.robotoregular }}
-                                    customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
+                                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{ color: COLORS.primary }} />}
+                                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
+                                    labelStyle={{ fontSize: RFValue(12), }}
+                                    showPasswordContainerStyle={{ height: 1900 }}
+                                    containerStyles={{ margin: "20%", height: "100%" }}
+                                    customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary, } }}
                                     onChangeText={e => { handleChange(e, "loginpassword"), setErrorLogin(""), setPassword(e), setErrorPassword(null) }} />
                                 {formErrors && formErrors.loginpassword ?
                                     <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
@@ -274,7 +288,7 @@ const Login = () => {
                                 <Text style={{ color: COLORS.blue, ...FONTS.robotoregular }}> Sign Up</Text></Text>
                         </Pressable>
 
-                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "1%" }}> Or</Text>
+                        {/* <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "1%" }}> Or</Text>
                         <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "2%" }}> Connect with Social Media</Text>
 
                         <View style={styles.socialMedia}>
@@ -297,7 +311,7 @@ const Login = () => {
                                     name="apple1" size={50} color={COLORS.black} style={{ top: "8%" }}
                                 />
                             </Pressable>
-                        </View>
+                        </View> */}
                     </View>
 
                 </ImageBackground>}
@@ -319,7 +333,7 @@ const styles = StyleSheet.create({
         width: "80%",
         // alignItems: "center",
         marginTop: "1%",
-        marginLeft: "10%",
+        marginLeft: "5%",
         padding: 2,
         backgroundColor: COLORS.white,
         borderWidth: 2, borderRadius: 20,
@@ -337,13 +351,13 @@ const styles = StyleSheet.create({
         color: COLORS.black,
         alignContent: "flex-start",
         fontSize: RFValue(14),
-        left: "10%",
+        left: "5%",
         ...FONTS.robotomedium
     },
     textInput: {
         color: COLORS.black,
         backgroundColor: COLORS.white,
-        fontSize:RFValue(14),
+        fontSize: RFValue(14),
         width: "45%",
         ...FONTS.robotoregular,
     },
@@ -351,7 +365,7 @@ const styles = StyleSheet.create({
         color: COLORS.black,
         backgroundColor: COLORS.white,
         width: "26%",
-        fontSize:RFValue(14),
+        fontSize: RFValue(14),
         ...FONTS.robotoregular,
         borderWidth: 0
     },

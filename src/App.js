@@ -9,7 +9,7 @@ import { images, icons, COLORS, FONTS, SIZES } from "./constants";
 import { RFValue } from "react-native-responsive-fontsize";
 
 import SplashScreen from "./screens/splashScreen";
-
+import 'react-native-gesture-handler';
 // screens
 import Login from "./screens/login/login";
 import SignUp from "./screens/signup/signup";
@@ -27,8 +27,9 @@ import RazorPay from "./screens/razorPay";
 import CheckoutComplete from "./screens/checkoutComplete";
 import ServerErrorPage from "./screens/Exceptions/serverDown";
 import MyWebinars from "./screens/myWebinars";
+// import VideoCall from "../jitsiVideoMeet";
 // import GeolocationFetcher from "./screens/geoLocation";
-
+import VideoCall from "./screens/sections/jitsiMeet";
 
 
 const theme = {
@@ -146,6 +147,11 @@ const App = () => {
                 < Stack.Screen
                     name="ViewCourse"
                     component={ViewCourse}
+                    options={{ headerShown: false }}
+                />
+                < Stack.Screen
+                    name="jitsiCall"
+                    component={VideoCall}
                     options={{ headerShown: false }}
                 />
                 < Stack.Screen

@@ -25,6 +25,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { wishListApi, wishListRemoverApi } from '../../../services/wishlist';
 import NetInfo from "@react-native-community/netinfo";
 import { useIsFocused } from "@react-navigation/core";
+import { baseUrl, baseUrl_payment } from '../../../services/constant';
+import { getWishListedCourses } from '../../../services/wishlist';
 
 const CourseList = ({ allCourses, cartData }) => {
     const navigation = useNavigation();
@@ -32,7 +34,8 @@ const CourseList = ({ allCourses, cartData }) => {
     const childRef = useRef(null);
     const ScrollRef = useRef(null);
     const redxitems = useSelector(state => state.courseList.data.data);
-
+    // console.log("Inside the courseListSearsch.js allCourses.........", allCourses)
+    // console.log("Inside the courseListSearsch.js cartData.........", cartData)
     const [cartArray, setCartArray] = useState([]);
 
     const totalPage = redxitems.total_page;
@@ -40,7 +43,7 @@ const CourseList = ({ allCourses, cartData }) => {
     // console.log("iam inside search redxitemss", allCourses.data[0].isWishlisted);
     const [flalistRefresh, setFlatListRefresh] = useState(false);
     const [showHeart, setShowHeart] = useState([]);
-    const [Data, setData] = useState("ttt");
+    const [Data, setData] = useState([]);
     const [loader, SetLoader] = useState(false);
     const [cartLoad, setCartLoad] = useState(true);
     const [currentId, setCurrentId] = useState("");
@@ -54,10 +57,10 @@ const CourseList = ({ allCourses, cartData }) => {
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [submission, setSubmission] = useState(false);
-    const [cartBtnLoader, setCartBtnLoader] = useState([]);
+    const [cartBtnLoader, setCartBtnLoader] = useState(false);
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
     // const token = useSelector((state) => state.loginHandle.data)
-
+    // console.log("Data..................", Data)
     useEffect(() => {
         if (isFocused) {
             NetInfo.addEventListener(networkState => {
@@ -67,7 +70,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 // }
             });
         }
-    }, [isFocused,network])
+    }, [isFocused, network])
     const handleWishlist = async (index) => {
         if (network) {
             if (showHeart[index] == 0) {
@@ -86,22 +89,22 @@ const CourseList = ({ allCourses, cartData }) => {
         }
     }
     const handleAddCart = async (id) => {
-       
+
         // console.log("new token", key);
-   if (network) {
-        if (key) {
-            // let arry=cartBtnLoader.push(id)
-            setCartBtnLoader(cartBtnLoader.push(id));
-            let result = await addtoCart(id, key).then(response=>{
-                
-                setCartBtnLoader([])
-            });
-            // console.log(result, "hello");
-            dispatch(cartHandler(key));
-        }
-        else {
-            navigation.navigate("Login");
-}
+        if (network) {
+            if (key) {
+                // let arry=cartBtnLoader.push(id)
+                setCartBtnLoader(true);
+                let result = await addtoCart(id, key).then(response => {
+
+                    setCartBtnLoader(false)
+                });
+                // console.log(result, "hello");
+                dispatch(cartHandler(key));
+            }
+            else {
+                navigation.navigate("Login");
+            }
         }
         else {
             navigation.navigate("NetworkError");
@@ -139,10 +142,12 @@ const CourseList = ({ allCourses, cartData }) => {
             const addData = async () => {
 
                 // console.log(key, "...........................token")
-                var Url = "https://backend-linux-login.azurewebsites.net/course?page=" + page;
+                // var Url = "https://livelogin.edusity.com/course?page=" + page;
+                var Url = `${baseUrl_payment}v1/course?page=${page}`;
+                console.log("Url...........", Url)
                 const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + key }
-                const callData = await axios.get(Url, { headers: headers }).then(response => {
-                    const newdata = response.data.data.data
+                const callData = await axios.post(Url).then(response => {
+                    const newdata = response.data.data.courses
                     setData(Data.concat(newdata));
                     setShowHeart(Data.concat(newdata).map(a => a.isWishlisted))
                     setRefreshList(false);
@@ -160,25 +165,26 @@ const CourseList = ({ allCourses, cartData }) => {
                 // console.log(filterPageNo, "filterpageno")
                 if (!selectedCategory) {
                     // console.log(selectedLevel, "level Only")
-                    var Url = `https://backend-linux-login.azurewebsites.net/course?level=${selectedLevel}&page=${filterPageNo}`;
+                    var Url = `${baseUrl}course?level=${selectedLevel}&page=${filterPageNo}`;
                 } else if (!selectedLevel) {
                     //  console.log(selectedCategory, "category Only")
                     if (selectedCategory.url == "AllCourses") {
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?page=${filterPageNo}`;
+                        var Url = `${baseUrl}course?page=${filterPageNo}`;
                     } else {
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?category=${selectedCategory.url}&page=${filterPageNo}`;
+                        var Url = `${baseUrl}course?category=${selectedCategory.url}&page=${filterPageNo}`;
                     }
                 } else {
                     // console.log(selectedCategory, selectedLevel, "Both")
-                    var Url = `https://backend-linux-login.azurewebsites.net/course?category=${selectedCategory.url}&level=${selectedLevel}&page=${filterPageNo}`;
+                    var Url = `${baseUrl}course?category=${selectedCategory.url}&level=${selectedLevel}&page=${filterPageNo}`;
                     if (selectedCategory.url == "AllCourses") {
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?level=${selectedLevel}&page=${filterPageNo}`;
+                        var Url = `${baseUrl}course?level=${selectedLevel}&page=${filterPageNo}`;
                     }
                 }
                 const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + key }
                 const callData = await axios.get(Url, { headers: headers }).then(response => {
                     const newdata = response.data.data.data
                     //  console.log(response.data.data.data, "newdata")
+                    console.log("3 setdatasde");
                     setData(Data.concat(newdata));
                     setShowHeart(Data.concat(newdata).map(a => a.isWishlisted))
                     setRefreshList(false);
@@ -200,21 +206,21 @@ const CourseList = ({ allCourses, cartData }) => {
             const addData = async () => {
                 if (!selectedCategory) {
                     // console.log(selectedLevel, "level Only")
-                    var Url = `https://backend-linux-login.azurewebsites.net/course?level=${selectedLevel}&page=1`;
+                    var Url = `${baseUrl}course?level=${selectedLevel}&page=1`;
                 } else if (!selectedLevel) {
                     //  console.log(selectedCategory, "category Only")
                     if (selectedCategory.url == "AllCourses") {
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?page=1`;
+                        var Url = `${baseUrl}course?page=1`;
                     } else {
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?category=${selectedCategory.url}&page=1`;
+                        var Url = `${baseUrl}course?category=${selectedCategory.url}&page=1`;
                     }
                     //    console.log(Url,"data")
                 } else {
                     //console.log(selectedCategory.url, selectedLevel, "BothR")
-                    var Url = `https://backend-linux-login.azurewebsites.net/course?category=${selectedCategory.url}&level=${selectedLevel}&page=1`;
+                    var Url = `${baseUrl}course?category=${selectedCategory.url}&level=${selectedLevel}&page=1`;
                     if (selectedCategory.url == 'null') {
                         //  console.log("Url Changed for its is null",selectedCategory.url)
-                        var Url = `https://backend-linux-login.azurewebsites.net/course?level=${selectedLevel}&page=1`;
+                        var Url = `${baseUrl}course?level=${selectedLevel}&page=1`;
                     }
                 }
                 const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + key }
@@ -223,10 +229,11 @@ const CourseList = ({ allCourses, cartData }) => {
                     //  console.log(response.data.data.data, "newdata")
                     setFilterdCourse(response.data.data.total)
                     setTotalFilterPage(response.data.data.total_page);
+                    console.log("4 setdatasde");
                     setData(newdata);
                     setShowHeart(newdata.map(a => a.isWishlisted))
                     setFilterPageNo(1);
-                    SetLoader(false); 
+                    SetLoader(false);
                     setRefreshList(false)
                     if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
                     return response.data
@@ -239,8 +246,11 @@ const CourseList = ({ allCourses, cartData }) => {
             }
             addData();
         } else {
-            setData(allCourses.data);
-            setShowHeart(allCourses.data.map(a => a.isWishlisted))
+            console.log("5 setdatasde");
+            setData(allCourses.courses);
+
+            // console.log("All courses below setData.......", allCourses.courses)
+            setShowHeart(allCourses.courses.map(a => a.isWishlisted))
             setRefreshList(false);
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
             setPage(1);
@@ -260,24 +270,32 @@ const CourseList = ({ allCourses, cartData }) => {
             SetLoader(true)
             let newToken = await AsyncStorage.getItem("loginToken")
             // console.log("ffff",allCourses,newToken,"gggg");
-            if (newToken) { 
-            setKey(newToken); 
-            setData(allCourses.data)
-            setShowHeart(allCourses.data.map(a => a.isWishlisted))
-            // console.log("there........................",Data)
-            setRefreshList(false);
-            SetLoader(false)
-            // console.log("there........................",allCourses.data.map(a => a.isWishlisted))
-            // console.log("there........................",Data)
-            }else{
+            if (newToken) {
+                setKey(newToken);
+                console.log("6 setdatasde");
+                setData(allCourses.courses)
+                let wishListedCourses = await getWishListedCourses(newToken).then(response => {
+                    console.log("Response for wishListed data.........", response);
+                }).catch((error) => {
+                    console.log("error.........", error);
+                })
+
+                setShowHeart(allCourses.courses.map(a => a.isWishlisted))
+                // console.log("there........................",Data)
+                setRefreshList(false);
+                SetLoader(false)
+                // console.log("there........................",allCourses.data.map(a => a.isWishlisted))
+                // console.log("there........................",Data)
+            } else {
                 // console.log("helooo not working ",allCourses.data)
-                setKey(null); 
-                setData(allCourses.data);
+                setKey(null);
+                console.log("7 setdatasde");
+                setData(allCourses.courses);
                 setRefreshList(false);
                 SetLoader(false)
             }
-      setFlatListRefresh(!flalistRefresh)
-    //   console.log("there........................",Data)
+            setFlatListRefresh(!flalistRefresh)
+            //   console.log("there........................",Data)
 
         }
         initial()
@@ -314,21 +332,21 @@ const CourseList = ({ allCourses, cartData }) => {
         },
     ]
     const handleViewNavigation = (item) => {
-        if(network){
-        SetLoader(true);
-        dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
-            .then((originalPromiseResult) => {
-                // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
-                SetLoader(false);
-                navigation.navigate("ViewCourse");
+        if (network) {
+            SetLoader(true);
+            dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
+                    SetLoader(false);
+                    navigation.navigate("ViewCourse");
 
-            })
-            .catch((rejectedValueOrSerializedError) => {
-                navigation.navigate("ServerError");
-                SetLoader(false);
-            })
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    navigation.navigate("ServerError");
+                    SetLoader(false);
+                })
         }
-        else{
+        else {
             navigation.navigate("NetworkError");
         }
     }
@@ -356,12 +374,12 @@ const CourseList = ({ allCourses, cartData }) => {
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
         }
         setFlatListRefresh(!flalistRefresh);
-
     }
     return (
 
         (loader) ?
             <View style={{ height: "100%", width: "100%", }}>
+                {/* <View style={[styles.overlay]} > */}
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                     <LoaderKit
                         style={{ width: 50, height: 50 }}
@@ -369,14 +387,26 @@ const CourseList = ({ allCourses, cartData }) => {
                         size={50} // Required on iOS
                         color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
                     />
+                    {/* </View> */}
                 </ImageBackground>
             </View> :
             <View style={styles.mainContainer}>
+                {cartBtnLoader ?
+                    <View style={styles.overlay} >
+                        <LoaderKit
+                            style={{ width: 50, height: 50, position: 'absolute' }}
+                            name={'BallPulse'} // Optional: see list of animations below
+                            size={50} // Required on iOS
+                            color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                        />
+                    </View>
+                    : null}
+
                 {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
-                {(Data?.length !== 0 && showHeart.length>0) ?
+                {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)}
+                {(Data?.length !== 0 && showHeart.length > 0) ?
 
                     <>
-                         {/* {console.log( key)} */}
                         <FlatList
                             data={Data}
                             ref={ScrollRef}
@@ -388,111 +418,110 @@ const CourseList = ({ allCourses, cartData }) => {
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
-                                    <View style={styles.mainTouchable}>
-                                       {/* {console.log("Dataaaaaaa",Data[0].CourseName)} */}
-                                       {/* {console.log("GTfrfrfrfrfrfrfr",item)} */} 
-                                        <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
-                                            <View style={{ width: "100%", flexDirection: "row" }}>
-                                                <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
-                                                    <View style={styles.coulmnImage}>
-                                                        {(item.imageFiles.length > 0) ?
-                                                            <Image
-                                                                source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
-                                                                resizeMode="contain"
-
-                                                                style={{
-                                                                    width: "98%",
-                                                                    height: 130,
-                                                                    margin: "1%",
-                                                                    borderRadius: 8,
-                                                                }}
-                                                            /> : <Image
-                                                                source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
-                                                                resizeMode="contain"
-
-                                                                style={{
-                                                                    width: "88%",
-                                                                    height: 100,
-                                                                    margin: "1%",
-                                                                    borderRadius: 8,
-                                                                }}
-                                                            />}
-                                                    </View>
-                                                </TouchableOpacity>
-                                                <View style={{ width: "65%", flexDirection: "column", padding: "1%" }}>
-                                                    <View style={{ width: "100%", flexDirection: "row", borderWidth: 0 }}>
-                                                        <View style={{ width: "90%", flexDirection: "column" }}>
-                                                            <Text style={{ fontSize: RFValue(16), marginVertical: "2%", color: COLORS.black, ...FONTS.robotomedium }}>{item.CourseName}{"\n"}
-                                                                <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text></Text>
-                                                        </View>
-                                                        {key ? <TouchableOpacity onPress={() => handleWishlist(index)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                                                           
-                                                            {(showHeart[index] == 0) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
-                                                                <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
-                                                        </TouchableOpacity> : null}
-                                                    </View>
-                                                    <Text style={{ padding: "1%" }}>
+                                <View style={styles.mainTouchable}>
+                                    {/* {console.log("Dataaaaaaa",Data[0].CourseName)} */}
+                                    {/* {console.log("GTfrfrfrfrfrfrfr",item)} */}
+                                    <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
+                                        <View style={{ width: "100%", flexDirection: "row" }}>
+                                            <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
+                                                <View style={styles.coulmnImage}>
+                                                    {(item.imageFiles.fileName) ?
                                                         <Image
-                                                            source={icons.LevelIcon}
+                                                            source={{ uri: "https://cdn.edusity.com/" + item.imageFiles.fileName }}
                                                             resizeMode="contain"
-                                                            style={{ width: RFValue(15), height: RFValue(15), }}
-                                                        />
-                                                        <Text style={{ fontSize: RFValue(13), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }} > {item.Level}</Text>
-                                                    </Text>
-                                                    <View style={styles.details}>
-                                                        <View style={{ flexDirection: "column", width: "100%" }}>
-                                                            <View style={{ flexDirection: "row", width: "100%" }}>
-                                                                <View style={{ flexDirection: "column", width: "70%" }}>
-                                                                    <Text style={{ padding: "2%" }}>
-                                                                        <Image
-                                                                            source={icons.Tutor}
-                                                                            resizeMode="contain"
-                                                                            style={{ width: RFValue(15), height: RFValue(15), }}
-                                                                        />
-                                                                        <Text style={styles.Brand}>  {item.instructorName}</Text></Text>
-                                                                    <Text style={styles.ratings}>
-                                                                        <View>
-                                                                            <Rating
-                                                                                type='star'
-                                                                                ratingCount={(item.StarRating) ? item.StarRating : 5}
-                                                                                imageSize={RFValue(16)}
-                                                                                showRating={false}
-                                                                                isDisabled={true}
-                                                                                ratingColor='#8830c4'
-                                                                            />
 
-                                                                        </View>
-                                                                    </Text>
-                                                                </View>
+                                                            style={{
+                                                                width: "98%",
+                                                                height: 130,
+                                                                margin: "1%",
+                                                                borderRadius: 8,
+                                                            }}
+                                                        /> : <Image
+                                                            source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
+                                                            resizeMode="contain"
+
+                                                            style={{
+                                                                width: "88%",
+                                                                height: 100,
+                                                                margin: "1%",
+                                                                borderRadius: 8,
+                                                            }}
+                                                        />}
+                                                </View>
+                                            </TouchableOpacity>
+                                            <View style={{ width: "65%", flexDirection: "column", padding: "1%" }}>
+                                                <View style={{ width: "100%", flexDirection: "row", borderWidth: 0 }}>
+                                                    <View style={{ width: "90%", flexDirection: "column" }}>
+                                                        <Text style={{ fontSize: RFValue(16), marginVertical: "2%", color: COLORS.black, ...FONTS.robotomedium }}>{(item.CourseName) ? item.CourseName : "N/A"}{"\n"}
+                                                            <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
+                                                    </View>
+                                                    {key ? <TouchableOpacity onPress={() => handleWishlist(index)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
+                                                        {console.log("Showherat......", showHeart[index] == 0, index, showHeart[index], showHeart)}
+                                                        {(showHeart[index] == 0) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
+                                                            <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
+                                                    </TouchableOpacity> : null}
+                                                </View>
+                                                <Text style={{ padding: "1%" }}>
+                                                    <Image
+                                                        source={icons.LevelIcon}
+                                                        resizeMode="contain"
+                                                        style={{ width: RFValue(15), height: RFValue(15), }}
+                                                    />
+                                                    <Text style={{ fontSize: RFValue(13), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }} > {(item.Level) ? item.Level : "N/A"}</Text>
+                                                </Text>
+                                                <View style={styles.details}>
+                                                    <View style={{ flexDirection: "column", width: "100%" }}>
+                                                        <View style={{ flexDirection: "row", width: "100%" }}>
+                                                            <View style={{ flexDirection: "column", width: "70%" }}>
+                                                                <Text style={{ padding: "2%" }}>
+                                                                    <Image
+                                                                        source={icons.Tutor}
+                                                                        resizeMode="contain"
+                                                                        style={{ width: RFValue(15), height: RFValue(15), }}
+                                                                    />
+                                                                    <Text style={styles.Brand}>  {(item.instructorName) ? item.instructorName : "N/A"}</Text></Text>
+                                                                <Text style={styles.ratings}>
+                                                                    <View>
+                                                                        <Rating
+                                                                            type='star'
+                                                                            ratingCount={(item.StarRating) ? item.StarRating : 5}
+                                                                            imageSize={RFValue(16)}
+                                                                            showRating={false}
+                                                                            isDisabled={true}
+                                                                            ratingColor='#8830c4'
+                                                                        />
+                                                                    </View>
+                                                                </Text>
                                                             </View>
                                                         </View>
                                                     </View>
-                                                    <View style={{ alignItems: "center" }}>
-                                                        <Text style={styles.location}>${item.EnrollmentFee}</Text>
-                                                    </View>
+                                                </View>
+                                                <View style={{ alignItems: "center" }}>
+                                                    <Text style={styles.location}>${(item.EnrollmentFee) ? item.EnrollmentFee : "N/A"}</Text>
                                                 </View>
                                             </View>
-                                            {/* <Divider /> */}
-                                           { (!item.isPurchased) ?
+                                        </View>
+                                        {/* <Divider /> */}
+                                        {(!item.isPurchased) ?
                                             <View style={{ flexDirection: "row", marginVertical: "2%" }}>
-                                                <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
+                                                {/* <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
 
                                                     <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
                                                         <MCIcon name="cart-heart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column", alignSelf: "center" }} />
                                                         <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Buy Now</Text>
                                                     </TouchableOpacity>
-                                                </View>
+                                                </View> */}
                                                 {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
                                                 <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
                                                     {/* {console.log(item.isPurchased)} */}
                                                     {!(cartArray.includes(`${item.ID}`)) ?
                                                         <>
-                                                            {(cartBtnLoader!=item.ID) ?
+                                                            {(cartBtnLoader != item.ID) ?
                                                                 <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
                                                                     <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                                                     <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
                                                                 </TouchableOpacity> :
-                                                                <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent:"center" ,padding: "4%", alignItems: "center", borderRadius: 10 }} >
+                                                                <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent: "center", padding: "4%", alignItems: "center", borderRadius: 10 }} >
                                                                     {/* {console.log("working", cartBtnLoader)} */}
                                                                     <LoaderKit
                                                                         style={{ width: RFValue(20), height: RFValue(20) }}
@@ -505,25 +534,25 @@ const CourseList = ({ allCourses, cartData }) => {
                                                         :
                                                         <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
                                                             <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                            <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View cart</Text>
+                                                            <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View Cart</Text>
                                                         </TouchableOpacity>
                                                     }
                                                 </View>
-                                            </View>: 
-                                             <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
-                                                            <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
-                                                        </View>}
+                                            </View> :
+                                            <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
+                                                <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                                <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
+                                            </View>}
 
-                                        </View>
-                                    </View> 
+                                    </View>
+                                </View>
                             )
                             }
                             onEndReachedThreshold={0.2}
                             onEndReached={refresh}
                         /></> : <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
                         <Image source={images.NoData} resizeMode="contain" style={{ height: "30%", width: "40%" }} />
-                        <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotoregular }}>No Course Found</Text>
+                        <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotoregular }}>No Courses Found!</Text>
                     </View>}
 
                 <FloatingAction
@@ -538,7 +567,7 @@ const CourseList = ({ allCourses, cartData }) => {
 
 
                 <View style={{ width: "100%", alignItems: "center" }}>
-                    {(!refreshList) ? (Data?.length != 0) ? <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text> : null
+                    {(!refreshList) ? (Data?.length != 0) ? <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular, }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text> : null
                         : <LoaderKit
                             style={{ width: 50, height: 25, marginLeft: "6%" }}
                             name={'BallPulse'} // Optional: see list of animations below
@@ -640,6 +669,19 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
+    },
+    overlay: {
+        flex: 1,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
+        justifyContent: "center"
+        , alignItems: "center"
     }
 });
 export default CourseList;

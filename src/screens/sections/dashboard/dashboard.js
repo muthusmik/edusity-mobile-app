@@ -137,11 +137,11 @@ const Dashboard = () => {
                         backgroundColor={COLORS.primary}
                     />
                     <View style={{ height: "8%", flexDirection: "row", backgroundColor: COLORS.primary, borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                        <TouchableOpacity style={{ borderWidth: 0,flexDirection:"column",justifyContent:"center",marginLeft:"5%" }} onPress={() => navigation.goBack()}>
+                        {/* <TouchableOpacity style={{ borderWidth: 0,flexDirection:"column",justifyContent:"center",marginLeft:"5%" }} onPress={() => navigation.goBack()}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <View style={{ flexDirection: "column", width: "70%",justifyContent:"center",marginLeft:"2%" }}>
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, }}>DashBoard</Text>
+                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, }}>Dashboard</Text>
                         </View>
                         {/* <Pressable style={{ flexDirection: "column", justifyContent: "flex-end", padding: "5%" }} onPressIn={() => setDrop(!drop)}>
                             <Text style={{ color: COLORS.white, fontSize: RFValue(13), ...FONTS.robotoregular, }}> {userName} <Icon name='chevron-down' size={RFValue(10)} color={COLORS.white} /> </Text>

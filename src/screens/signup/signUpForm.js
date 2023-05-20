@@ -118,7 +118,7 @@ const Form = () => {
                     value={firstName}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     name={"FirstName"}
-                    leftIcon={<MCI name={'format-letter-case-lower'} size={18} style={{color:COLORS.primary}} />}
+                    //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}}  />}
                     onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
                     containerStyles={{padding:"5%"}}
                 />
@@ -132,10 +132,10 @@ const Form = () => {
                 <InputBox
                     inputOutline
                     label={'Last Name'}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
+                    customLabelStyle={{ ...FONTS.robotoregular,}}
                     value={lastName}
                     name={"LastName"}
-                    leftIcon={<MCI name={'format-letter-case-lower'} size={18} style={{color:COLORS.primary}} />}
+                    //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
                     onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
                 />
                 {formErrors && formErrors.lastName ?
@@ -153,7 +153,7 @@ const Form = () => {
                     value={email}
                     name={"Email"}
                     customLabelStyle={{ ...FONTS.robotoregular }}
-                    leftIcon={<MCI name={'email'} size={18} style={{color:COLORS.primary}} />}
+                    //leftIcon={<MCI name={'email'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
                     onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
                 />
                 {formErrors && formErrors.email ?
@@ -172,7 +172,7 @@ const Form = () => {
                     name={"Password"}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
-                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
+                    //rightIcon={<FontAwesome5 name={'eye'} size={23} style={{color:COLORS.primary,right:"40%"}}  />}
                     passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
                     secureTextEntry={true}
                     // rightIcon={<Image
@@ -198,7 +198,7 @@ const Form = () => {
                     value={confirmPassword}
                     secureTextEntry={true}
                     // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
-                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
+                    // rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
                     passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
@@ -215,7 +215,7 @@ const Form = () => {
                     inputOutline
                     label={'UserName'}
                     value={userName}
-                    leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
+                    //leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
                 />
@@ -230,11 +230,11 @@ const Form = () => {
                     label={'Phone'}
                     value={phone}
                     maxLength={10}
-                    leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
+                    // leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "phonenumber"), setPhone(e) }}
+                    onChangeText={e => { handleChange(e, "phoneNumber"), setPhone(e) }}
                 />
-                {formErrors && formErrors.phonenumber ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.phonenumber}</Text></View> : null}
+                {formErrors && formErrors.phoneNumber ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.phoneNumber}</Text></View> : null}
             </View>
             {/* <Text  style={{color: COLORS.black ,fontSize:RFValue(13),...FONTS.robotomedium, marginHorizontal: "10%",marginTop:"2%"}}>Choose your Role:</Text>
             <View style={{ width: "85%",borderWidth:0, flexDirection: "row", height: "10%", alignItems: "center", justifyContent: "space-around" }}>
@@ -253,11 +253,11 @@ const Form = () => {
                 </View> : null}
 
             <TouchableOpacity
-                style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%" }]}
+                style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%",marginBottom:"5%" }]}
                 onPress={e => { handleSubmit(e, 2) }}
             >
                 <LinearGradient
-                    style={{ height: '100%', width: '30%', alignItems: 'center', justifyContent: 'center', borderRadius: 20 }}
+                    style={{ height: '100%', width: '30%', alignItems: 'center', justifyContent: 'center', borderRadius: 20,margin:10 }}
                     colors={['#46aeff', '#5884ff']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}

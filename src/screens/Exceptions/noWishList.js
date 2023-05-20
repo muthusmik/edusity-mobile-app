@@ -27,11 +27,12 @@ const NoWishList = ({data}) => {
                 <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
             </View> */}
             <KeyboardAvoidingView style={styles.mainContainer}>
-
+                <TouchableOpacity onPress={()=>navigation.navigate("Home",{screen:"Search"})}>
                 <Image source={images.noWishlist} resizeMode="contain" style={{ height: 200, width: 200 }} />
+                </TouchableOpacity>
                 <View style={{ width: "80%", margin: "5%",alignItems:"center" }}>
                     <Text style={{ color: COLORS.black,textAlign:"center", fontSize: RFValue(16), ...FONTS.robotomedium }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Wish List is currently empty!</Text>
-                    <Pressable onPressIn={() => navigation.navigate("Home")}>
+                    <Pressable onPressIn={() => navigation.navigate("Home",{screen:"Search"})}>
                         <Text style={{ color: COLORS.primary, fontSize: RFValue(10), ...FONTS.robotoregular }}>Here's where you might find something you like!!!</Text>
                     </Pressable>
                 </View>

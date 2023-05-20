@@ -15,7 +15,7 @@ import AntIcon from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import OctIcon from 'react-native-vector-icons/Octicons'
 import WebView from 'react-native-webview';
-
+import LoaderKit from 'react-native-loader-kit'
 // import StarRating from 'react-native-star-rating-widget';
 import { viewCourseHandler } from '../../../store/redux/viewCourse';
 import { cartHandler } from '../../../store/redux/cart';
@@ -26,6 +26,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
+import { getWishListedCourses, wishListRemoverApi,wishListApi  } from '../../../services/wishlist';
 
 const ViewCourse = () => {
     // console.log("iam inside search allCourses");
@@ -38,20 +39,44 @@ const ViewCourse = () => {
     const Data = useSelector(state => state.viewCourse.data)
     // console.log(Data.data.recordsets[0][0].isPurchased, "Data")
     const [loader, setLoader] = useState(false);
+    const[addLoader,setAddLoader]=useState(false);
     const [token, setToken] = useState("");
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
     const [cartArray, setCartArray] = useState([]);
+    const[wishData,setWishData]=useState([]);
+    const[wishArr,setWishArr]=useState([]);
     const CartData = useSelector(state => state.cartList.data);
     //   console.log(CartData);
     const listData = Data?.data;
     // console.log("List in view ", listData);
-
+const wishListed=async(token)=>{
+  setAddLoader(true);
+    await getWishListedCourses(token).then(response =>
+        setWishData(response.data),
+        
+        // console.log("wishlist Data", WishData),
+      ).catch(err=>{
+        setAddLoader(false)
+      })
+}
+useEffect(()=>{
+    let ListWishId=[];
+    (wishData).forEach((element) => {
+        var Data = (element.ID);
+        ListWishId.push(Data);   
+    }
+    )
+    setWishArr(ListWishId);
+    setAddLoader(false)
+    console.log("Array", ListWishId)
+},[wishData])
     useEffect(() => {
         if (isFocused) {
             const initialLoading = async () => {
                 let newToken = await AsyncStorage.getItem("loginToken");
                 setToken(newToken);
+                wishListed(newToken);
             }
             
             NetInfo.addEventListener(state => {
@@ -68,16 +93,18 @@ const ViewCourse = () => {
     }, [isFocused, network])
 
     const handleAddCart = async (id) => {
-        // console.log("new token", network);
+    
         if(network){
         if (token) {
+            setAddLoader(true)
             //let result = await addtoCart(id, Token.data);
             let result = await addtoCart(id, token);
             // console.log(result, "hello");
-            dispatch(cartHandler(token));
+            dispatch(cartHandler(token))
         }
         else {
             navigation.navigate("Login");
+            setAddLoader(false)
         }
     }
     else{
@@ -125,18 +152,40 @@ const ViewCourse = () => {
                 //console.log(ListCartId, "Array")
             })
             setCartArray(ListCartId);
+            setAddLoader(false);
         }
     }, [CartData])
+cartHandler
+const addToWishlist=async(id)=>{
+    if(token){
+        await wishListApi(id,token).then(response=>
+            wishListed(token)
+            )
+    }
+    else{
+        navigation.navigate('Login')
+    }
+}
 
-    // const goToCart=()=>{
-    //     navigation.navigate("Cart");
-    // }
-// const handleWishlist=()=>{
-//       let wishlistedData = await wishListApi(Data[index].ID, key).then(data => { console.log("wishlisted",data) })
-// }
+const removeFromWishlist=async(id)=>{
+    if(token){
+        await wishListRemoverApi(id,token).then(response=>{
+            wishListed(token)
+            // console.log(response)
+        })
+    }
+    else{
+        navigation.navigate('Login')
+    }
+}
 
     return (
         <>
+         {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null}
+                
             {
                 (!listData || loader) ?
                     <View style={{ height: "100%", width: "100%", }}>
@@ -144,7 +193,21 @@ const ViewCourse = () => {
                             <ActivityIndicator size="large" />
                         </ImageBackground>
                     </View> :
+                    <View>
+                            {addLoader?
+                       <View style={styles.overlay} >
+                        {/* <ActivityIndicator size="large" color={COLORS.white} /> */} 
+                        <LoaderKit
+                        style={{ width: 50, height: 50,position:'absolute'}}
+                        name={'BallPulse'} // Optional: see list of animations below
+                        size={50} // Required on iOS
+                        color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                    />
+                    </View>
+                    :null}
+                    
                     <ScrollView style={styles.mainContainer} contentContainerStyle={{ paddingBottom: "5%", }} overScrollMode="never">
+                    
                         <View style={{ backgroundColor: "#e9ddf1",paddingBottom:"15%" }}>
                             <View style={{ width: "100%", flexDirection: "row", backgroundColor: COLORS.primary, borderBottomStartRadius: 35, borderBottomEndRadius: 35,paddingVertical:"3%" }}>
                                 <Pressable style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
@@ -159,9 +222,9 @@ const ViewCourse = () => {
                                 </View>
                                 <View style={{ flexDirection: "column", borderWidth: 0, justifyContent: "center", width: "20%" }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                                        <TouchableOpacity style={{ margin: "0%" }}>
+                                        {/* <TouchableOpacity style={{ margin: "0%" }}>
                                             <MCIcon name="share-variant" size={RFValue(18)} color={COLORS.white} />
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
                                         <TouchableOpacity style={{ margin: "0%" }} onPress={() =>navigation.navigate("Cart")}>
                                             <MCIcon name="cart-variant" size={RFValue(20)} color={COLORS.white} />
                                         </TouchableOpacity>
@@ -250,27 +313,36 @@ const ViewCourse = () => {
                         </View>
                         <View style={{ backgroundColor: COLORS.white }}>
                             <View>
-                                {(Data.data.recordsets[0][0].isPurchased === false) ?
+                                {/* {(Data.data.recordsets[0][0].isPurchased === false) ?
                                     <TouchableOpacity style={{ width: "90%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.primary, marginHorizontal: "5%", marginTop: "5%", padding: "3%" }}>
                                         <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Buy Now</Text>
                                     </TouchableOpacity> :
                                     null
-                                }
+                                } */}
                                 <View style={{ flexDirection: "row", width: "90%", marginHorizontal: "5%", marginTop: "5%" }}>
-                                    <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }}>
-                                        <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Wishlist</Text>
-                                    </TouchableOpacity>
-                                    {(Data.data.recordsets[0][0].isPurchased === false) ? (cartArray.includes(`${listData?.recordsets[0][0].ID}`)) ?
-                                        <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center",backgroundColor:COLORS.gray, margin: "1%", borderWidth: 1,borderColor:COLORS.gray, padding: "3%" }} onPress={() => handleNavigation()}>
-                                            <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
-                                        </TouchableOpacity> :<TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
-                                            <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Cart</Text>
-                                        </TouchableOpacity> :
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.black, flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handlePurchased()}>
-                                            <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Purchased</Text>
-                                        </TouchableOpacity>
 
-                                    }
+                                        {(Data.data.recordsets[0][0].isPurchased === false) ?
+                                            !(wishArr.includes(listData?.recordsets[0][0].ID)) ?
+                                                <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => addToWishlist(listData?.recordsets[0][0].ID)}>
+                                                    <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Wishlist</Text>
+                                                </TouchableOpacity> :
+                                                <TouchableOpacity style={{ flexDirection: "column", width: "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%", backgroundColor: COLORS.black }} onPress={() => removeFromWishlist(listData?.recordsets[0][0].ID)}>
+                                                    <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Remove from Wishlist</Text>
+                                                </TouchableOpacity>
+                                            :
+                                            null}
+
+                                        {(Data.data.recordsets[0][0].isPurchased === false) ? (cartArray.includes(`${listData?.recordsets[0][0].ID}`)) ?
+                                            <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.gray, margin: "1%", borderWidth: 1, borderColor: COLORS.gray, padding: "3%" }} onPress={() => handleNavigation()}>
+                                                <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
+                                            </TouchableOpacity> : <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
+                                                <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Cart</Text>
+                                            </TouchableOpacity> :
+                                            <TouchableOpacity style={{ backgroundColor: COLORS.black, flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handlePurchased()}>
+                                                <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Purchased</Text>
+                                            </TouchableOpacity>
+
+                                        }
                                     {/* {console.log("purchased", (Data.data.recordsets[0][0].isPurchased))} */}
 
                                     {/* {console.log("purchased3", (cartArray.includes(`${listData?.recordsets[0][0].ID}`)))} */}
@@ -321,7 +393,7 @@ const ViewCourse = () => {
                                             source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${listData?.recordsets[0][0].Description}` }}
                                             scalesPageToFit={false}
                                         />
-                                     {/* <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular, }}><AntIcon name="checkcircleo" size={13} color={COLORS.primary} /> {listData?.recordsets[0][0].Description} </Text> */}
+                                        {/* <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular, }}><AntIcon name="checkcircleo" size={13} color={COLORS.primary} /> {listData?.recordsets[0][0].Description} </Text> */}
                                     </View>
                                 </View> : null}
 
@@ -404,6 +476,7 @@ const ViewCourse = () => {
                                 </View> : null}
                         </View>
                     </ScrollView >
+                    </View>
             }
         </>
     );
@@ -528,6 +601,19 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         marginVertical: "2%",
         left: "3%"
-    }
+    },
+    overlay: {
+        flex: 1,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        width:"100%",
+        height:"100%",
+        zIndex:1,
+        justifyContent:"center"
+        ,alignItems:"center"
+      }  
 });
 export default ViewCourse;

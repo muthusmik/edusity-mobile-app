@@ -93,10 +93,14 @@ const ForgotPassword = ({ navigation }) => {
 
 return (
         <KeyboardAvoidingView style={styles.container}>
-              <StatusBar
+              {/* <StatusBar
                         animated={true}
                         backgroundColor={COLORS.primary}
-                    />
+                    /> */}
+                     {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
             <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
                         <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>

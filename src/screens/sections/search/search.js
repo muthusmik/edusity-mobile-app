@@ -28,11 +28,14 @@ const Search = ({ navigation }) => {
     const dispatch = useDispatch();
     const Token = useSelector((state) => state.loginHandle.data)
     const allCourses = useSelector((state) => state.courseList.data.data)
-    const [wishListed,setWishListed]=useState([false]);
+    // console.log("const allCourses = useSelector((state) => state.courseList.data.data)",allCourses)
+
+    const [wishListed, setWishListed] = useState([false]);
     const cartData = useSelector((state) => state.cartList.data.data)
+    console.log("All cartData inside the serach.js.........",cartData)
     const [isSearchLoader, setIsSearchLoader] = useState(false);
-    const cartCount= useSelector((state) => state.cartList.data.data);
-    //console.log(allCourses, "isSearchLoader")
+    const cartCount = useSelector((state) => state.cartList.data.data);
+
     const [Data, setData] = useState([]);
     const [network, setNetwork] = useState('')
     const [totalValue, setTotalValue] = useState(0);
@@ -41,20 +44,20 @@ const Search = ({ navigation }) => {
     // console.log("Network connection ",network);
     useEffect(() => {
         if (isFocused) {
-        setIsSearchLoader(true);
+            setIsSearchLoader(true);
             NetInfo.refresh().then(state => {
                 setNetwork(state.isConnected)
                 if (state.isConnected) {
                     initialLoading();
-                    
+
                 }
                 else {
-                setIsSearchLoader(false);
+                    setIsSearchLoader(false);
                     navigation.navigate("NetworkError");
                 }
             })
             // console.log("done n search")
-            
+
             const initialLoading = async () => {
                 let token = await AsyncStorage.getItem("loginToken");
                 if (token) {
@@ -83,7 +86,7 @@ const Search = ({ navigation }) => {
                         // console.log(" course list failed Inside catch", rejectedValueOrSerializedError);
                         setIsSearchLoader(false);
                     })
-                   
+
 
             }
 
@@ -114,10 +117,15 @@ const Search = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView style={styles.mainContainer}>
-              <StatusBar
-                        animated={true}
-                        backgroundColor={COLORS.primary}
-                    />
+            <StatusBar
+                animated={true}
+                backgroundColor={COLORS.primary}
+                style={{ marginBottom: "2%" }}
+            />
+            {Platform.OS == 'ios' ?
+                <View style={{ backgroundColor: COLORS.primary, height: "1%" }}>
+
+                </View> : null}
             {
                 (!allCourses || isSearchLoader) ?
                     <View style={{ height: "100%", width: "100%", }}>
@@ -130,14 +138,14 @@ const Search = ({ navigation }) => {
                             />
                         </ImageBackground>
                     </View> :
-                    <View style={{ height: "100%", width: "100%", zIndex: 20, position: 'absolute', }}>
-                        <View style={{ height: "11%", width: "100%", }}>
+                    <View style={{ height: "100%", width: "100%", position: 'relative' }}>
+                        <View style={{ height: "11%", width: "100%", zIndex: 100 }}>
                             <SearchScreen isSearchLoader={isSearchLoader} setIsSearchLoader={setIsSearchLoader} cartCount={cartCount} />
                         </View>
-                        <View style={{ width: "100%", paddingBottom: "6%", zIndex: -10, height: "92%" }}>
+                        <View style={{ width: "100%", paddingBottom: "6%", height: "92%" }}>
                             {/* {console.log("carrrrrrarrt", wishListed)} */}
-                 
-                            <CourseList allCourses={allCourses} cartData={cartData}  />
+
+                            <CourseList allCourses={allCourses} cartData={cartData} />
                         </View>
                     </View>
             }

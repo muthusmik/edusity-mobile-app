@@ -9,6 +9,7 @@ import { viewCourseHandler } from "../../../store/redux/viewCourse"
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { baseUrl } from '../../../services/constant'
 import { RFValue } from 'react-native-responsive-fontsize';
 import { TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -85,7 +86,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
 
     const suggestionCallApi = async (data) => {
         // const searchUrl = "https://backend-linux-login.azurewebsites.net/search/course?search=" + data;
-        const searchUrl =`https://livelogin.edusity.com/search/course?search=${data}`;
+        const searchUrl =`${baseUrl}search/course?search=${data}`;
         const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + Token }
         return await axios.get(searchUrl, { headers: headers }).then(response => {
             const suggestions = response.data.data

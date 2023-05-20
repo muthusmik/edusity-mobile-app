@@ -30,21 +30,25 @@ const MyCourseWishListTab = () => {
     const renderTabBar = props => (
         <TabBar
             {...props}
-            activeColor={COLORS.primary}
+            activeColor={"yellow"}
             inactiveColor={COLORS.black}
-            scrollEnabled={true}
             indicatorStyle={{
-                backgroundColor:COLORS.primary,  
+                backgroundColor: "yellow",
+                borderWidth: 1.8,
+                borderColor: "yellow"
             }}
-            contentContainerStyle={{width:"100%"}}
-            labelStyle={{ ...FONTS.robotoregular }}
-            style={{ backgroundColor: COLORS.white}}
-            // tabStyle={styles.tab}
+            contentContainerStyle={{ width: '100%' }}
+            labelStyle={{ ...FONTS.robotomedium }}
+            style={{ backgroundColor: COLORS.primary, flex: 0.07, justifyContent: 'space-between' }}
         />
+
     )
     return (
         <View style={{ height: "100%" }}>
-         
+            {/* {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null} */}
             <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
@@ -57,8 +61,8 @@ const MyCourseWishListTab = () => {
 }
 
 const styles = StyleSheet.create({
-    tab:{
-        width:"auto"
+    tab: {
+        width: "auto"
     }
 })
 

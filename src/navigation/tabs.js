@@ -41,8 +41,10 @@ const Tabs = () => {
     return (
         <Tab.Navigator
             initialRouteName={'Search'}
-            tabBarOptions={tabOptions}
+            // tabBarOptions={tabOptions}
             screenOptions={({ route }) => ({
+                tabBarShowLabel: false,
+                tabBarStyle: { backgroundColor: COLORS.primary },
                 tabBarIcon: ({ focused }) => {
                     const tintColor = focused ? "yellow" : COLORS.white;
 
@@ -114,27 +116,22 @@ const Tabs = () => {
                 name="MyCourse"
                 component={MyCourseWishListTab}
                 options={{
-                    title: <Text>MyCourses <Text style={{fontSize:8}}>and</Text> WishLists</Text>,
+                    title: <Text>MyCourses <Text style={{ fontSize: RFValue(8) }}>and</Text> WishLists</Text>,
                     headerLeft: () => (
-                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0}} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
+                        <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.navigate('Home', { screen: 'Search' })}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
                     ),
                     headerStyle: {
-                        backgroundColor: COLORS.primary,
-                        // borderBottomStartRadius: 30, 
-                        // borderBottomEndRadius: 30
+                        backgroundColor: COLORS.primary
                     },
                     headerTitleStyle: {
                         color: COLORS.white,
-                        // marginRight: "25%",
-                        right:"30%",
                         ...FONTS.robotoregular,
-                        borderWidth:0,
+                        borderWidth: 0,
                         fontSize: RFValue(16, 580)
                     }
                 }}
-
             />
             <Tab.Screen
                 name="Profile"
@@ -142,7 +139,7 @@ const Tabs = () => {
                 options={{
                     title: "Profile",
                     headerLeft: () => (
-                        <TouchableOpacity style={{ marginLeft: "20%",borderWidth:0 }} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
+                        <TouchableOpacity style={{ marginLeft: "20%", borderWidth: 0 }} onPress={() => navigation.navigate('Home', { screen: 'Search' })}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
                     ),
@@ -154,7 +151,7 @@ const Tabs = () => {
                     headerTitleStyle: {
                         color: COLORS.white,
                         ...FONTS.robotoregular,
-                        right:"115%",
+                        right: "115%",
                         fontSize: RFValue(16, 580)
                     }
                 }}

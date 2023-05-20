@@ -33,7 +33,7 @@ const AvatarTitle=(username?.slice(0, 2)).toUpperCase()
                     />
                 </View>
                 <View style={{ flexDirection: "column", height: "100%", width: "50%",  justifyContent: "center" }}>
-                    <Text style={{fontSize:RFValue(12),color:COLORS.black,...FONTS.robotomedium}}>HI,{username}</Text>
+                    <Text style={{fontSize:RFValue(12),color:COLORS.black,...FONTS.robotomedium}}>Hi, {username}</Text>
                     <Text style={{fontSize:RFValue(12),color:COLORS.primary,...FONTS.robotoregular}}>STUDENT DASHBOARD</Text>
                 </View>
                 <View style={{ flexDirection: "column", height: "100%", width: "30%",  alignItems: "center", justifyContent: "center" }}>

@@ -4,7 +4,7 @@ import {
     Text, Image,
     TouchableOpacity,
     Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView,
+    Pressable, FlatList, StyleSheet, KeyboardAvoidingView,StatusBar,Platform
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LoaderKit from 'react-native-loader-kit';
@@ -43,10 +43,14 @@ const CheckoutComplete = () => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
-            <View style={{ width: "100%", height: "5%", top: "3%" }}>
+                    {/* {Platform.OS=='ios'?
+                    <View style={{height:"5%"}}>
+
+                    </View>:null} */}
+            <View style={{ width: "100%", height: "5%" }}>
                 <TouchableOpacity style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
                     onPress={() => navigation.navigate('Cart')}
-                    >
+                >
                     <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                 </TouchableOpacity>
             </View>

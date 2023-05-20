@@ -1,63 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text, Image,
-    TouchableOpacity,
-    Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView,
-} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { StripeProvider, usePaymentSheet } from '@stripe/stripe-react-native';
+import axios from 'axios';
 import 'intl';
-import { RFValue } from 'react-native-responsive-fontsize';
+import React, { useEffect, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, Pressable, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions } from 'react-native';
 import LoaderKit from 'react-native-loader-kit';
-import { images, icons, COLORS, FONTS, SIZES } from "../constants";
+import { Colors } from 'react-native-paper';
+import RazorpayCheckout from 'react-native-razorpay';
+import { RFValue } from 'react-native-responsive-fontsize';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
+import { COLORS, FONTS } from "../constants";
+import { cartListUrl, checkoutUrl, intentPayment } from '../services/constant';
 import { cartHandler } from '../store/redux/cart';
-import { Colors } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 import { viewCourseHandler } from '../store/redux/viewCourse';
-import { deleteItemUrl, cartListUrl } from '../services/constant';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// import "../assets/icons/edusity-logo.png"
-//Sham Changes
-// import StripePopup from "../StripePopup";
-import RazorpayCheckout from 'react-native-razorpay';
-import Toast from 'react-native-simple-toast';
-// import NoData from './noCartData';
 import NoData from './Exceptions/noCartData';
-import { useIsFocused } from '@react-navigation/native';
-import NetInfo from '@react-native-community/netinfo';
-import { checkoutUrl } from '../services/constant';
-
+import { razorpayKeyLive, stripepayKeyLive } from '../services/constant';
 const Cart = () => {
+    const { width, height } = Dimensions.get('window');
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
-
+    const [ready, setReady] = useState(false);
     const [Token, setToken] = useState("");
     const cartData = useSelector((state) => state.cartList.data)
-    // console.log("thor....",cartData)
-    // const loader=useSelector((state) => state.loginHandle.loading)
-    // const carValueData = useSelector((state) => state.cartList)
+    const Geolocation = useSelector((state) => state.geoLocationPicker);
     const [showloader, SetLoader] = useState(false);
     const [Data, setData] = useState([]);
     const [totalValue, setTotalValue] = useState(0);
     const [loader, setLoader] = useState(false);
-    //sham changes
+    const [addLoader, setAddLoader] = useState(false);
     const LoginData = useSelector(state => state.userLoginHandle.data)
-    const [overlay, setOverlay] = useState(null);
     const [dataSession, setDataSession] = useState();
-    // const [modalVisible, setModalVisible] = useState(false);
-    // const popupCloseHandler = (e) => {
-    //     console.log("im inside the close handler");
-    //     setOverlay((state) => !state);
-    // };
-    // console.log("iam inside...............", LoginData.data);
     const username = LoginData?.data?.userName;
+    const {
+        initPaymentSheet,
+        presentPaymentSheet,
+        loading,
+        resetPaymentSheetCustomer,
+    } = usePaymentSheet();
+
+
+
+
+
     useEffect(() => {
+        console.log("ia ma inside the focusted");
         if (isFocused) {
             NetInfo.refresh().then(state => {
                 setNetwork(state.isConnected)
@@ -69,19 +61,22 @@ const Cart = () => {
                 }
             })
             const initialLoading = async () => {
+                console.log("initial loading");
                 let token = await AsyncStorage.getItem("loginToken");
                 setLoader(true);
                 if (token) {
+                    console.log("token ....................", token);
                     setToken(token)
                     dispatch(cartHandler(token)).then(unwrapResult)
                         .then((originalPromiseResult) => {
                             setData(originalPromiseResult.data.Courses);
+                            //console.log("Data",Data[0].TotalAmount);
+                            //initialisePaymentSheet();
 
-                            // console.log(originalPromiseResult.data.Courses,"Courses")
                         })
                         .catch((rejectedValueOrSerializedError) => {
-                            // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
                             setLoader(false);
+                            console.log("error", rejectedValueOrSerializedError);
                         })
                 } else {
                     setLoader(false);
@@ -91,7 +86,25 @@ const Cart = () => {
 
         }
     }, [isFocused, network])
+    {/* ******************** */ }
+    useEffect(() => {
+        // console.log(cartData,"cartData2");
+        let cartValue = 0
+        let course = cartData?.data?.Courses;
+        // console.log(course,"course detail")
+        setData(cartData);
+        for (let i = 0; i < course?.length; i++) {
+            cartValue = cartValue + course[i].enrollmentFee;
 
+        }
+        setTotalValue(cartValue);
+        initialisePaymentSheet(cartValue);
+        //fetchPaymentSheetParams();
+
+        setLoader(false);
+
+    }, [cartData])
+    {/* ******************** */ }
     const handleViewNavigation = (item) => {
         SetLoader(true);
         dispatch(viewCourseHandler(item)).then(unwrapResult)
@@ -105,58 +118,171 @@ const Cart = () => {
             })
 
     }
+    {/* ******************** */ }
     const callCart = () => {
         SetLoader(true);
         dispatch(cartHandler(Token)).then(unwrapResult)
             .then((originalPromiseResult) => {
                 // console.log("CartList ", originalPromiseResult);
                 setData(originalPromiseResult.data.Courses);
-                SetLoader(false);
+                setAddLoader(false);
             })
             .catch((rejectedValueOrSerializedError) => {
                 // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
-                SetLoader(false);
+                setAddLoader(false);
             })
     }
+    {/* ******************** */ }
+    const removeItem = async (id) => {
+        console.log(id, "............................id", Data)
+        setAddLoader(true);
+        return axios
+            .delete(cartListUrl + `/${id}?country=IN&isBundle=0`, {
+                headers: {
+                    Authorization: `Bearer ${Token}`,
+                },
+            })
+            .then((response) => {
+                console.log("im th Removal item token..................", Token)
+                callCart();
+                console.log("........................................response", response.data)
+                SetLoader(false);
+                return response.data;
+            })
+            .catch(err => { console.log(err, "error listed"), setAddLoader(false); })
+    }
+    {/* ******************** */ }
+    const deleteCart = async () => {
+        setAddLoader(true);
+        await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
+            .then(response => {
+                callCart()
+            })
+            .catch(err => { console.log(err, "error listed"), SetLoader(false) })
+    }
+    {/* ******************** */ }
+    const LoaderActivity = () => {
+        return (
+            <View style={{ width: "100%", alignItems: "center", paddingBottom: "5%", height: "100%", justifyContent: "center" }}>
+                <LoaderKit
+                    style={{ width: 50, height: 55 }}
+                    name={'BallPulse'} // Optional: see list of animations below
+                    size={30} // Required on iOS
+                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
+                />
+            </View>
+        )
+    }
+    {/* ******************** */ }
+    const fetchPaymentSheetParams = async (cartvalue) => {
 
+        let Token = await AsyncStorage.getItem("loginToken")
+        console.log("stripe", Token, cartvalue)
+        const response = await axios.post(intentPayment, { 'amount': cartvalue }, {
+            headers: {
+                'Authorization': `Bearer ${Token}`,
+            },
+        })
+            .then((response) => {
+                //let response = data?.data.data;
+                console.log("payment data", response?.data.data);
+                return response?.data.data
+            })
+            .catch(err => {
+                console.log("error in fetching", err);
+            });
+        console.log("ressspppoooonnsee...", response);
+        const { paymentIntent, ephemeralKey, customer } = response;
+        console.log(paymentIntent, "......", ephemeralKey, ".....", customer)
+        return {
+            paymentIntent,
+            ephemeralKey,
+            customer,
+        };
+    };
+    {/* Stripe Payment Intent ******************** */ }
+    const initialisePaymentSheet = async (cartvalue) => {
+        console.log("initial payment sheet");
+        const { paymentIntent, customer, ephemeralKey } = await fetchPaymentSheetParams(cartvalue);
+        console.log("jjjj", paymentIntent, "jjjj", customer, "jjjj", ephemeralKey);
+        const { error } = await initPaymentSheet({
+            customerId: customer,
+            customerEphemeralKeySecret: ephemeralKey,
+            appearance: {
+                colors: {
+                    primary: '#e06c75',
+                    background: '#282c34',
+                    componentBackground: '#abb2bf',
+                    componentDivider: '#e5c07b',
+                    primaryText: '#61afef',
+                    secondaryText: '#c678dd',
+                    componentText: '#282c34',
+                    icon: '#e06c75',
+                    placeholderText: '#ffffff',
+                },
+                shapes: {
+                    borderRadius: 25,
+                },
+            },
+            paymentIntentClientSecret: paymentIntent,
+            merchantDisplayName: 'Edusity Inc.',
+            applePay: {
+                merchantCountryCode: 'US',
+            },
+            googlePay: {
+                merchantCountryCode: 'US',
+                testEnv: true,
+                currencyCode: 'usd',
+            },
+            allowsDelayedPaymentMethods: true,
+            returnURL: 'stripe-example://stripe-redirect',
+        });
+        if (error) {
+            Alert.alert(`Error code: ${error.code}`, error.message);
+        } else {
+            console.log("Readyyyyyyy....", error)
+            setReady(true);
+        }
+    };
 
-    //sham changes
-    const handleMakePayment = (Data) => {
+    const AlertPayment = () => {
+        Alert.alert(
+            "Checkout by logging in via Web Application 'edusity.com'",
+            "currently the payment option is not enabled in the application",
+            [
+
+                { text: "OK" }
+            ]
+        );
+    }
+    {/* Payment with regards to Location ******************** */ }
+    const handleMakePayment = async (Data) => {
+        console.log("eslection country", Geolocation.countryCode);
+        // if(Geolocation.countryCode=="IN"){
         const session = Data[0].SessionID;
         setDataSession(session);
-        // console.log("iam inside search value of cartvalueData", totalValue);
-        let pricing = (totalValue * 100).toString();
-        // console.log("iam inside search value of cartvalueData",pricing);
+        console.log("session", session, Geolocation)
+        let pricing = Data[0].TotalAmount * 100
         var options = {
             name: "Edusity",
             description: "Test Transaction",
             image: "../assets/icons/edusity-logo.png",
-            key: "rzp_test_0YBgt6YFSNUirq",
+            key: razorpayKeyLive,
             order_id: dataSession,
-            currency: 'USD',
+            currency: 'INR',
             amount: pricing,
             prefill: {
-                name: "buusha",
-                email: "buusha.br@gmail.com",
-                contact: 8939423416,
+                name: LoginData.data.firstName,
+                email: LoginData.data.email,
+                contact: "",
             },
         }
-        // console.log("im the checkout................",options)
-        // RazorpayCheckout.open(options).then((data) => {
-        //     // handle success
-        //     alert(`Success: ${data.razorpay_payment_id}`);
-        //   }).catch((error) => {
-        //     // handle failure
-        //     alert(`Error: ${error.code} | ${error.description}`);
-        //   });
+
         RazorpayCheckout.open(options)
             .then(async (result) => {
                 // alert(`Success: ${result.razorpay_payment_id}`);
                 let Token = await AsyncStorage.getItem("loginToken");
                 var sessionId = { "sessionId": result.razorpay_payment_id }
-                // console.log("Im inisde the data of Cart page....", result)
-
-                //let cartremoval = `https://backend-linux-payment.azurewebsites.net/v2/checkout?country=IN`;
                 const response = await axios.post(checkoutUrl + "?country=IN", sessionId, {
                     headers: {
                         Authorization: `Bearer ${Token}`,
@@ -174,8 +300,41 @@ const Cart = () => {
             .catch(error => {
                 // Toast.show(error, "RazorPay Rejection", Toast.LONG);
                 alert(`Error: ${error.description}`);
+                navigation.goBack();
                 // console.log("im th echeckout error.................", error);
             });
+        // }
+        // else{
+        // console.log("India");
+        //     const {error} = await presentPaymentSheet();
+        //     if (error) {
+        //       Alert.alert(`Error code: ${error.code}`, error.message);
+        //       console.log("session",Data[0].SessionID);
+        //     } else {
+        //       Alert.alert('Success', 'The payment was confirmed successfully');
+
+        //       setReady(false);
+        //         const session = Data[0].SessionID;
+        //         // console.log(Data[0].SessionId)
+        //         const response = await axios.post(checkoutUrl + "?country=IN", {"sessionId":session}, {
+        //             headers: {
+        //                 Authorization: `Bearer ${Token}`,
+        //             }
+        //         }).then(result => {
+        //             console.log(result, "result stripe",result);
+
+        //             navigation.navigate('Checkout')
+        //         }).catch(err => {
+        //             console.log("err in removal", err)
+        //         });
+
+
+
+
+
+        //     }
+        // }
+
     };
     // useEffect(() => {
     //     // console.log("im the setoverlay value", overlay)
@@ -252,85 +411,34 @@ const Cart = () => {
     //             Toast.show(BushaoriginalPromiseResult.errormessage, "RazorPay Rejection", Toast.LONG);
     //         });
     // }
-    const removeItem = async (id) => {
-        // console.log(id, "............................id")
-        SetLoader(true);
-        //let removeUrl = `https://backend-linux-payment.azurewebsites.net/v2/cart/${id}?country=IN&isBundle=0`
-        return axios
-            .delete(cartListUrl + "/${id}?country=IN&isBundle=0", {
-                headers: {
-                    Authorization: `Bearer ${Token}`,
-                },
-            })
-            .then((response) => {
-                // console.log("im th Removal item token..................", Token)
-                callCart();
-                console.log("........................................response", response.data)
-                SetLoader(false);
-                return response.data;
-            })
-            .catch(err => { console.log(err, "error listed"), SetLoader(false); })
-    }
-    const deleteCart = async () => {
 
-        await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
-            .then(response => {
-                // console.log(response.data);
-                callCart()
-            })
-            .catch(err => { console.log(err, "error listed"), SetLoader(false) })
-    }
-    useEffect(() => {
-        // console.log(cartData,"cartData2");
-        let cartValue = 0
-        let course = cartData?.data?.Courses;
-        // console.log(course,"course detail")
-        setData(cartData);
-        for (let i = 0; i < course?.length; i++) {
-            cartValue = cartValue + course[i].enrollmentFee;
-
-        }
-        setTotalValue(cartValue);
-        setLoader(false);
-
-    }, [cartData])
-    // console.log("im the cart data in cart page", Data)
-
-    const LoaderActivity = () => {
-        return (
-            <View style={{ width: "100%", alignItems: "center", paddingBottom: "5%", height: "100%", justifyContent: "center" }}>
-                <LoaderKit
-                    style={{ width: 50, height: 55 }}
-                    name={'BallPulse'} // Optional: see list of animations below
-                    size={30} // Required on iOS
-                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
-                />
-            </View>
-        )
-    }
     return (
-        <>
+        <StripeProvider
+            publishableKey={stripepayKeyLive}
+            merchantIdentifier="merchant.com.EdusityMobi"
+        >
             <KeyboardAvoidingView style={styles.mainContainer}>
-                    <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                            <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
-                        </TouchableOpacity>
-                        <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
+                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
+                    </TouchableOpacity>
+                    <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
+                </View>
+                {addLoader ?
+                    <View style={styles.overlay} >
+                        {/* <ActivityIndicator size="large" color={COLORS.white} /> */}
+                        <LoaderKit
+                            style={{ width: 50, height: 50, position: 'absolute' }}
+                            name={'BallPulse'} // Optional: see list of animations below
+                            size={50} // Required on iOS
+                            color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                        />
                     </View>
-
+                    : null}
                 {(!loader) ?
-
                     (Data.length > 0) ?
                         <>
-                            {/* <View style={{ backgroundColor: COLORS.white }}>
-                                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
-                                    </TouchableOpacity>
-                                    <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
-                                </View>
-                            </View> */}
-                            <View style={{ color: COLORS.black, backgroundColor: COLORS.lightGray, height: "78%" }}>
+                            <View style={{ color: COLORS.black, backgroundColor: COLORS.lightGray, height: height / 1.3 }}>
                                 <FlatList
                                     data={Data}
                                     scrollEnabled={true}
@@ -364,7 +472,7 @@ const Cart = () => {
                                     )}
                                 />
                             </View>
-                            <View style={{ color: COLORS.black, backgroundColor: COLORS.white, height: "18%" }}>
+                            <View style={{ backgroundColor: COLORS.white, height: "18%" }}>
                                 <View style={{ flexDirection: "row", height: "40%", width: "100%" }}>
                                     <View style={{ flexDirection: "column", width: "40%", alignItems: "flex-start" }}>
                                         <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "8%", fontSize: RFValue(10), ...FONTS.robotomedium }}>Total items :{(cartData?.data?.Courses)?.length}</Text>
@@ -383,10 +491,10 @@ const Cart = () => {
                                         </TouchableOpacity>
                                     </View>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => handleMakePayment(Data)}>
-                                            <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Secure Checkout
-                                                {'\n'}
-                                                <Text style={{ color: COLORS.white, marginHorizontal: "5%", fontSize: RFValue(8), ...FONTS.robotoregular, textAlign: "center" }}>You Will Be Redirected To Razor Pay </Text>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => AlertPayment()/* handleMakePayment(Data) */}>
+                                            <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Proceed
+                                                {/* {'\n'} */}
+                                                {/* <Text style={{ color: COLORS.white, marginHorizontal: "5%", fontSize: RFValue(8), ...FONTS.robotoregular, textAlign: "center" }}>You Will Be Redirected To Razor Pay </Text> */}
                                             </Text>
 
                                         </TouchableOpacity>
@@ -416,14 +524,14 @@ const Cart = () => {
 
 
             </KeyboardAvoidingView>
-        </>
+        </StripeProvider>
     );
 }
 const styles = StyleSheet.create({
     mainContainer: {
         height: "100%",
         width: "100%",
-        backgroundColor:COLORS.white
+        backgroundColor: COLORS.lightGray,
     },
     mainTouchable: {
         margin: "2%",
@@ -501,6 +609,19 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
         ...FONTS.robotoregular
+    },
+    overlay: {
+        flex: 1,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.5,
+        backgroundColor: 'black',
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
+        justifyContent: "center"
+        , alignItems: "center"
     }
 });
 export default Cart;

@@ -2,8 +2,6 @@ import React,{useState,useEffect} from "react";
 import axios from "axios";
 import { useSelector,useDispatch } from "react-redux";
 import { getPurchasedUrl } from "./constant";
-import { Platform } from "react-native";
-import { View } from "react-native";
 
 export const purchasedCourses = async (Token,page) => {
   // const Token=useSelector(state=>state.loginHandle.data.data);
@@ -20,3 +18,5 @@ export const purchasedCourses = async (Token,page) => {
         return(res)
       });
   };
+
+    

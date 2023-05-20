@@ -37,35 +37,35 @@ const useForm = (validate) => {
         }
         break;
       case 2: console.log("Sign Page");
-        if (formValues.firstName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.phonenumber) {
+        if (formValues.firstName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.phoneNumber) {
           setFormErrors(validate(formValues));
         }
         else {
-          if (!formValues.firstName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.phonenumber) {
+          if (!formValues.firstName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.phoneNumber) {
             let Error = { "signundef": "First Name is required!" }
             setFormErrors(Error);
           }
-          else if (!formValues.lastName && formValues.firstName && formValues.email && formValues.password && formValues.password2 && formValues.phonenumber) {
+          else if (!formValues.lastName && formValues.firstName && formValues.email && formValues.password && formValues.password2 && formValues.phoneNumber) {
             let Error = { "signundef": "Last Name is required!" }
             setFormErrors(Error);
           }
-          else if (!formValues.email && formValues.lastName && formValues.firstName && formValues.password && formValues.password2 && formValues.phonenumber) {
+          else if (!formValues.email && formValues.lastName && formValues.firstName && formValues.password && formValues.password2 && formValues.phoneNumber) {
             let Error = { "signundef": "Email is required!" }
             setFormErrors(Error);
           }
-          else if (!formValues.password && formValues.lastName && formValues.email && formValues.firstName && formValues.password2 && formValues.phonenumber) {
+          else if (!formValues.password && formValues.lastName && formValues.email && formValues.firstName && formValues.password2 && formValues.phoneNumber) {
             let Error = { "signundef": "Password is required!" }
             setFormErrors(Error);
           }
-          else if (!formValues.password2 && formValues.lastName && formValues.email && formValues.password && formValues.firstName && formValues.phonenumber) {
+          else if (!formValues.password2 && formValues.lastName && formValues.email && formValues.password && formValues.firstName && formValues.phoneNumber) {
             let Error = { "signundef": "Confirm password is required!" }
             setFormErrors(Error);
           }
-          // else if (!formValues.userName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.firstName && formValues.phonenumber) {
+          // else if (!formValues.userName && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.firstName && formValues.phoneNumber) {
           //   let Error = { "signundef": "User Name is required!" }
           //   setFormErrors(Error);
           // }
-          else if (!formValues.phonenumber && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.firstName) {
+          else if (!formValues.phoneNumber && formValues.lastName && formValues.email && formValues.password && formValues.password2 && formValues.firstName) {
             let Error = { "signundef": "Mobile Number is required!" }
             setFormErrors(Error);
           }

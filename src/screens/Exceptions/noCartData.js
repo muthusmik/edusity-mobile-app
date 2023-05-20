@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
     View,
-    Text, 
+    Text,
     Image,
     TouchableOpacity,
     Modal,
     Pressable,
     FlatList,
-    StyleSheet, 
+    StyleSheet,
     KeyboardAvoidingView,
+    Dimensions
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LoaderKit from 'react-native-loader-kit';
@@ -20,7 +21,9 @@ import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const NoData = ({data}) => {
+const { width, height } = Dimensions.get('window');
+const NoData = ({ data }) => {
+
     const navigation = useNavigation();
     return (
         <>
@@ -45,11 +48,11 @@ const NoData = ({data}) => {
 }
 const styles = StyleSheet.create({
     mainContainer: {
-        height: "100%",
+        height: height / 1.09,
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:COLORS.white,
+        backgroundColor: COLORS.white
     },
 });
 export default NoData;
