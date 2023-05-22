@@ -20,7 +20,7 @@ import { courseListHandler } from '../../../store/redux/courseList';
 import { cartHandler } from '../../../store/redux/cart';
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
-
+import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 
 const Search = ({ navigation }) => {
     // console.log("iam inside search", Token);
@@ -32,7 +32,7 @@ const Search = ({ navigation }) => {
 
     const [wishListed, setWishListed] = useState([false]);
     const cartData = useSelector((state) => state.cartList.data.data)
-    console.log("All cartData inside the serach.js.........",cartData)
+    console.log("All cartData inside the serach.js.........", cartData)
     const [isSearchLoader, setIsSearchLoader] = useState(false);
     const cartCount = useSelector((state) => state.cartList.data.data);
 
@@ -75,6 +75,7 @@ const Search = ({ navigation }) => {
                         .catch((rejectedValueOrSerializedError) => {
                             // console.log(" Inside catch", rejectedValueOrSerializedError);
                         })
+                    dispatch(getWishListDataHandler(token))
                 }
                 // console.log("Search.............................")
                 dispatch(courseListHandler(token)).then(unwrapResult)
@@ -122,10 +123,7 @@ const Search = ({ navigation }) => {
                 backgroundColor={COLORS.primary}
                 style={{ marginBottom: "2%" }}
             />
-            {Platform.OS == 'ios' ?
-                <View style={{ backgroundColor: COLORS.primary, height: "1%" }}>
-
-                </View> : null}
+            {Platform.OS == 'ios' ? <View style={{ backgroundColor: COLORS.primary, height: "1%" }} /> : null}
             {
                 (!allCourses || isSearchLoader) ?
                     <View style={{ height: "100%", width: "100%", }}>

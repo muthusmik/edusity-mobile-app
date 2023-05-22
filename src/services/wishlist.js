@@ -8,12 +8,12 @@ export const wishListApi = async (payload, token) => {
     let data = { "courseId": payload }
     const headers = { Authorization: `Bearer ${token}` }
     // console.log("url",url,"rr",headers)
-    await axios.post(url, data, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+    return await axios.post(url, data, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
         // console.log("response")
         // console.log("finalData", response.data)
         return response.data
     }).catch((err) => {
-        console.log(err)
+        console.log("Catch inside the wishlistApi.........", err)
     })
 }
 export const wishListRemoverApi = async (payload, token) => {
@@ -21,12 +21,12 @@ export const wishListRemoverApi = async (payload, token) => {
     let data = { "courseId": payload }
     const headers = { Authorization: `Bearer ${token}` }
     console.log("deletedd.............................................")
-    await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
+    return await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } }).then(response => {
         console.log("response deletedddd.", response.data)
         // console.log("finalData", response.data)
         return response.data
     }).catch((err) => {
-        console.log(err)
+        return err
     })
 }
 
@@ -42,7 +42,7 @@ export const getWishListedCourses = async (Token) => {
 
         })
         .catch((res) => {
-            //   console.log(res);
+            console.log("Catch of getWishListedCourses............", res);
             return (res)
         });
 };

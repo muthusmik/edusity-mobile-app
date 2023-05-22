@@ -1,28 +1,29 @@
-import {configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import loginHandleReducer from "./redux/login/";
 import signUpHandleReducer from "./redux/signup";
-import  forgotPasswordHandleReducer from './redux/forgotPassword';
+import forgotPasswordHandleReducer from './redux/forgotPassword';
 import userLoginHandleReducer from './redux/userLogin';
 import courseListReducer from "./redux/courseList";
-import  viewCourseReducer from './redux/viewCourse';
-import  geoLocationReducer  from './redux/geoLocation';
-import cartListReducer  from './redux/cart';
-const store=configureStore({
-    reducer:{
-        loginHandle:loginHandleReducer,
-        signUpHandle:signUpHandleReducer,
-        forgotPasswordHandle:forgotPasswordHandleReducer,
-        userLoginHandle:userLoginHandleReducer,
-        courseList:courseListReducer,
-        viewCourse:viewCourseReducer,
-        geoLocationPicker:geoLocationReducer,
-        cartList:cartListReducer,
-
+import viewCourseReducer from './redux/viewCourse';
+import geoLocationReducer from './redux/geoLocation';
+import cartListReducer from './redux/cart';
+import getWishListReducer from './redux/getWishListData';
+const store = configureStore({
+    reducer: {
+        loginHandle: loginHandleReducer,
+        signUpHandle: signUpHandleReducer,
+        forgotPasswordHandle: forgotPasswordHandleReducer,
+        userLoginHandle: userLoginHandleReducer,
+        courseList: courseListReducer,
+        viewCourse: viewCourseReducer,
+        geoLocationPicker: geoLocationReducer,
+        cartList: cartListReducer,
+        getWishList: getWishListReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         immutableCheck: false,
         serializableCheck: false,
-      })
+    })
 })
 
 export default store;

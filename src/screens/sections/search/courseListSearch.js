@@ -27,19 +27,21 @@ import NetInfo from "@react-native-community/netinfo";
 import { useIsFocused } from "@react-navigation/core";
 import { baseUrl, baseUrl_payment } from '../../../services/constant';
 import { getWishListedCourses } from '../../../services/wishlist';
+import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 
 const CourseList = ({ allCourses, cartData }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const childRef = useRef(null);
     const ScrollRef = useRef(null);
-    const redxitems = useSelector(state => state.courseList.data.data);
-    // console.log("Inside the courseListSearsch.js allCourses.........", allCourses)
+    const redxitems = useSelector(state => state?.courseList?.data?.data);
+    const getWishListData = useSelector(state => state?.getWishList?.data?.data)
+    // console.log("Inside the courseListSearsch.js allCourses.........", getWishListData)
     // console.log("Inside the courseListSearsch.js cartData.........", cartData)
     const [cartArray, setCartArray] = useState([]);
 
-    const totalPage = redxitems.total_page;
-    const totalCourses = redxitems.total;
+    const totalPage = redxitems?.total_page;
+    const totalCourses = redxitems?.total;
     // console.log("iam inside search redxitemss", allCourses.data[0].isWishlisted);
     const [flalistRefresh, setFlatListRefresh] = useState(false);
     const [showHeart, setShowHeart] = useState([]);
@@ -71,16 +73,18 @@ const CourseList = ({ allCourses, cartData }) => {
             });
         }
     }, [isFocused, network])
-    const handleWishlist = async (index) => {
+
+    const handleWishlist = async (itemId) => {
+        console.log("Item Id............", itemId)
         if (network) {
-            if (showHeart[index] == 0) {
-                showHeart[index] = 1;
-                setShowHeart(showHeart)
-                let wishlistedData = await wishListApi(Data[index].ID, key).then(data => { console.log("wishlisted", data) })
+            if (!showHeart.includes(itemId)) {
+                console.log("Exclis", !showHeart.includes(itemId))
+                // setShowHeart(showHeart)
+                let wishlistedData = await wishListApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
             } else {
-                showHeart[index] = 0;
-                setShowHeart(showHeart)
-                let wishlistedData = await wishListRemoverApi(Data[index].ID, key).then(data => { console.log("wishlisted", data) })
+                console.log("Iclsive", showHeart.includes(itemId))
+                // showHeart.append(itemId)
+                let wishlistedData = await wishListRemoverApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
             }
             setFlatListRefresh(!flalistRefresh);
         }
@@ -88,8 +92,8 @@ const CourseList = ({ allCourses, cartData }) => {
             navigation.navigate("NetworkError");
         }
     }
-    const handleAddCart = async (id) => {
 
+    const handleAddCart = async (id) => {
         // console.log("new token", key);
         if (network) {
             if (key) {
@@ -274,13 +278,14 @@ const CourseList = ({ allCourses, cartData }) => {
                 setKey(newToken);
                 console.log("6 setdatasde");
                 setData(allCourses.courses)
-                let wishListedCourses = await getWishListedCourses(newToken).then(response => {
-                    console.log("Response for wishListed data.........", response);
-                }).catch((error) => {
-                    console.log("error.........", error);
-                })
-
-                setShowHeart(allCourses.courses.map(a => a.isWishlisted))
+                // let wishListedCourses = await getWishListedCourses(newToken).then(response => {
+                //     console.log("Response for wishListed data.........", response.data);
+                //     return response.data
+                // }).catch((error) => {
+                //     console.log("error.........", error);
+                // })
+                // console.log("wishListedCourses............after login...", wishListedCourses)
+                setShowHeart(getWishListData.map(a => a.ID))
                 // console.log("there........................",Data)
                 setRefreshList(false);
                 SetLoader(false)
@@ -405,7 +410,6 @@ const CourseList = ({ allCourses, cartData }) => {
                 {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
                 {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)}
                 {(Data?.length !== 0 && showHeart.length > 0) ?
-
                     <>
                         <FlatList
                             data={Data}
@@ -419,7 +423,7 @@ const CourseList = ({ allCourses, cartData }) => {
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
                                 <View style={styles.mainTouchable}>
-                                    {/* {console.log("Dataaaaaaa",Data[0].CourseName)} */}
+                                    {/* {console.log("Dataaaaaaa", item.ID)} */}
                                     {/* {console.log("GTfrfrfrfrfrfrfr",item)} */}
                                     <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
                                         <View style={{ width: "100%", flexDirection: "row" }}>
@@ -455,9 +459,9 @@ const CourseList = ({ allCourses, cartData }) => {
                                                         <Text style={{ fontSize: RFValue(16), marginVertical: "2%", color: COLORS.black, ...FONTS.robotomedium }}>{(item.CourseName) ? item.CourseName : "N/A"}{"\n"}
                                                             <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
                                                     </View>
-                                                    {key ? <TouchableOpacity onPress={() => handleWishlist(index)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                                                        {console.log("Showherat......", showHeart[index] == 0, index, showHeart[index], showHeart)}
-                                                        {(showHeart[index] == 0) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
+                                                    {key ? <TouchableOpacity onPress={() => handleWishlist(item.ID)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
+                                                        {console.log("Showherat......", showHeart[index] == 0, index, item.ID, showHeart, showHeart.includes(item.ID))}
+                                                        {!(showHeart.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
                                                             <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
                                                     </TouchableOpacity> : null}
                                                 </View>

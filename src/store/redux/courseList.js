@@ -11,7 +11,7 @@ export const courseListHandler = createAsyncThunk('posts/courseListcall', async 
     let courseUrl = courseListUrl + "?page=1";
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     return await axios.post(courseUrl, { headers: headers }).then((response) => {
-        console.log("Success response for courseListUrl.........", response.data)
+        console.log("Success response for courseListUrl.........", response.data.data.courses)
         return response.data
     }).catch((err) => {
         console.log("Inisde Catch Error response for courseListUrl.........", err)

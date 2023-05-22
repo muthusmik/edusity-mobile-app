@@ -3,8 +3,8 @@ import { SafeAreaView } from 'react-native';
 // import JitsiMeet, { JitsiMeetView } from 'react-native-jitsi-meet';
 import 'react-native-gesture-handler' ; 
 const VideoCall = ({route}) => {
-    const Data=route.params.data.data;
-    console.log("Route Params",route.params.data.data)
+    // const Data=route.params.data.data;
+    console.log("Route Params inside the jitsiMeet..........",route)
   const onConferenceTerminated = (nativeEvent) => {
     /* Conference terminated event */
     console.log('conference terminated joined')
@@ -24,15 +24,15 @@ const VideoCall = ({route}) => {
 
   useEffect(() => {
     //setTimeout(() => {
-      const url = `https://conf.edusity.com/${Data.room}`; // can also be only room name and will connect to jitsi meet servers
-      const userInfo = { displayName: Data.name, email:  Data.email, avatar: ''};
-      const options = {
-        audioMuted: false,
-        audioOnly: false,
-        videoMuted: false,
-        subject: "your subject",
-        token: Data.token
-      }
+      // const url = `https://conf.edusity.com/${Data.room}`; // can also be only room name and will connect to jitsi meet servers
+      // const userInfo = { displayName: Data.name, email:  Data.email, avatar: ''};
+      // const options = {
+      //   audioMuted: false,
+      //   audioOnly: false,
+      //   videoMuted: false,
+      //   subject: "your subject",
+      //   token: Data.token
+      // }
       const meetFeatureFlags = {
         addPeopleEnabled: true,
         calendarEnabled: true,
