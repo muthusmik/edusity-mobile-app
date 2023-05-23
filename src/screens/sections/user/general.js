@@ -26,7 +26,7 @@ const ProfileInput = (props) => {
         <View style={{ borderBottomWidth: 1, width: "90%", borderRadius: 20, justifyContent: "center", }}>
             <TextInput
                 placeholder={placeholder}
-                style={{ marginHorizontal: 10, ...FONTS.robotoregular }}
+                style={{ marginHorizontal: 10, ...FONTS.robotoregular, color: COLORS.black }}
                 value={value}
                 placeholderTextColor={COLORS.gray}
                 selectionColor={COLORS.blue}
@@ -45,7 +45,7 @@ const General = () => {
     const [Error, setError] = useState({});
     const [addLoader, setAddLoader] = useState(false);
     const scrollRef = useRef(null);
-    const navigation=useNavigation();
+    const navigation = useNavigation();
 
     useEffect(() => {
         const initialLoading = async () => {
@@ -233,8 +233,8 @@ const General = () => {
 
     const handleDeactivate = async () => {
         //setLoader(true)
-     await DeleteProfile(Token).then(response=>{
-             AsyncStorage.removeItem("loginToken");
+        await DeleteProfile(Token).then(response => {
+            AsyncStorage.removeItem("loginToken");
             navigation.navigate("Home", { screen: "Search" })
         })
     }
@@ -348,12 +348,12 @@ const General = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={{ backgroundColor: "red", width: "96%", borderRadius: 10, padding: "4%", marginTop: "5%", alignSelf: "center" }}
+                    style={{ backgroundColor: "red", width: "90%", borderRadius: 10, padding: "4%", marginTop: "5%", alignSelf: "center" }}
                     onPressIn={() => { deactivateTwoButtonAlert() }}
                 >
-                    <View style={{ flexDirection: "row",alignSelf:"center"}}>
+                    <View style={{ flexDirection: "row", alignSelf: "center", justifyContent: "center" }}>
                         <MCIcon name="account-remove" size={RFValue(18)} color={COLORS.white} />
-                        <Text style={{ color: COLORS.white,fontWeight:"700", textAlign: "center", ...FONTS.robotoregular,fontSize:RFValue(16) }}> Delete Account</Text>
+                        <Text style={{ color: COLORS.white, textAlign: "center", ...FONTS.h3, fontSize: RFValue(16) }}>  Delete Account</Text>
                     </View>
                 </TouchableOpacity>
 

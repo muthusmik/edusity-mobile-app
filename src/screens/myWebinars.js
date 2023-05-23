@@ -19,12 +19,11 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
-import { getWebinars } from '../services/webinars';
+import { getWebinars, generateWebinarToken, getCourseAnnnouncement } from '../services/webinars';
 import NoCourse from './Exceptions/noPurchasedCourse';
 import NoWebinars from './Exceptions/noWebinars';
 import moment from 'moment';
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { generateWebinarToken } from '../services/webinars';
 import WebView from 'react-native-webview';
 
 const platformUsing = Platform.OS;
@@ -68,7 +67,11 @@ const MyWebinars = ({ data }) => {
                         console.log("webinar", data.data);
                         setData(data?.data);
                         setLoader(false);
-                    })
+                    }).catch((error) => { console.log("Catch error in getwebinars.........", error) })
+                    // let ment = await getCourseAnnnouncement(token).then(data => {
+                    //     console.log("getCourseAnnnouncement..........", data.data);
+                    //     setLoader(false);
+                    // }).catch((error) => { console.log("Catch error in anonunce.........", error) })
                 }
 
             }

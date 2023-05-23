@@ -79,12 +79,13 @@ const CourseList = ({ allCourses, cartData }) => {
         if (network) {
             if (!showHeart.includes(itemId)) {
                 console.log("Exclis", !showHeart.includes(itemId))
-                // setShowHeart(showHeart)
+
                 let wishlistedData = await wishListApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
+                setShowHeart(getWishListData?.map(a => a.ID))
             } else {
                 console.log("Iclsive", showHeart.includes(itemId))
-                // showHeart.append(itemId)
                 let wishlistedData = await wishListRemoverApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
+                setShowHeart(getWishListData?.map(a => a.ID))
             }
             setFlatListRefresh(!flalistRefresh);
         }
@@ -153,7 +154,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 const callData = await axios.post(Url).then(response => {
                     const newdata = response.data.data.courses
                     setData(Data.concat(newdata));
-                    setShowHeart(Data.concat(newdata).map(a => a.isWishlisted))
+                    setShowHeart(getWishListData?.map(a => a.ID))
                     setRefreshList(false);
                     return response.data
                 })
@@ -190,7 +191,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     //  console.log(response.data.data.data, "newdata")
                     console.log("3 setdatasde");
                     setData(Data.concat(newdata));
-                    setShowHeart(Data.concat(newdata).map(a => a.isWishlisted))
+                    setShowHeart(getWishListData?.map(a => a.ID))
                     setRefreshList(false);
                     return response.data
                 })
@@ -235,7 +236,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     setTotalFilterPage(response.data.data.total_page);
                     console.log("4 setdatasde");
                     setData(newdata);
-                    setShowHeart(newdata.map(a => a.isWishlisted))
+                    setShowHeart(getWishListData?.map(a => a.ID))
                     setFilterPageNo(1);
                     SetLoader(false);
                     setRefreshList(false)
@@ -254,7 +255,7 @@ const CourseList = ({ allCourses, cartData }) => {
             setData(allCourses.courses);
 
             // console.log("All courses below setData.......", allCourses.courses)
-            setShowHeart(allCourses.courses.map(a => a.isWishlisted))
+            setShowHeart(getWishListData?.map(a => a.ID))
             setRefreshList(false);
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
             setPage(1);
@@ -285,7 +286,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 //     console.log("error.........", error);
                 // })
                 // console.log("wishListedCourses............after login...", wishListedCourses)
-                setShowHeart(getWishListData.map(a => a.ID))
+                setShowHeart(getWishListData?.map(a => a.ID))
                 // console.log("there........................",Data)
                 setRefreshList(false);
                 SetLoader(false)
@@ -368,14 +369,14 @@ const CourseList = ({ allCourses, cartData }) => {
         } else if (name == "Sort-High-Low") {
             resultData = Data.slice().sort((a, b) => b.EnrollmentFee - a.EnrollmentFee)
             setData(resultData);
-            setShowHeart(resultData.map(a => a.isWishlisted))
+            setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) {
                 ScrollRef.current.scrollToOffset({ offset: 0, animated: true })
             };
         } else if (name == "Sort-Low-High") {
             resultData = Data.slice().sort((a, b) => a.EnrollmentFee - b.EnrollmentFee)
             setData(resultData);
-            setShowHeart(resultData.map(a => a.isWishlisted))
+            setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
         }
         setFlatListRefresh(!flalistRefresh);
@@ -408,8 +409,8 @@ const CourseList = ({ allCourses, cartData }) => {
                     : null}
 
                 {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
-                {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)}
-                {(Data?.length !== 0 && showHeart.length > 0) ?
+                {/* {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)} */}
+                {(Data?.length !== 0) ?
                     <>
                         <FlatList
                             data={Data}
@@ -429,16 +430,16 @@ const CourseList = ({ allCourses, cartData }) => {
                                         <View style={{ width: "100%", flexDirection: "row" }}>
                                             <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
                                                 <View style={styles.coulmnImage}>
-                                                    {(item.imageFiles.fileName) ?
+                                                    {(item?.imageFiles?.fileName) ?
                                                         <Image
-                                                            source={{ uri: "https://cdn.edusity.com/" + item.imageFiles.fileName }}
+                                                            source={{ uri: "https://cdn.edusity.com/" + item?.imageFiles?.fileName }}
                                                             resizeMode="contain"
 
                                                             style={{
                                                                 width: "98%",
                                                                 height: 130,
                                                                 margin: "1%",
-                                                                borderRadius: 8,
+                                                                borderRadius: 8
                                                             }}
                                                         /> : <Image
                                                             source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
@@ -448,7 +449,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                                 width: "88%",
                                                                 height: 100,
                                                                 margin: "1%",
-                                                                borderRadius: 8,
+                                                                borderRadius: 8
                                                             }}
                                                         />}
                                                 </View>
@@ -460,8 +461,8 @@ const CourseList = ({ allCourses, cartData }) => {
                                                             <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
                                                     </View>
                                                     {key ? <TouchableOpacity onPress={() => handleWishlist(item.ID)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                                                        {console.log("Showherat......", showHeart[index] == 0, index, item.ID, showHeart, showHeart.includes(item.ID))}
-                                                        {!(showHeart.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
+                                                        {/* {console.log("Showherat......", showHeart[index] == 0, index, item.ID, showHeart, showHeart.includes(item.ID))} */}
+                                                        {!(showHeart?.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
                                                             <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
                                                     </TouchableOpacity> : null}
                                                 </View>

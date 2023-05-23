@@ -8,6 +8,7 @@ import {
     StatusBar,
     Pressable,
     BackHandler,
+    ScrollView,
 } from 'react-native';
 
 import LoaderKit from 'react-native-loader-kit'
@@ -28,7 +29,9 @@ import { useIsFocused } from "@react-navigation/core";
 import Toast from 'react-native-simple-toast';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import NetInfo from '@react-native-community/netinfo';
-
+import { getCourseAnnouncement, getStudentStatistics, getUpcommingWebniars } from "../../../services/webinars";
+import CourseAnnouncementDashboard from "./courseAnnouncement";
+import UpcomingWebniarDashboard from "./upcomingWebniar";
 const Dashboard = () => {
     // console.log("iam inside DashBoard");
     const dispatch = useDispatch();
@@ -42,26 +45,73 @@ const Dashboard = () => {
     // console.log("LoginReduxData->", LoginData?.data?.role);
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
+    const [courseAnnouncementDetails, setCourseAnnouncementDetails] = useState([])
+    const [studentStatistics, setStudentStatistics] = useState([])
+    const [upcomingWebniarDetails, setUpcomingWebniarDetails] = useState([])
+    // useEffect(() => {
+    //     // console.log("done and dusted..........", LoginData)
+    //     if (LoginData) {
+    //         if (LoginData?.data?.lastName) {
+    //             let fullName = LoginData?.data?.firstName + " " + LoginData?.data?.lastName;
+    //             setUserName(LoginData?.data?.firstName + " " + LoginData?.data?.lastName)
+    //         } else {
+    //             let fullName = LoginData?.data?.firstName + " " + LoginData?.data?.LastName;
+    //             setUserName(LoginData?.data?.firstName)
+    //         }
+    //     }
+    // }, [LoginData]);
 
-
-
-
-
-    useEffect(() => {
-        // console.log("done and dusted..........", LoginData)
-        if (LoginData) {
-            if (LoginData?.data?.LastName) {
-                setUserName(LoginData?.data?.firstName + LoginData?.data?.LastName)
-            } else {
-                setUserName(LoginData?.data?.firstName)
-            }
+    const initialLoading = async () => {
+        console.log("Inside the initial loading function");
+        let token = await AsyncStorage.getItem("loginToken");
+        if (token) {
+            setLoader(true);
+            dispatch(userLoginHanlder(token)).then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    // console.log("successfully returned to login with response ", originalPromiseResult);
+                    if (originalPromiseResult.data) {
+                        const param = originalPromiseResult.data;
+                        navigation.navigate('Home', {
+                            screen: 'Dashboard',
+                        });
+                        dispatch(cartHandler(token)).then(unwrapResult)
+                            .then((originalPromiseResult) => { console.log("cartDataaaa", originalPromiseResult.data) })
+                        setLoader(false);
+                    } else {
+                        setLoader(false);
+                        Toast.show("Something Went Wrong please try again!", Toast.LONG);
+                        navigation.navigate('Login');
+                    }
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    console.log(" Inside catch", rejectedValueOrSerializedError);
+                })
+            let courseAnnouncementUrl = await getCourseAnnouncement(token).then(data => {
+                setCourseAnnouncementDetails(data?.message)
+                setLoader(false);
+            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+            let studentStatistics = await getStudentStatistics(token).then(data => {
+                setStudentStatistics(data)
+                setLoader(false);
+            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+            let UpcomingWebniars = await getUpcommingWebniars(token).then(data => {
+                console.log("getUpcommingWebniars.................", data.data)
+                setUpcomingWebniarDetails(data.data)
+                setLoader(false);
+            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+        } else {
+            // console.log("No Token")
+            setLoader(false);
+            navigation.navigate('Login');
+            BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+            return () => {
+                BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+            };
+            // Toast.show("Please fill the laid details to proceed!", Toast.LONG);
         }
-    }, [LoginData]);
-
-
+    }
     useEffect(() => {
         if (isFocused) {
-            // console.log("dashbord return")
             NetInfo.fetch().then(state => {
                 setNetwork(state.isConnected)
                 if (state.isConnected) {
@@ -71,43 +121,8 @@ const Dashboard = () => {
                     navigation.navigate("NetworkError");
                 }
             })
-            const initialLoading = async () => {
-                let token = await AsyncStorage.getItem("loginToken");
-                if (token) {
-                    setLoader(true);
-                    dispatch(userLoginHanlder(token)).then(unwrapResult)
-                        .then((originalPromiseResult) => {
-                            // console.log("successfully returned to login with response ", originalPromiseResult);
-                            if (originalPromiseResult.data) {
-                                const param = originalPromiseResult.data;
-                                navigation.navigate('Home', {
-                                    screen: 'Dashboard',
-                                });
-                                dispatch(cartHandler(token)).then(unwrapResult)
-                                    .then((originalPromiseResult) => { console.log("cartDataaaa", originalPromiseResult.data) })
-                                setLoader(false);
-                            } else {
-                                setLoader(false);
-                                Toast.show("Something Went Wrong please try again!", Toast.LONG);
-                                navigation.navigate('Login');
-                            }
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            console.log(" Inside catch", rejectedValueOrSerializedError);
-                        })
-                } else {
-                    // console.log("No Token")
-                    setLoader(false);
-                    navigation.navigate('Login');
-                    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
-                    return () => {
-                        BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
-                    };
-                    // Toast.show("Please fill the laid details to proceed!", Toast.LONG);
-                }
-            }
         }
-    }, [isFocused,network])
+    }, [isFocused, network])
 
     // useEffect(() => {
     //     BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
@@ -124,11 +139,9 @@ const Dashboard = () => {
     }
 
     return (
-
         (LoginData?.data?.role)
             ?
             <View>
-                {/* {console.log("iside render dashbord")} */}
                 <SafeAreaView style={{
                     backgroundColor: COLORS.lightGray, height: "100%"
                 }}>
@@ -140,7 +153,7 @@ const Dashboard = () => {
                         {/* <TouchableOpacity style={{ borderWidth: 0,flexDirection:"column",justifyContent:"center",marginLeft:"5%" }} onPress={() => navigation.goBack()}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity> */}
-                        <View style={{ flexDirection: "column", width: "70%",justifyContent:"center",marginLeft:"2%" }}>
+                        <View style={{ flexDirection: "column", width: "70%", justifyContent: "center", marginLeft: 22 }}>
                             <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, }}>Dashboard</Text>
                         </View>
                         {/* <Pressable style={{ flexDirection: "column", justifyContent: "flex-end", padding: "5%" }} onPressIn={() => setDrop(!drop)}>
@@ -152,15 +165,21 @@ const Dashboard = () => {
 
                     </View>
 
+                    {(LoginData.data.role == 1) ?
+                        <View style={styles.container}>
+                            <View style={{ height: "100%", width: "100%", alignItems: "center", marginTop: "80%" }}>
+                                <Text style={{ color: COLORS.black, justifyContent: "center", fontSize: RFValue(15, 580), ...FONTS.robotoregular, lineHeight: 100 }}>Welcoming  Instructor {LoginData.data.firstName} {LoginData.data.LastName} to </Text>
+                                <Text style={{ color: "#8830c4", justifyContent: "center", fontSize: RFValue(40, 580), ...FONTS.robotoregular, ...FONTS.largeTitle }}>Edusity</Text>
+                            </View>
+                        </View> :
+                        (LoginData.data.role == 2) ?
+                            <ScrollView>
 
+                                {studentStatistics && <View style={{ height: SIZES.height - 600 }}><StudentDashboard username={LoginData?.data} studentStatistics={studentStatistics?.data} /></View>}
+                                {courseAnnouncementDetails && <View style={{ height: SIZES.height - 610 }}><CourseAnnouncementDashboard announcement={courseAnnouncementDetails} /></View>}
+                                {upcomingWebniarDetails && <View style={{ height: SIZES.height - 610 }}><UpcomingWebniarDashboard upcomingWebinar={upcomingWebniarDetails} /></View>}
 
-                    {(LoginData.data.role == 1) ? <View style={styles.container}>
-                        <View style={{ height: "100%", width: "100%", alignItems: "center", marginTop: "80%" }}>
-                            <Text style={{ color: COLORS.black, justifyContent: "center", fontSize: RFValue(15, 580), ...FONTS.robotoregular, lineHeight: 100 }}>Welcoming  Instructor {LoginData.data.firstName} {LoginData.data.LastName} to </Text>
-                            <Text style={{ color: "#8830c4", justifyContent: "center", fontSize: RFValue(40, 580), ...FONTS.robotoregular, ...FONTS.largeTitle }}>Edusity</Text>
-
-                        </View>
-                    </View> : (LoginData.data.role == 2 && userName) ? <StudentDashboard username={userName} /> : null}
+                            </ScrollView> : null}
                 </SafeAreaView>
             </View>
             :

@@ -40,3 +40,12 @@ export const generateWebinarTokenUrl = baseUrl + "webinar/join?webinarId=";
 export const intentPayment = baseUrl_payment + "react-native-stripe-payment-sheet"
 export const userDeleteUrl = baseUrl_payment + "user/v1";
 export const userDeactiveUrl = baseUrl_payment + "user/v1/deactive";
+// new api urls
+// https://dev-payment.edusity.com/course-annnouncement get
+export const courseAnnouncementUrl = baseUrl_payment + "course-annnouncement";
+// https://dev-login.edusity.com/student/statistics
+export const studentStatisticsUrl = baseUrl + "student/statistics";
+// https://dev-login.edusity.com/webinar/upcomming
+export const upcommingWebniarsUrl = baseUrl + "webinar/upcomming";
+// https://dev-login.edusity.com/test/list
+export const testListUrl = baseUrl + "test/list";

@@ -25,7 +25,7 @@ const ProfileInput = (props) => {
         <View style={{ borderBottomWidth: 1, width: "90%", borderRadius: 20, justifyContent: "center", }}>
             <TextInput
                 placeholder={placeholder}
-                style={{ marginHorizontal: 10, ...FONTS.robotoregular }}
+                style={{ marginHorizontal: 10, ...FONTS.robotoregular, color: COLORS.black }}
                 value={value}
                 placeholderTextColor={COLORS.gray}
                 selectionColor={COLORS.blue}
@@ -60,7 +60,7 @@ const Security = () => {
                         console.log(" update  failed Inside catch", rejectedValueOrSerializedError);
                     })
             }
-        } 
+        }
         else {
             setError({ "email": "Please enter your email address !" })
         }

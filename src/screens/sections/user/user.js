@@ -58,9 +58,9 @@ const Profile = () => {
                 }
             })
             const initialLoading = async () => {
-                
+
                 let token = await AsyncStorage.getItem("loginToken");
-                console.log("token.......................",token)
+                console.log("token.......................", token)
                 if (LoginDetails.data && token) {
                     setKey(token)
                     // console.log(LoginDetails)
@@ -74,9 +74,9 @@ const Profile = () => {
                     };
                 }
             }
-            
+
         }
-    }, [LoginDetails, isFocused,network])
+    }, [LoginDetails, isFocused, network])
 
     const createTwoButtonAlert = () =>
         Alert.alert(
@@ -91,8 +91,8 @@ const Profile = () => {
                 { text: "OK", onPress: () => handleLogout() }
             ]
         );
-       
-        const deactivateTwoButtonAlert = () =>
+
+    const deactivateTwoButtonAlert = () =>
         Alert.alert(
             "Deactivate Account",
             "Are you sure? you want to Deactivate  your Account, your account will be temporarily kept inactive if you continue!",
@@ -106,14 +106,14 @@ const Profile = () => {
             ]
         );
 
-        const handleDeactivate = async () => {
-            //setLoader(true)
-            await DeactivateProfile(key).then(
-                    //  AsyncStorage.removeItem("loginToken").then(
-                     navigation.navigate("Home", { screen: "Search" })
-                // )
-                )
-        }
+    const handleDeactivate = async () => {
+        //setLoader(true)
+        await DeactivateProfile(key).then(
+            //  AsyncStorage.removeItem("loginToken").then(
+            navigation.navigate("Home", { screen: "Search" })
+            // )
+        )
+    }
 
     const handleLogout = async () => {
         //setLoader(true)
@@ -137,7 +137,7 @@ const Profile = () => {
         { key: 'fifth', title: 'Notifications' }
     ]);
 
-    const renderScene = SceneMap({ 
+    const renderScene = SceneMap({
         first: FirstRoute,
         second: SecondRoute,
         // third: ThirdRoute,
@@ -165,21 +165,21 @@ const Profile = () => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
-                     {/* {Platform.OS=='ios'?
+                    {/* {Platform.OS=='ios'?
                     <View style={{height:"5%"}}>
 
                     </View>:null} */}
                     <View style={{ flexDirection: 'row', justifyContent: "center", paddingBottom: "5%", position: "relative", backgroundColor: COLORS.primary }}>
                         <View style={{ backgroundColor: COLORS.primary, width: '100%', position: 'absolute' }} />
                         <LinearGradient colors={["#bfe9ff", "#bfe9ff"]} style={{ marginVertical: "4%", flexDirection: 'row', width: "90%", borderRadius: 10, justifyContent: "space-around", padding: "6%" }}>
-                            <View style={{ borderColor: "red", flexDirection: "column", alignItems: "center", width: "40%", justifyContent: "center" }}>
+                            <View style={{ borderColor: "red", flexDirection: "column", alignItems: "center", width: "28%", justifyContent: "center" }}>
                                 <Avatar
                                     size={80}
                                     rounded
                                     title={userDetails[0].firstName.charAt(0).toUpperCase() + userDetails[0].lastName.charAt(0).toUpperCase()}
                                     containerStyle={{ backgroundColor: "red", fontFamily: 'Roboto-Regular', }}
                                 />
-                                 {/* <TouchableOpacity onPress={() =>  deactivateTwoButtonAlert()} style={{ marginTop: "5%", flexDirection: "row" }} >
+                                {/* <TouchableOpacity onPress={() =>  deactivateTwoButtonAlert()} style={{ marginTop: "5%", flexDirection: "row" }} >
                                     <MCIcon name="broadcast-off" size={RFValue(18)} color={COLORS.primary} />
                                     <Text  style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10), alignSelf: "center", marginHorizontal: "2%" }}>Deactivate Account</Text>
                                 </TouchableOpacity> */}
