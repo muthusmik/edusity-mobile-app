@@ -215,7 +215,7 @@ const Login = () => {
                                     inputOutLine
                                     label={"Email"}
                                     value={email}
-
+                                    style={{ color: COLORS.black }}
                                     // labelStyle={{ fontSize:RFValue(18), }}
                                     rightIcon={<FontAwesome5 name={'user-graduate'} size={20} style={{ color: COLORS.primary }} />}
                                     customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
@@ -244,6 +244,7 @@ const Login = () => {
                                     label={"Password"}
                                     value={password}
                                     secureTextEntry={errorPassword ? false : true}
+                                    style={{ color: COLORS.black }}
                                     rightIcon={<FontAwesome5 name={'eye'} size={18} style={{ color: COLORS.primary }} />}
                                     passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
                                     labelStyle={{ fontSize: RFValue(12), }}

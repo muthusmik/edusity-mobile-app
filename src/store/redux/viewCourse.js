@@ -6,18 +6,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const viewCourseHandler = createAsyncThunk('posts/viewCoursecall', async (data, thunkAPI) => {
     // console.log("Inside the api call courseList", data);
-    const Url=ViewCourseUrl+data;
+    const Url = ViewCourseUrl + data;
     let token = await AsyncStorage.getItem("loginToken");
-    const headers = {'Content-Type': 'application/json','Authorization':"Bearer "+ token}
-    return  await axios.get(Url,{ headers: headers }).then(response=> {
-        // console.log("success View Course",response)
-        return response.data })
-        .catch((err)=>{
+    const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + token }
+    return await axios.get(Url, { headers: headers }).then(response => {
+        console.log("Response for success View Course............................",Url,"mmmm", response.data.data)
+        return response.data
+    }).catch((err) => {
         console.log(err)
-        })
+    })
 })
 
-export const viewCourseSlice = createSlice({     
+export const viewCourseSlice = createSlice({
     name: 'viewCourse',
     initialState: {
         data: [],

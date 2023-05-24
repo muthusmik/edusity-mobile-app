@@ -27,11 +27,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useIsFocused } from "@react-navigation/core";
 import Toast from 'react-native-simple-toast';
-import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
 import { getCourseAnnouncement, getStudentStatistics, getUpcommingWebniars } from "../../../services/webinars";
 import CourseAnnouncementDashboard from "./courseAnnouncement";
 import UpcomingWebniarDashboard from "./upcomingWebniar";
+import NotificationScreen from '../../../components/notificationScreen';
+import { metrices } from '../../../constants/metrices';
+import { useFocusEffect } from '@react-navigation/native';
+
 const Dashboard = () => {
     // console.log("iam inside DashBoard");
     const dispatch = useDispatch();
@@ -48,6 +53,16 @@ const Dashboard = () => {
     const [courseAnnouncementDetails, setCourseAnnouncementDetails] = useState([])
     const [studentStatistics, setStudentStatistics] = useState([])
     const [upcomingWebniarDetails, setUpcomingWebniarDetails] = useState([])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            //   console.log('Home screen is focused');
+            return () => {
+                setDropdownVisible(false)
+            };
+        }, [])
+    );
+
     // useEffect(() => {
     //     // console.log("done and dusted..........", LoginData)
     //     if (LoginData) {
@@ -60,9 +75,22 @@ const Dashboard = () => {
     //         }
     //     }
     // }, [LoginData]);
+    const [isDropdownVisible, setDropdownVisible] = useState(false);
+
+    const handleNotificationClick = () => {
+        if (isDropdownVisible) {
+            setDropdownVisible(false);
+        }
+        else {
+            setDropdownVisible(true);
+        }
+    };
+
+    const handleCloseDropdown = () => {
+        setDropdownVisible(false);
+    };
 
     const initialLoading = async () => {
-        console.log("Inside the initial loading function");
         let token = await AsyncStorage.getItem("loginToken");
         if (token) {
             setLoader(true);
@@ -89,16 +117,16 @@ const Dashboard = () => {
             let courseAnnouncementUrl = await getCourseAnnouncement(token).then(data => {
                 setCourseAnnouncementDetails(data?.message)
                 setLoader(false);
-            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+            }).catch((error) => { console.log("Catch error in courseAnnouncementUrl.........", error) })
             let studentStatistics = await getStudentStatistics(token).then(data => {
                 setStudentStatistics(data)
                 setLoader(false);
-            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+            }).catch((error) => { console.log("Catch error in studentStatistics.........", error) })
             let UpcomingWebniars = await getUpcommingWebniars(token).then(data => {
                 console.log("getUpcommingWebniars.................", data.data)
                 setUpcomingWebniarDetails(data.data)
                 setLoader(false);
-            }).catch((error) => { console.log("Catch error in anonunce.........", error) })
+            }).catch((error) => { console.log("Catch error in UpcomingWebniars.........", error) })
         } else {
             // console.log("No Token")
             setLoader(false);
@@ -110,6 +138,7 @@ const Dashboard = () => {
             // Toast.show("Please fill the laid details to proceed!", Toast.LONG);
         }
     }
+
     useEffect(() => {
         if (isFocused) {
             NetInfo.fetch().then(state => {
@@ -131,7 +160,6 @@ const Dashboard = () => {
     //     };
     //   }, []);
 
-
     function handleBackButtonClick() {
         // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
@@ -142,28 +170,27 @@ const Dashboard = () => {
         (LoginData?.data?.role)
             ?
             <View>
-                <SafeAreaView style={{
-                    backgroundColor: COLORS.lightGray, height: "100%"
-                }}>
+                <SafeAreaView style={styles.container}>
                     <StatusBar
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
-                    <View style={{ height: "8%", flexDirection: "row", backgroundColor: COLORS.primary, borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                        {/* <TouchableOpacity style={{ borderWidth: 0,flexDirection:"column",justifyContent:"center",marginLeft:"5%" }} onPress={() => navigation.goBack()}>
+                    <View style={styles.topBarStyle}>
+                        <TouchableOpacity onPress={() => { navigation.goBack() }}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
-                        </TouchableOpacity> */}
-                        <View style={{ flexDirection: "column", width: "70%", justifyContent: "center", marginLeft: 22 }}>
+                        </TouchableOpacity>
+                        <View>
                             <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, }}>Dashboard</Text>
                         </View>
-                        {/* <Pressable style={{ flexDirection: "column", justifyContent: "flex-end", padding: "5%" }} onPressIn={() => setDrop(!drop)}>
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(13), ...FONTS.robotoregular, }}> {userName} <Icon name='chevron-down' size={RFValue(10)} color={COLORS.white} /> </Text>
-                           { (drop)?<View style={{height:"50%",backgroundColor:COLORS.white}}>
-                                <Text style={{color:COLORS.black}}>Log Out</Text>
-                            </View>:null}                       
-                        </Pressable> */}
-
+                        <TouchableOpacity onPress={() => handleNotificationClick()}>
+                            {(courseAnnouncementDetails?.length) ?
+                                <MaterialCommunityIcons name="bell-badge" size={RFValue(25)} color={COLORS.white} /> :
+                                <MaterialCommunityIcons name="bell" size={RFValue(25)} color={COLORS.white} />
+                            }
+                        </TouchableOpacity>
                     </View>
+
+                    <NotificationScreen isVisible={isDropdownVisible} onClose={handleCloseDropdown} announcement={courseAnnouncementDetails} />
 
                     {(LoginData.data.role == 1) ?
                         <View style={styles.container}>
@@ -174,32 +201,42 @@ const Dashboard = () => {
                         </View> :
                         (LoginData.data.role == 2) ?
                             <ScrollView>
-
-                                {studentStatistics && <View style={{ height: SIZES.height - 600 }}><StudentDashboard username={LoginData?.data} studentStatistics={studentStatistics?.data} /></View>}
-                                {courseAnnouncementDetails && <View style={{ height: SIZES.height - 610 }}><CourseAnnouncementDashboard announcement={courseAnnouncementDetails} /></View>}
-                                {upcomingWebniarDetails && <View style={{ height: SIZES.height - 610 }}><UpcomingWebniarDashboard upcomingWebinar={upcomingWebniarDetails} /></View>}
-
+                                <Pressable onPress={() => setDropdownVisible(false)}>
+                                    {studentStatistics && <View style={{ height: metrices(48) }}><StudentDashboard username={LoginData?.data} studentStatistics={studentStatistics?.data} setDropdownVisible={setDropdownVisible} /></View>}
+                                    {/* {courseAnnouncementDetails && <View style={{ height: SIZES.height - 610 }}><CourseAnnouncementDashboard announcement={courseAnnouncementDetails} setDropdownVisible={setDropdownVisible} /></View>} */}
+                                    {upcomingWebniarDetails && <View style={{ height: metrices(20) }}><UpcomingWebniarDashboard upcomingWebinar={upcomingWebniarDetails} /></View>}
+                                    <View style={{ padding: "8%" }} />
+                                </Pressable>
                             </ScrollView> : null}
                 </SafeAreaView>
             </View>
             :
             <View style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                {/* {console.log("error render")} */}
                 <LoaderKit
                     style={{ width: 50, height: 50 }}
-                    name={'BallPulse'} // Optional: see list of animations below
-                    size={50} // Required on iOS
-                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                    name={'BallPulse'}
+                    size={50}
+                    color={COLORS.primary}
                 />
             </View>
-
     );
 }
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: COLORS.back,
+        backgroundColor: COLORS.lightGray,
+        height: SIZES.height
     },
-
+    topBarStyle: {
+        height: "8%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: COLORS.primary,
+        borderBottomStartRadius: 30,
+        borderBottomEndRadius: 30,
+        paddingRight: 26,
+        paddingLeft: 18
+    }
 });
+
 export default Dashboard;

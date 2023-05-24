@@ -19,11 +19,12 @@ import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
 import moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const CourseAnnouncementDashboard = ({ announcement }) => {
+const CourseAnnouncementDashboard = ({ announcement, setDropdownVisible }) => {
 
     const [modalShow, setModalShow] = useState(false);
     const [modalValue, setModalValue] = useState({})
     const handleAnnouncement = (item) => {
+        setDropdownVisible(false)
         setModalValue(item)
         setModalShow(true)
     }

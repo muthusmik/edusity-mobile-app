@@ -204,6 +204,7 @@ const CourseList = ({ allCourses, cartData }) => {
         }
 
     }, [page, filterPageNo])
+
     useEffect(() => {
         //console.log(selectedCategory, "mother", selectedLevel, submission)
         SetLoader(true);
@@ -263,49 +264,43 @@ const CourseList = ({ allCourses, cartData }) => {
 
         }
     }, [submission])
+
     // useEffect(()=>{
     //     console.log("changed",Data)
     // },[Data])
 
     const [key, setKey] = useState("")
-    useEffect(() => {
-
-        const initial = async () => {
-            setRefreshList(true);
-            SetLoader(true)
-            let newToken = await AsyncStorage.getItem("loginToken")
-            // console.log("ffff",allCourses,newToken,"gggg");
-            if (newToken) {
-                setKey(newToken);
-                console.log("6 setdatasde");
-                setData(allCourses.courses)
-                // let wishListedCourses = await getWishListedCourses(newToken).then(response => {
-                //     console.log("Response for wishListed data.........", response.data);
-                //     return response.data
-                // }).catch((error) => {
-                //     console.log("error.........", error);
-                // })
-                // console.log("wishListedCourses............after login...", wishListedCourses)
-                setShowHeart(getWishListData?.map(a => a.ID))
-                // console.log("there........................",Data)
-                setRefreshList(false);
-                SetLoader(false)
-                // console.log("there........................",allCourses.data.map(a => a.isWishlisted))
-                // console.log("there........................",Data)
-            } else {
-                // console.log("helooo not working ",allCourses.data)
-                setKey(null);
-                console.log("7 setdatasde");
-                setData(allCourses.courses);
-                setRefreshList(false);
-                SetLoader(false)
-            }
-            setFlatListRefresh(!flalistRefresh)
-            //   console.log("there........................",Data)
-
+    const initial = async () => {
+        setRefreshList(true);
+        SetLoader(true)
+        let newToken = await AsyncStorage.getItem("loginToken")
+        if (newToken) {
+            setKey(newToken);
+            console.log("6 setdatasde");
+            setData(allCourses.courses)
+            // let wishListedCourses = await getWishListedCourses(newToken).then(response => {
+            //     console.log("Response for wishListed data.........", response.data);
+            //     return response.data
+            // }).catch((error) => {
+            //     console.log("error.........", error);
+            // })
+            // console.log("wishListedCourses............after login...", wishListedCourses)
+            setShowHeart(getWishListData?.map(a => a.ID))
+            setRefreshList(false);
+            SetLoader(false)
+        } else {
+            // console.log("helooo not working ",allCourses.data)
+            setKey(null);
+            console.log("7 setdatasde");
+            setData(allCourses.courses);
+            setRefreshList(false);
+            SetLoader(false)
         }
-        initial()
+        setFlatListRefresh(!flalistRefresh)
+    }
 
+    useEffect(() => {
+        initial()
     }, [allCourses])
 
     const actions = [
@@ -337,15 +332,15 @@ const CourseList = ({ allCourses, cartData }) => {
             textColor: COLORS.black,
         },
     ]
+
     const handleViewNavigation = (item) => {
         if (network) {
             SetLoader(true);
             dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
                 .then((originalPromiseResult) => {
                     // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
-                    SetLoader(false);
                     navigation.navigate("ViewCourse");
-
+                    SetLoader(false);
                 })
                 .catch((rejectedValueOrSerializedError) => {
                     navigation.navigate("ServerError");
@@ -360,8 +355,8 @@ const CourseList = ({ allCourses, cartData }) => {
     const popUpFilter = () => {
         childRef.current.childFunction1();
         childRef.current.childFunction2();
-
     };
+
     const handleFiltertype = (name) => {
         var resultData = "";
         if (name == "Advanced-Filter") {
@@ -381,8 +376,8 @@ const CourseList = ({ allCourses, cartData }) => {
         }
         setFlatListRefresh(!flalistRefresh);
     }
-    return (
 
+    return (
         (loader) ?
             <View style={{ height: "100%", width: "100%", }}>
                 {/* <View style={[styles.overlay]} > */}
@@ -519,7 +514,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                 {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
                                                 <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
                                                     {/* {console.log(item.isPurchased)} */}
-                                                    {!(cartArray.includes(`${item.ID}`)) ?
+                                                    {!(cartArray.includes(item.ID)) ?
                                                         <>
                                                             {(cartBtnLoader != item.ID) ?
                                                                 <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >

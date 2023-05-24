@@ -491,7 +491,7 @@ const Cart = () => {
                                         </TouchableOpacity>
                                     </View>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => AlertPayment()/* handleMakePayment(Data) */}>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => /* AlertPayment() */ handleMakePayment(Data)}>
                                             <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Proceed
                                                 {/* {'\n'} */}
                                                 {/* <Text style={{ color: COLORS.white, marginHorizontal: "5%", fontSize: RFValue(8), ...FONTS.robotoregular, textAlign: "center" }}>You Will Be Redirected To Razor Pay </Text> */}
