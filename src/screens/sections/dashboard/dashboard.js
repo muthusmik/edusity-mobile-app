@@ -9,6 +9,7 @@ import {
     Pressable,
     BackHandler,
     ScrollView,
+    Dimensions
 } from 'react-native';
 
 import LoaderKit from 'react-native-loader-kit'
@@ -112,6 +113,8 @@ const Dashboard = () => {
                     }
                 })
                 .catch((rejectedValueOrSerializedError) => {
+                    setLoader(false);
+                    Toast.show("Something Went Wrong please try again!", Toast.LONG);
                     console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
             let courseAnnouncementUrl = await getCourseAnnouncement(token).then(data => {
@@ -180,13 +183,13 @@ const Dashboard = () => {
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
                         <View>
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, }}>Dashboard</Text>
+                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular }}>Dashboard</Text>
                         </View>
                         <TouchableOpacity onPress={() => handleNotificationClick()}>
-                            {(courseAnnouncementDetails?.length) ?
-                                <MaterialCommunityIcons name="bell-badge" size={RFValue(25)} color={COLORS.white} /> :
-                                <MaterialCommunityIcons name="bell" size={RFValue(25)} color={COLORS.white} />
-                            }
+                            <MaterialCommunityIcons name="bell-badge" size={RFValue(25)} color={COLORS.white} />
+                            {(courseAnnouncementDetails?.length) ? <View style={styles.circle}>
+                                <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.robotomedium, }}>{courseAnnouncementDetails?.length}</Text>
+                            </View> : null}
                         </TouchableOpacity>
                     </View>
 
@@ -236,6 +239,19 @@ const styles = StyleSheet.create({
         borderBottomEndRadius: 30,
         paddingRight: 26,
         paddingLeft: 18
+    },
+    circle: {
+        flexDirection: "column", borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+        width: Dimensions.get('window').width * 0.05,
+        height: Dimensions.get('window').width * 0.05,
+        backgroundColor: "red",
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: "absolute",
+        bottom: metrices(1.8),
+        left: metrices(1.3),
+        borderWidth: 1,
+        borderColor: "red"
     }
 });
 

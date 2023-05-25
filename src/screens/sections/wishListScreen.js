@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
-    StatusBar, TouchableOpacity, FlatList, Image, StyleSheet, BackHandler
+    StatusBar, TouchableOpacity, FlatList, Image, StyleSheet, BackHandler, ToastAndroid
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import LoaderKit from 'react-native-loader-kit'
@@ -22,13 +22,14 @@ import { addtoCart } from '../../services/cartService';
 import { cartHandler } from '../../store/redux/cart';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { viewCourseHandler } from '../../store/redux/viewCourse';
+import OverlayLoader from '../../components/overlayLoader';
+
 const WishListScreen = () => {
     // console.log("wishlist");
     const dispatch = useDispatch();
     const navigation = useNavigation();
     // const Token = useSelector(state => state.loginHandle?.data?.data);
     const [Data, setData] = useState([]);
-
     const [loginToken, setLoginToken] = useState();
     const [totalCourses, setTotalCourse] = useState(0);
     // const [totalPage, setTotalPage] = useState(0);
@@ -36,6 +37,7 @@ const WishListScreen = () => {
     const [loader, setLoader] = useState(false);
     const [flalistRefresh, setFlatListRefresh] = useState(false);
     // // const [CoursesCount, setCourseCount] = useState(0);
+    const getWishListData = useSelector(state => state?.getWishList?.data?.data)
     const [page, setPage] = useState(1);
     const [addLoader, setAddLoader] = useState(false);
     const isFocused = useIsFocused();
@@ -44,6 +46,7 @@ const WishListScreen = () => {
     const [cartArray, setCartArray] = useState([]);
     const [network, setNetwork] = useState('')
     const username = LoginData?.data?.userName;
+    // console.log("wishList data.............", getWishListData);
 
     useEffect(() => {
         if (isFocused) {
@@ -86,17 +89,20 @@ const WishListScreen = () => {
 
         }
     }, [isFocused, network, refreshList])
+
     useEffect(() => {
         if (cartData) {
             var ListCartId = [];
             (cartData?.Courses).forEach((element) => {
                 var Data = (element.CourseId);
                 ListCartId.push(Data);
-                console.log(ListCartId, "Array")
             })
             setCartArray(ListCartId);
+            setAddLoader(false)
+            console.log("ListCartId....heloo................", ListCartId)
         }
     }, [cartData])
+
     function handleBackButtonClick() {
         // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
@@ -109,14 +115,18 @@ const WishListScreen = () => {
             setRefreshList(!refreshList);
         })
     }
+
     const addToCart = async (id) => {
-        console.log(id);
+        console.log("Inside the add to cart...........", id)
         setAddLoader(true)
         let result = await addtoCart(id, loginToken).then(response => {
-            console.log("wishlist add to cart", response);
-            setAddLoader(false)
+            console.log("Inside the add to cart...........", response)
+            if (response.error) { ToastAndroid.showWithGravity(response.message, ToastAndroid.TOP, ToastAndroid.LONG) }
+            dispatch(cartHandler(loginToken));
+        }).catch(() => {
+            setAddLoader(false);
+            ToastAndroid.showWithGravity("Can't able to add in cart, please try again later", ToastAndroid.CENTER, ToastAndroid.LONG)
         });
-        dispatch(cartHandler(loginToken));
     }
 
 
@@ -149,17 +159,10 @@ const WishListScreen = () => {
                     animated={true}
                     backgroundColor={COLORS.primary}
                 />
-                {addLoader ? <View style={[styles.overlay]} >
-                    <LoaderKit
-                        style={{ width: 50, height: 50 }}
-                        name={'BallPulse'} // Optional: see list of animations below
-                        size={50} // Required on iOS
-                        color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                    />
-                </View> : null}
+                {addLoader ? <OverlayLoader /> : null}
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
                     <>
-                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your WishLists: {Data.length}</Text>
+                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your WishLists are {Data.length}</Text>
                     </>
                     {(Data.length >= 1) ?
                         <FlatList
@@ -176,15 +179,12 @@ const WishListScreen = () => {
                                 <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
                                     <View style={{ width: "100%", flexDirection: "row" }}>
                                         <View style={styles.coulmnImage}>
-
                                             <Image
                                                 source={{ uri: "https://cdn.edusity.com/" + item.fileName }}
                                                 resizeMode="contain"
-
                                                 style={{
                                                     width: "100%",
                                                     height: 120,
-                                                    margin: "1%",
                                                     borderRadius: 8,
                                                 }}
                                             />
@@ -193,47 +193,16 @@ const WishListScreen = () => {
                                             <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
                                             <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
                                             <View style={{ flexDirection: "row", width: "100%" }}>
-                                                {!(cartArray.includes(`${item.ID}`)) ?
-                                                    <TouchableOpacity style={{
-                                                        width: "40%",
-                                                        backgroundColor: COLORS.primary,
-                                                        padding: "5%",
-                                                        marginHorizontal: "1%",
-                                                        flexDirection: "column",
-                                                        marginVertical: "15%",
-                                                        borderRadius: 10,
-                                                        alignItems: "center"
-                                                    }}
-                                                        onPressIn={() => { console.log(item.ID), addToCart(item.ID) }}>
-                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> Add to Cart</Text>
+                                                {!(cartArray.includes(item.ID)) ?
+                                                    <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.primary }]} onPressIn={() => { addToCart(item.ID) }}>
+                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Add to Cart</Text>
                                                     </TouchableOpacity> :
-                                                    <TouchableOpacity style={{
-                                                        width: "40%",
-                                                        backgroundColor: COLORS.primary,
-                                                        padding: "5%",
-                                                        marginHorizontal: "1%",
-                                                        flexDirection: "column",
-                                                        marginVertical: "15%",
-                                                        borderRadius: 10,
-                                                        alignItems: "center"
-                                                    }}
-
-                                                        onPressIn={() => { console.log(item.ID), navigation.navigate("Cart") }}>
-                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> View Cart</Text>
+                                                    <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.gray }]} onPressIn={() => { navigation.navigate("Cart") }}>
+                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>View Cart</Text>
                                                     </TouchableOpacity>
                                                 }
-                                                <TouchableOpacity style={{
-                                                    width: "40%",
-                                                    backgroundColor: "red",
-                                                    padding: "5%",
-                                                    flexDirection: "column",
-                                                    marginHorizontal: "1%",
-                                                    marginVertical: "15%",
-                                                    borderRadius: 10,
-                                                    alignItems: "center"
-                                                }}
-                                                    onPressIn={() => { console.log(item.ID), removeFromList(item.ID) }}>
-                                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> Remove</Text>
+                                                <TouchableOpacity style={[styles.button, { backgroundColor: "red" }]} onPressIn={() => { removeFromList(item.ID) }}>
+                                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Remove</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
@@ -292,6 +261,15 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         paddingHorizontal: "2%",
         marginVertical: "2%",
+    },
+    button: {
+        width: "40%",
+        padding: "5%",
+        marginHorizontal: "1%",
+        flexDirection: "column",
+        marginVertical: "15%",
+        borderRadius: 10,
+        alignItems: "center"
     },
     overlay: {
         flex: 1,

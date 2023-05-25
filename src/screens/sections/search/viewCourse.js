@@ -3,7 +3,7 @@ import {
     View,
     Text, Image, ImageBackground, ActivityIndicator,
     TouchableOpacity,
-    StatusBar, ScrollView, FlatList, StyleSheet, Pressable, Dimensions, useWindowDimensions, ToastAndroid
+    ScrollView, FlatList, StyleSheet, Pressable, ToastAndroid
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
@@ -28,6 +28,7 @@ import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
 import { getWishListedCourses, wishListRemoverApi, wishListApi } from '../../../services/wishlist';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
+import OverlayLoader from '../../../components/overlayLoader';
 
 const ViewCourse = () => {
     const dispatch = useDispatch();
@@ -200,16 +201,7 @@ const ViewCourse = () => {
                     </ImageBackground>
                 </View> :
                 <View>
-                    {addLoader ?
-                        <View style={styles.overlay} >
-                            <LoaderKit
-                                style={{ width: 50, height: 50, position: 'absolute' }}
-                                name={'BallPulse'} // Optional: see list of animations below
-                                size={50} // Required on iOS
-                                color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                            />
-                        </View>
-                        : null}
+                    {addLoader ? <OverlayLoader /> : null}
                     <View style={{ backgroundColor: "#e9ddf1" }}>
                         <View style={{ width: "100%", flexDirection: "row", backgroundColor: COLORS.primary, borderBottomStartRadius: 30, borderBottomEndRadius: 30, paddingVertical: "3%" }}>
                             <Pressable style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
@@ -608,19 +600,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         marginVertical: "2%",
         left: "3%"
-    },
-    overlay: {
-        flex: 1,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-        justifyContent: "center"
-        , alignItems: "center"
     }
 });
 export default ViewCourse;

@@ -6,7 +6,7 @@ import { StripeProvider, usePaymentSheet } from '@stripe/stripe-react-native';
 import axios from 'axios';
 import 'intl';
 import React, { useEffect, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Pressable, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Pressable, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions, ToastAndroid } from 'react-native';
 import LoaderKit from 'react-native-loader-kit';
 import { Colors } from 'react-native-paper';
 import RazorpayCheckout from 'react-native-razorpay';
@@ -19,8 +19,12 @@ import { cartHandler } from '../store/redux/cart';
 import { viewCourseHandler } from '../store/redux/viewCourse';
 import NoData from './Exceptions/noCartData';
 import { razorpayKeyLive, stripepayKeyLive } from '../services/constant';
+import OverlayLoader from '../components/overlayLoader';
+
+const { width, height } = Dimensions.get('window');
+
 const Cart = () => {
-    const { width, height } = Dimensions.get('window');
+
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const isFocused = useIsFocused();
@@ -29,7 +33,6 @@ const Cart = () => {
     const [Token, setToken] = useState("");
     const cartData = useSelector((state) => state.cartList.data)
     const Geolocation = useSelector((state) => state.geoLocationPicker);
-    const [showloader, SetLoader] = useState(false);
     const [Data, setData] = useState([]);
     const [totalValue, setTotalValue] = useState(0);
     const [loader, setLoader] = useState(false);
@@ -37,6 +40,7 @@ const Cart = () => {
     const LoginData = useSelector(state => state.userLoginHandle.data)
     const [dataSession, setDataSession] = useState();
     const username = LoginData?.data?.userName;
+
     const {
         initPaymentSheet,
         presentPaymentSheet,
@@ -44,12 +48,29 @@ const Cart = () => {
         resetPaymentSheetCustomer,
     } = usePaymentSheet();
 
-
-
-
+    const initialLoading = async () => {
+        let token = await AsyncStorage.getItem("loginToken");
+        setLoader(true);
+        if (token) {
+            setToken(token)
+            dispatch(cartHandler(token)).then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    setData(originalPromiseResult.data.Courses);
+                    setLoader(false);
+                    //console.log("Data",Data[0].TotalAmount);
+                    //initialisePaymentSheet();
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    setLoader(false);
+                    console.log("error", rejectedValueOrSerializedError);
+                })
+        } else {
+            setLoader(false);
+            navigation.replace('Login');
+        }
+    }
 
     useEffect(() => {
-        console.log("ia ma inside the focusted");
         if (isFocused) {
             NetInfo.refresh().then(state => {
                 setNetwork(state.isConnected)
@@ -60,33 +81,10 @@ const Cart = () => {
                     navigation.navigate("NetworkError");
                 }
             })
-            const initialLoading = async () => {
-                console.log("initial loading");
-                let token = await AsyncStorage.getItem("loginToken");
-                setLoader(true);
-                if (token) {
-                    console.log("token ....................", token);
-                    setToken(token)
-                    dispatch(cartHandler(token)).then(unwrapResult)
-                        .then((originalPromiseResult) => {
-                            setData(originalPromiseResult.data.Courses);
-                            //console.log("Data",Data[0].TotalAmount);
-                            //initialisePaymentSheet();
-
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            setLoader(false);
-                            console.log("error", rejectedValueOrSerializedError);
-                        })
-                } else {
-                    setLoader(false);
-                    navigation.replace('Login');
-                }
-            }
 
         }
     }, [isFocused, network])
-    {/* ******************** */ }
+
     useEffect(() => {
         // console.log(cartData,"cartData2");
         let cartValue = 0
@@ -95,87 +93,14 @@ const Cart = () => {
         setData(cartData);
         for (let i = 0; i < course?.length; i++) {
             cartValue = cartValue + course[i].enrollmentFee;
-
         }
         setTotalValue(cartValue);
         initialisePaymentSheet(cartValue);
         //fetchPaymentSheetParams();
-
         setLoader(false);
-
     }, [cartData])
-    {/* ******************** */ }
-    const handleViewNavigation = (item) => {
-        SetLoader(true);
-        dispatch(viewCourseHandler(item)).then(unwrapResult)
-            .then((originalPromiseResult) => {
-                SetLoader(false);
-                navigation.navigate("ViewCourse");
-            })
-            .catch((rejectedValueOrSerializedError) => {
-                // console.log(" Inside catch", rejectedValueOrSerializedError);
-                SetLoader(false);
-            })
 
-    }
-    {/* ******************** */ }
-    const callCart = () => {
-        SetLoader(true);
-        dispatch(cartHandler(Token)).then(unwrapResult)
-            .then((originalPromiseResult) => {
-                // console.log("CartList ", originalPromiseResult);
-                setData(originalPromiseResult.data.Courses);
-                setAddLoader(false);
-            })
-            .catch((rejectedValueOrSerializedError) => {
-                // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
-                setAddLoader(false);
-            })
-    }
-    {/* ******************** */ }
-    const removeItem = async (id) => {
-        console.log(id, "............................id", Data)
-        setAddLoader(true);
-        return axios
-            .delete(cartListUrl + `/${id}?country=IN&isBundle=0`, {
-                headers: {
-                    Authorization: `Bearer ${Token}`,
-                },
-            })
-            .then((response) => {
-                console.log("im th Removal item token..................", Token)
-                callCart();
-                console.log("........................................response", response.data)
-                SetLoader(false);
-                return response.data;
-            })
-            .catch(err => { console.log(err, "error listed"), setAddLoader(false); })
-    }
-    {/* ******************** */ }
-    const deleteCart = async () => {
-        setAddLoader(true);
-        await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
-            .then(response => {
-                callCart()
-            })
-            .catch(err => { console.log(err, "error listed"), SetLoader(false) })
-    }
-    {/* ******************** */ }
-    const LoaderActivity = () => {
-        return (
-            <View style={{ width: "100%", alignItems: "center", paddingBottom: "5%", height: "100%", justifyContent: "center" }}>
-                <LoaderKit
-                    style={{ width: 50, height: 55 }}
-                    name={'BallPulse'} // Optional: see list of animations below
-                    size={30} // Required on iOS
-                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
-                />
-            </View>
-        )
-    }
-    {/* ******************** */ }
     const fetchPaymentSheetParams = async (cartvalue) => {
-
         let Token = await AsyncStorage.getItem("loginToken")
         console.log("stripe", Token, cartvalue)
         const response = await axios.post(intentPayment, { 'amount': cartvalue }, {
@@ -185,7 +110,7 @@ const Cart = () => {
         })
             .then((response) => {
                 //let response = data?.data.data;
-                console.log("payment data", response?.data.data);
+                console.log("Payment details like customerId,ephemeralKey and paymentIntent................", response?.data.data);
                 return response?.data.data
             })
             .catch(err => {
@@ -200,9 +125,9 @@ const Cart = () => {
             customer,
         };
     };
-    {/* Stripe Payment Intent ******************** */ }
+
     const initialisePaymentSheet = async (cartvalue) => {
-        console.log("initial payment sheet");
+        console.log("Inside the initialisePaymentSheet");
         const { paymentIntent, customer, ephemeralKey } = await fetchPaymentSheetParams(cartvalue);
         console.log("jjjj", paymentIntent, "jjjj", customer, "jjjj", ephemeralKey);
         const { error } = await initPaymentSheet({
@@ -245,6 +170,73 @@ const Cart = () => {
         }
     };
 
+    const handleViewNavigation = (item) => {
+        setLoader(true);
+        dispatch(viewCourseHandler(item)).then(unwrapResult)
+            .then((originalPromiseResult) => {
+                setLoader(false);
+                navigation.navigate("ViewCourse");
+            })
+            .catch((rejectedValueOrSerializedError) => {
+                ToastAndroid.showWithGravity('Something went wrong, please try again later!', ToastAndroid.CENTER, ToastAndroid.LONG);
+                // console.log(" Inside catch", rejectedValueOrSerializedError);
+                setLoader(false);
+            })
+    }
+
+    const callCart = () => {
+        setLoader(true);
+        dispatch(cartHandler(Token)).then(unwrapResult)
+            .then((originalPromiseResult) => {
+                // console.log("CartList ", originalPromiseResult);
+                setData(originalPromiseResult.data.Courses);
+                setAddLoader(false);
+            })
+            .catch((rejectedValueOrSerializedError) => {
+                // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
+                ToastAndroid.showWithGravity("Can't able to remove from cart, please try again later", ToastAndroid.CENTER, ToastAndroid.LONG);
+                setAddLoader(false);
+            })
+    }
+
+    const removeItem = async (id) => {
+        setAddLoader(true);
+        return axios.delete(cartListUrl + `/${id}?country=IN&isBundle=0`, {
+            headers: {
+                Authorization: `Bearer ${Token}`,
+            },
+        }).then((response) => {
+            callCart();
+            setLoader(false);
+            return response.data;
+        }).catch((err) => {
+            console.log(err, "error listed"),
+                setAddLoader(false);
+        })
+    }
+
+    const deleteCart = async () => {
+        setAddLoader(true);
+        await axios.delete(cartListUrl, { headers: { 'Authorization': "Bearer " + Token } })
+            .then(response => {
+                callCart()
+            })
+            .catch((err) => { console.log(err, "error listed"), setLoader(false) })
+    }
+
+    const LoaderActivity = () => {
+        return (
+            <View style={{ width: "100%", alignItems: "center", paddingBottom: "5%", height: "100%", justifyContent: "center" }}>
+                <LoaderKit
+                    style={{ width: 50, height: 55 }}
+                    name={'BallPulse'}
+                    size={30}
+                    color={COLORS.primary}
+                />
+            </View>
+        )
+    }
+
     const AlertPayment = () => {
         Alert.alert(
             "Checkout by logging in via Web Application 'edusity.com'",
@@ -255,14 +247,16 @@ const Cart = () => {
             ]
         );
     }
+
     {/* Payment with regards to Location ******************** */ }
     const handleMakePayment = async (Data) => {
-        console.log("eslection country", Geolocation.countryCode);
+        console.log("Geolocation.countryCode.................", Geolocation.countryCode, "Data.........", Data[0]);
         // if(Geolocation.countryCode=="IN"){
         const session = Data[0].SessionID;
         setDataSession(session);
         console.log("session", session, Geolocation)
         let pricing = Data[0].TotalAmount * 100
+        // let pricing = 1 * 100
         var options = {
             name: "Edusity",
             description: "Test Transaction",
@@ -418,27 +412,17 @@ const Cart = () => {
             merchantIdentifier="merchant.com.EdusityMobi"
         >
             <KeyboardAvoidingView style={styles.mainContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
+                <View style={styles.topBar}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                     </TouchableOpacity>
-                    <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
+                    <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, marginLeft: 14 }}>Cart</Text>
                 </View>
-                {addLoader ?
-                    <View style={styles.overlay} >
-                        {/* <ActivityIndicator size="large" color={COLORS.white} /> */}
-                        <LoaderKit
-                            style={{ width: 50, height: 50, position: 'absolute' }}
-                            name={'BallPulse'} // Optional: see list of animations below
-                            size={50} // Required on iOS
-                            color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                        />
-                    </View>
-                    : null}
+                {addLoader ? <OverlayLoader /> : null}
                 {(!loader) ?
                     (Data.length > 0) ?
                         <>
-                            <View style={{ color: COLORS.black, backgroundColor: COLORS.lightGray, height: height / 1.3 }}>
+                            <View style={styles.flatlistContainerstyle}>
                                 <FlatList
                                     data={Data}
                                     scrollEnabled={true}
@@ -446,27 +430,25 @@ const Cart = () => {
                                     // extraData={flalistRefresh}
                                     renderItem={({ item }) => (
                                         <View style={styles.mainTouchable}>
-                                            <View style={{ flexDirection: "row", width: "100%", margin: "2%", padding: "2%" }}>
-                                                <Pressable style={{ flexDirection: "column", width: "70%", alignItems: "flex-start", }} onPressIn={() => handleViewNavigation(item.CourseId)}>
+                                            <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
+                                                <TouchableOpacity style={{ flexDirection: "column" }} onPressIn={() => handleViewNavigation(item.CourseId)}>
                                                     <Text style={{ color: COLORS.black, fontSize: RFValue(14), ...FONTS.robotomedium }}>
                                                         {item.CourseName}
                                                     </Text>
                                                     <Text style={{ color: COLORS.primary, fontSize: RFValue(12), ...FONTS.robotomedium }}>
                                                         <Text style={{ color: COLORS.black }}>Instructor:</Text> {item.Author}
                                                     </Text>
-
-                                                </Pressable>
-                                                <View style={{ flexDirection: "column", width: "20%", alignItems: "flex-end" }}>
+                                                </TouchableOpacity>
+                                                <View style={{ flexDirection: "column", }}>
                                                     <Text style={{ color: COLORS.primary, fontSize: RFValue(16), ...FONTS.robotomedium }}>
                                                         ${item.enrollmentFee}
                                                     </Text>
-
                                                 </View>
                                             </View>
 
-                                            <TouchableOpacity style={{ flexDirection: "row" }} onPressIn={() => removeItem(item.cartId)}>
-                                                <MCIcon name="delete-forever" size={RFValue(20)} color="red" />
-                                                <Text style={{ color: "red", fontSize: RFValue(8), marginTop: "1%", marginHorizontal: "1%", paddingBottom: "2%", ...FONTS.robotoregular }}>Remove from Cart</Text>
+                                            <TouchableOpacity style={styles.deleteButton} onPressIn={() => removeItem(item.cartId)}>
+                                                <MCIcon name="cart-remove" size={RFValue(18)} color="red" />
+                                                <Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>Remove from Cart</Text>
                                             </TouchableOpacity>
                                         </View>
                                     )}
@@ -475,7 +457,7 @@ const Cart = () => {
                             <View style={{ backgroundColor: COLORS.white, height: "18%" }}>
                                 <View style={{ flexDirection: "row", height: "40%", width: "100%" }}>
                                     <View style={{ flexDirection: "column", width: "40%", alignItems: "flex-start" }}>
-                                        <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "8%", fontSize: RFValue(10), ...FONTS.robotomedium }}>Total items :{(cartData?.data?.Courses)?.length}</Text>
+                                        <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "8%", fontSize: RFValue(10), ...FONTS.robotomedium }}>Total items : {(cartData?.data?.Courses)?.length}</Text>
                                     </View>
                                     <View style={{ flex: 1, flexDirection: "column", width: "60%", alignItems: "flex-end" }}>
                                         <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(10), ...FONTS.robotoregular, textAlign: "right" }}>SubTotal{"\n"}
@@ -486,7 +468,7 @@ const Cart = () => {
                                 </View>
                                 <View style={{ flexDirection: "row", height: "35%", width: "100%", }}>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.gray, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => { deleteCart(), SetLoader(true) }}>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.gray, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => { deleteCart(), setLoader(true) }}>
                                             <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Empty the Cart</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -496,11 +478,9 @@ const Cart = () => {
                                                 {/* {'\n'} */}
                                                 {/* <Text style={{ color: COLORS.white, marginHorizontal: "5%", fontSize: RFValue(8), ...FONTS.robotoregular, textAlign: "center" }}>You Will Be Redirected To Razor Pay </Text> */}
                                             </Text>
-
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-
                             </View>
                         </>
                         :
@@ -521,8 +501,6 @@ const Cart = () => {
                         alert(`Error: ${error.code} | ${error.description}`);
                     }); */}
 
-
-
             </KeyboardAvoidingView>
         </StripeProvider>
     );
@@ -534,16 +512,27 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.lightGray,
     },
     mainTouchable: {
-        margin: "2%",
         borderRadius: 10,
         backgroundColor: Colors.white,
-        shadowColor: COLORS.primary,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 2.25,
-        shadowRadius: 3.84,
+        marginBottom: 12,
+        padding: 8
+    },
+    topBar: {
+        flexDirection: "row",
+        alignItems: "center",
+        color: COLORS.black,
+        backgroundColor: COLORS.primary,
+        height: "8%",
+        borderBottomStartRadius: 30,
+        borderBottomEndRadius: 30,
+        alignItems: "center",
+        paddingHorizontal: 18
+    },
+    flatlistContainerstyle: {
+        color: COLORS.black,
+        backgroundColor: COLORS.lightGray,
+        height: height / 1.3,
+        padding: 12
     },
     listItem: {
         flex: 1,
@@ -565,6 +554,17 @@ const styles = StyleSheet.create({
         paddingTop: 2,
         borderWidth: 1,
         borderRadius: 10,
+    },
+    deleteButton: {
+        flexDirection: "row",
+        marginTop: 6,
+        borderWidth: 1,
+        borderRadius: 6,
+        alignItems: "center",
+        borderColor: COLORS.lightGray,
+        width: "36%",
+        padding: 4,
+        justifyContent: "space-evenly"
     },
     centeredView: {
         flex: 1,
@@ -609,19 +609,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
         ...FONTS.robotoregular
-    },
-    overlay: {
-        flex: 1,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-        justifyContent: "center"
-        , alignItems: "center"
     }
 });
 export default Cart;

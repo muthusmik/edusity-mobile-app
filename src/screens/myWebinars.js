@@ -109,14 +109,16 @@ const MyWebinars = ({ data }) => {
         } else {
             //     let roomId=data.data.room;
             console.log("Inside the else conidtion.......", webinarData?.error)
-            Alert.alert(
-                "Info",
-                `Webinar room id is: ${webinarData.message}`,
-                [
-                    { text: "OK" }
-                ]
-            );
-            navigation.navigate("jitsiCall", { webinarData });
+            Alert.alert("Ongoing process to make webinar success")
+            
+            // Alert.alert(
+            //     "Info",
+            //     `Webinar room id is: ${webinarData.message}`,
+            //     [
+            //         { text: "OK" }
+            //     ]
+            // );
+            // navigation.navigate("jitsiCall", { webinarData });
 
             //     <WebView style={{ height: 200, width: "100%" }}
             //     source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${data.data.room}` }}

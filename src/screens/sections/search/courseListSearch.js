@@ -9,7 +9,6 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import axios from 'axios';
 import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import LoaderKit from 'react-native-loader-kit'
 import { useNavigation } from '@react-navigation/native';
@@ -28,21 +27,19 @@ import { useIsFocused } from "@react-navigation/core";
 import { baseUrl, baseUrl_payment } from '../../../services/constant';
 import { getWishListedCourses } from '../../../services/wishlist';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
+import OverlayLoader from '../../../components/overlayLoader';
 
 const CourseList = ({ allCourses, cartData }) => {
+
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const childRef = useRef(null);
     const ScrollRef = useRef(null);
     const redxitems = useSelector(state => state?.courseList?.data?.data);
     const getWishListData = useSelector(state => state?.getWishList?.data?.data)
-    // console.log("Inside the courseListSearsch.js allCourses.........", getWishListData)
-    // console.log("Inside the courseListSearsch.js cartData.........", cartData)
     const [cartArray, setCartArray] = useState([]);
-
     const totalPage = redxitems?.total_page;
     const totalCourses = redxitems?.total;
-    // console.log("iam inside search redxitemss", allCourses.data[0].isWishlisted);
     const [flalistRefresh, setFlatListRefresh] = useState(false);
     const [showHeart, setShowHeart] = useState([]);
     const [Data, setData] = useState([]);
@@ -61,8 +58,7 @@ const CourseList = ({ allCourses, cartData }) => {
     const [submission, setSubmission] = useState(false);
     const [cartBtnLoader, setCartBtnLoader] = useState(false);
     const [contentVerticalOffset, setContentVerticalOffset] = useState(null);
-    // const token = useSelector((state) => state.loginHandle.data)
-    // console.log("Data..................", Data)
+
     useEffect(() => {
         if (isFocused) {
             NetInfo.addEventListener(networkState => {
@@ -75,77 +71,95 @@ const CourseList = ({ allCourses, cartData }) => {
     }, [isFocused, network])
 
     const handleWishlist = async (itemId) => {
-        console.log("Item Id............", itemId)
+        setCartBtnLoader(true)
         if (network) {
             if (!showHeart.includes(itemId)) {
-                console.log("Exclis", !showHeart.includes(itemId))
-
-                let wishlistedData = await wishListApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
-                setShowHeart(getWishListData?.map(a => a.ID))
+                let wishlistedData = await wishListApi(itemId, key).then((response) => {
+                    dispatch(getWishListDataHandler(key))
+                }).catch((error) => {
+                    setCartBtnLoader(false)
+                    ToastAndroid.showWithGravity("Can't able add in WishList, please try again later", ToastAndroid.SHORT, ToastAndroid.CENTER)
+                    console.error("Error................addwishList", error);
+                })
             } else {
-                console.log("Iclsive", showHeart.includes(itemId))
-                let wishlistedData = await wishListRemoverApi(itemId, key).then(() => { dispatch(getWishListDataHandler(key)) })
-                setShowHeart(getWishListData?.map(a => a.ID))
+                let wishlistedData = await wishListRemoverApi(itemId, key).then((response) => {
+                    dispatch(getWishListDataHandler(key))
+                }).catch((error) => {
+                    setCartBtnLoader(false)
+                    ToastAndroid.showWithGravity("Can't able remove in WishList, please try again later", ToastAndroid.SHORT, ToastAndroid.CENTER)
+                    console.error("Error................addwishList", error);
+                })
             }
             setFlatListRefresh(!flalistRefresh);
         }
         else {
+            setCartBtnLoader(false)
             navigation.navigate("NetworkError");
         }
     }
 
     const handleAddCart = async (id) => {
-        // console.log("new token", key);
+        // console.log("Id...........", id)
+        setCartBtnLoader(true);
         if (network) {
             if (key) {
-                // let arry=cartBtnLoader.push(id)
-                setCartBtnLoader(true);
                 let result = await addtoCart(id, key).then(response => {
-
+                    // console.log("Response for add to cart...........", response)
+                    if (response.error) { ToastAndroid.showWithGravity(response.message, ToastAndroid.TOP, ToastAndroid.LONG) }
+                    dispatch(cartHandler(key))
+                }).catch((error) => {
                     setCartBtnLoader(false)
-                });
-                // console.log(result, "hello");
-                dispatch(cartHandler(key));
+                    ToastAndroid.showWithGravity("Can't able add in Cart, please try again later", ToastAndroid.SHORT, ToastAndroid.CENTER);
+                    console.error("Error................handleAddCart", error);
+                })
             }
             else {
                 navigation.navigate("Login");
+                setCartBtnLoader(false);
             }
         }
         else {
             navigation.navigate("NetworkError");
+            setCartBtnLoader(false);
         }
     }
+
     const refresh = () => {
         if (!selectedLevel && !selectedCategory) {
             if (page < totalPage) {
                 setPage(page + 1);
                 setRefreshList(true);
             }
-
         } else {
             if (filterPageNo < totalFilterPage) {
                 setFilterPageNo(filterPageNo + 1);
                 setRefreshList(true);
             }
-
         }
     }
+
     useEffect(() => {
         if (cartData) {
             var ListCartId = [];
             (cartData?.Courses).forEach((element) => {
                 var Data = (element.CourseId);
                 ListCartId.push(Data);
-                // console.log(ListCartId, "Array")
             })
             setCartArray(ListCartId);
+            setCartBtnLoader(false)
         }
     }, [cartData])
 
     useEffect(() => {
+        if (getWishListData) {
+            setShowHeart(getWishListData?.map(a => a.ID))
+            setCartBtnLoader(false)
+        }
+    }, [getWishListData])
+
+    useEffect(() => {
         if (page > 1 && page <= totalPage && !selectedLevel && !selectedCategory) {
             const addData = async () => {
-
                 // console.log(key, "...........................token")
                 // var Url = "https://livelogin.edusity.com/course?page=" + page;
                 var Url = `${baseUrl_payment}v1/course?page=${page}`;
@@ -154,7 +168,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 const callData = await axios.post(Url).then(response => {
                     const newdata = response.data.data.courses
                     setData(Data.concat(newdata));
-                    setShowHeart(getWishListData?.map(a => a.ID))
+                    // setShowHeart(getWishListData?.map(a => a.ID))
                     setRefreshList(false);
                     return response.data
                 })
@@ -166,7 +180,6 @@ const CourseList = ({ allCourses, cartData }) => {
             addData();
         } else if (filterPageNo > 1 && filterPageNo <= totalFilterPage && (selectedLevel || selectedCategory)) {
             const addData = async () => {
-
                 // console.log(filterPageNo, "filterpageno")
                 if (!selectedCategory) {
                     // console.log(selectedLevel, "level Only")
@@ -191,14 +204,13 @@ const CourseList = ({ allCourses, cartData }) => {
                     //  console.log(response.data.data.data, "newdata")
                     console.log("3 setdatasde");
                     setData(Data.concat(newdata));
-                    setShowHeart(getWishListData?.map(a => a.ID))
+                    // setShowHeart(getWishListData?.map(a => a.ID))
                     setRefreshList(false);
                     return response.data
+                }).catch((err) => {
+                    navigation.navigate("ServerError");
+                    setRefreshList(false);
                 })
-                    .catch((err) => {
-                        navigation.navigate("ServerError");
-                        setRefreshList(false);
-                    })
             }
             addData();
         }
@@ -237,7 +249,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     setTotalFilterPage(response.data.data.total_page);
                     console.log("4 setdatasde");
                     setData(newdata);
-                    setShowHeart(getWishListData?.map(a => a.ID))
+                    // setShowHeart(getWishListData?.map(a => a.ID))
                     setFilterPageNo(1);
                     SetLoader(false);
                     setRefreshList(false)
@@ -254,9 +266,8 @@ const CourseList = ({ allCourses, cartData }) => {
         } else {
             console.log("5 setdatasde");
             setData(allCourses.courses);
-
             // console.log("All courses below setData.......", allCourses.courses)
-            setShowHeart(getWishListData?.map(a => a.ID))
+            // setShowHeart(getWishListData?.map(a => a.ID))
             setRefreshList(false);
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
             setPage(1);
@@ -285,7 +296,7 @@ const CourseList = ({ allCourses, cartData }) => {
             //     console.log("error.........", error);
             // })
             // console.log("wishListedCourses............after login...", wishListedCourses)
-            setShowHeart(getWishListData?.map(a => a.ID))
+            // setShowHeart(getWishListData?.map(a => a.ID))
             setRefreshList(false);
             SetLoader(false)
         } else {
@@ -302,6 +313,15 @@ const CourseList = ({ allCourses, cartData }) => {
     useEffect(() => {
         initial()
     }, [allCourses])
+
+    const handleViewCart = () => {
+        if (key) {
+            navigation.navigate("Cart");
+        }
+        else {
+            navigation.navigate("Login");
+        }
+    }
 
     const actions = [
         {
@@ -364,14 +384,14 @@ const CourseList = ({ allCourses, cartData }) => {
         } else if (name == "Sort-High-Low") {
             resultData = Data.slice().sort((a, b) => b.EnrollmentFee - a.EnrollmentFee)
             setData(resultData);
-            setShowHeart(getWishListData?.map(a => a.ID))
+            // setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) {
                 ScrollRef.current.scrollToOffset({ offset: 0, animated: true })
             };
         } else if (name == "Sort-Low-High") {
             resultData = Data.slice().sort((a, b) => a.EnrollmentFee - b.EnrollmentFee)
             setData(resultData);
-            setShowHeart(getWishListData?.map(a => a.ID))
+            // setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
         }
         setFlatListRefresh(!flalistRefresh);
@@ -392,17 +412,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 </ImageBackground>
             </View> :
             <View style={styles.mainContainer}>
-                {cartBtnLoader ?
-                    <View style={styles.overlay} >
-                        <LoaderKit
-                            style={{ width: 50, height: 50, position: 'absolute' }}
-                            name={'BallPulse'} // Optional: see list of animations below
-                            size={50} // Required on iOS
-                            color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                        />
-                    </View>
-                    : null}
-
+                {cartBtnLoader ? <OverlayLoader /> : null}
                 {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
                 {/* {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)} */}
                 {(Data?.length !== 0) ?
@@ -456,7 +466,6 @@ const CourseList = ({ allCourses, cartData }) => {
                                                             <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
                                                     </View>
                                                     {key ? <TouchableOpacity onPress={() => handleWishlist(item.ID)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                                                        {/* {console.log("Showherat......", showHeart[index] == 0, index, item.ID, showHeart, showHeart.includes(item.ID))} */}
                                                         {!(showHeart?.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
                                                             <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
                                                     </TouchableOpacity> : null}
@@ -501,7 +510,8 @@ const CourseList = ({ allCourses, cartData }) => {
                                                 </View>
                                             </View>
                                         </View>
-                                        {/* <Divider /> */}
+                                        {/* {console.log("Ispurchased..............",item.isPurchased,"Item ID.........",item.ID)}
+                                       {console.log("item..............",item)} */}
                                         {(!item.isPurchased) ?
                                             <View style={{ flexDirection: "row", marginVertical: "2%" }}>
                                                 {/* <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
@@ -512,8 +522,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                     </TouchableOpacity>
                                                 </View> */}
                                                 {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
-                                                <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                                    {/* {console.log(item.isPurchased)} */}
+                                                <View style={{ flexDirection: "column", width: "50%", alignItems: "center", alignSelf: "flex-end" }}>
                                                     {!(cartArray.includes(item.ID)) ?
                                                         <>
                                                             {(cartBtnLoader != item.ID) ?
@@ -522,7 +531,6 @@ const CourseList = ({ allCourses, cartData }) => {
                                                                     <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
                                                                 </TouchableOpacity> :
                                                                 <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent: "center", padding: "4%", alignItems: "center", borderRadius: 10 }} >
-                                                                    {/* {console.log("working", cartBtnLoader)} */}
                                                                     <LoaderKit
                                                                         style={{ width: RFValue(20), height: RFValue(20) }}
                                                                         name={'BallPulse'} // Optional: see list of animations below
@@ -532,18 +540,17 @@ const CourseList = ({ allCourses, cartData }) => {
                                                                 </View>}
                                                         </>
                                                         :
-                                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
+                                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
                                                             <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                                             <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View Cart</Text>
                                                         </TouchableOpacity>
                                                     }
                                                 </View>
                                             </View> :
-                                            <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
+                                            <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
                                                 <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                                 <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
                                             </View>}
-
                                     </View>
                                 </View>
                             )
@@ -585,23 +592,17 @@ const CourseList = ({ allCourses, cartData }) => {
                     setSubmission={setSubmission}
                     style={{ margiTop: "15%" }} />
             </View>
-
-
-
     );
 }
+
 const styles = StyleSheet.create({
-
     mainContainer: {
-
         height: "100%",
         width: "100%",
         borderBottomStartRadius: 5,
         borderBottomEndRadius: 5,
     },
     mainTouchable: {
-
-
         shadowColor: COLORS.primary,
         shadowOffset: {
             width: 0,
@@ -611,7 +612,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
     },
     searchContainer: {
-
         backgroundColor: COLORS.white,
         height: "60%",
         borderRadius: 25,
@@ -630,7 +630,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
     },
-
     listItem: {
         flex: 1,
         right: "1.5%",
@@ -640,7 +639,6 @@ const styles = StyleSheet.create({
         width: '97%',
         height: "100%",
         lineHeight: "1.5",
-
     },
     listItemText: {
         fontSize: 18,
@@ -656,7 +654,6 @@ const styles = StyleSheet.create({
     ratings: {
         fontSize: 10, color: COLORS.black,
     },
-
     coulmnImage: {
         width: "100%",
         flexDirection: "column",
@@ -669,19 +666,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-    },
-    overlay: {
-        flex: 1,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-        justifyContent: "center"
-        , alignItems: "center"
     }
 });
+
 export default CourseList;

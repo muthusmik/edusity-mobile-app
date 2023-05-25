@@ -16,8 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native'
 Feather.loadFont()
 
-const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
-    const isFocused=useIsFocused();
+const SearchScreen = ({ setIsSearchLoader, cartCount }) => {
+    const isFocused = useIsFocused();
     // useEffect(() => {
     //     // console.log(selectedItem, "selected item")
     // }, [selectedItem])
@@ -38,32 +38,32 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
     const [totalValue, setTotalValue] = useState(0);
 
     useEffect(() => {
-        if(isFocused){
-        const initialLoading = async () => {
-            let newToken = await AsyncStorage.getItem("loginToken");
-            // console.log("new token", newToken);
-            if (newToken) {
-                if (cartData) {
-                    let cartValue = 0
-                    let course = cartData.Courses;
-                    // console.log(course, "course detail")
-                    setData(cartData);
-                    for (let i = 0; i < course.length; i++) {
-                        cartValue = cartValue + course[i].enrollmentFee;
-        
+        if (isFocused) {
+            const initialLoading = async () => {
+                let newToken = await AsyncStorage.getItem("loginToken");
+                // console.log("new token", newToken);
+                if (newToken) {
+                    if (cartData) {
+                        let cartValue = 0
+                        let course = cartData.Courses;
+                        // console.log(course, "course detail")
+                        setData(cartData);
+                        for (let i = 0; i < course.length; i++) {
+                            cartValue = cartValue + course[i].enrollmentFee;
+
+                        }
+                        setTotalValue(cartValue);
                     }
-                    setTotalValue(cartValue);
+                    setKeyToken(newToken);
+                } else {
+                    setKeyToken(null);
                 }
-                setKeyToken(newToken);
-            }else{
-                setKeyToken(null);
+
             }
-           
+            initialLoading();
+            // console.log("cartData2.........................................................................");
         }
-        initialLoading();
-        // console.log("cartData2.........................................................................");
-    }
-    }, [cartData,cartCount,isFocused])
+    }, [cartData, cartCount, isFocused])
 
     const handleSelelction = (data) => {
         setIsSearchLoader(true)
@@ -86,7 +86,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
 
     const suggestionCallApi = async (data) => {
         // const searchUrl = "https://backend-linux-login.azurewebsites.net/search/course?search=" + data;
-        const searchUrl =`${baseUrl}search/course?search=${data}`;
+        const searchUrl = `${baseUrl}search/course?search=${data}`;
         const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + Token }
         return await axios.get(searchUrl, { headers: headers }).then(response => {
             const suggestions = response.data.data
@@ -122,7 +122,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
     }, [])
 
     const onOpenSuggestionsList = useCallback(isOpened => { }, [])
-    const handlecart =() => {
+    const handlecart = () => {
         // console.log(keyToken,"hello")
         if (keyToken) {
             navigation.navigate("Cart")
@@ -194,7 +194,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                         }}
                         // suggestionsListMaxHeight=50
                         containerStyle={{ justifyContent: "space-around", marginTop: "5%", marginHorizontal: "5%" }}
-                        renderItem={(item, text) => <Text style={{ color: COLORS.black, padding: 10, ...FONTS.robotoregular,height:60}}>{item.title}</Text>}
+                        renderItem={(item, text) => <Text style={{ color: COLORS.black, padding: 10, ...FONTS.robotoregular, height: 60 }}>{item.title}</Text>}
                         ChevronIconComponent={<Feather name="chevron-down" size={20} color="red" />}
                         ClearIconComponent={<Feather name="x-circle" size={18} color="red" />}
                         inputHeight={40}
@@ -214,20 +214,7 @@ const SearchScreen = ({ setIsSearchLoader,cartCount }) => {
                     <TouchableOpacity style={{ alignItems: 'center', flexDirection: "row", borderWidth: 0, justifyContent: "center", borderColor: COLORS.white, borderRadius: 10 }} onPress={() => handlecart()}>
                         <FontAwesome name="shopping-cart" size={RFValue(35)} color="white" style={{ flexDirection: "column" }} />
                         {/* {console.log("hi,",keyToken)} */}
-                        {(Data && keyToken) ? <View style={{
-                            flexDirection: "column", borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
-                            width: Dimensions.get('window').width * 0.05,
-                            height: Dimensions.get('window').width * 0.05,
-                            backgroundColor: "red",
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            // marginLeft:"8%"
-                            position: "absolute",
-                            bottom: "54%",
-                            left: "41%",
-                            borderWidth: 1,
-                            borderColor: "red"
-                        }}>
+                        {(Data && keyToken) ? <View style={styles.circle}>
                             <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.robotomedium, }}>{(Data?.Courses)?.length}</Text>
                         </View> : null}
                     </TouchableOpacity>
@@ -276,5 +263,19 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
     },
+    circle: {
+        flexDirection: "column", borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+        width: Dimensions.get('window').width * 0.05,
+        height: Dimensions.get('window').width * 0.05,
+        backgroundColor: "red",
+        justifyContent: 'center',
+        alignItems: 'center',
+        // marginLeft:"8%"
+        position: "absolute",
+        bottom: "54%",
+        left: "41%",
+        borderWidth: 1,
+        borderColor: "red"
+    }
 });
 export default SearchScreen;

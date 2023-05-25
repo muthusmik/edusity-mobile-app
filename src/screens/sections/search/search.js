@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
     View,
-    Text, Image,
-    TouchableOpacity,
-    ImageBackground, ActivityIndicator,
-    StatusBar, ScrollView, FlatList, StyleSheet, KeyboardAvoidingView,
+    ImageBackground,
+    StatusBar, StyleSheet, KeyboardAvoidingView, ToastAndroid,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import LoaderKit from 'react-native-loader-kit';
 import { images, icons, COLORS, FONTS, SIZES } from "../../../constants";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,25 +19,53 @@ import NetInfo from '@react-native-community/netinfo';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 
 const Search = ({ navigation }) => {
-    // console.log("iam inside search", Token);
-    //  console.log("iam inside search");
     const dispatch = useDispatch();
-    const Token = useSelector((state) => state.loginHandle.data)
     const allCourses = useSelector((state) => state.courseList.data.data)
-    // console.log("const allCourses = useSelector((state) => state.courseList.data.data)",allCourses)
-
-    const [wishListed, setWishListed] = useState([false]);
     const cartData = useSelector((state) => state.cartList.data.data)
-    console.log("All cartData inside the serach.js.........", cartData)
     const [isSearchLoader, setIsSearchLoader] = useState(false);
     const cartCount = useSelector((state) => state.cartList.data.data);
-
-    const [Data, setData] = useState([]);
     const [network, setNetwork] = useState('')
     const [totalValue, setTotalValue] = useState(0);
     const isFocused = useIsFocused();
 
-    // console.log("Network connection ",network);
+    const initialLoading = async () => {
+        let token = await AsyncStorage.getItem("loginToken");
+        if (token) {
+            dispatch(cartHandler(token)).then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    // console.log("Inside the cartHandler............. ", originalPromiseResult)
+                    dispatch(userLoginHanlder(token)).then(unwrapResult)
+                        .then((originalPromiseResult) => {
+                            // console.log("Inside the userLoginHanlder............. ", originalPromiseResult)
+                            dispatch(getWishListDataHandler(token)).then((originalPromiseResult) => {
+                                // console.log("Inside the getWishListDataHandler............. ", originalPromiseResult)
+                            }).catch((rejectedValueOrSerializedError) => {
+                                // console.log("Inside the catch of getWishListDataHandler............. ", rejectedValueOrSerializedError)
+                                ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                            })
+                        })
+                        .catch((rejectedValueOrSerializedError) => {
+                            ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                            // console.log("Inside the catch of userLoginHanlder............", rejectedValueOrSerializedError);
+                        })
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                    // console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
+                })
+        }
+        dispatch(courseListHandler(token)).then(unwrapResult)
+            .then((originalPromiseResult) => {
+                // console.log("Inside the response of courseListHandler..........", originalPromiseResult)
+                setIsSearchLoader(false);
+            })
+            .catch((rejectedValueOrSerializedError) => {
+                ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                // console.log("Inside the catch of courseListHandler................", rejectedValueOrSerializedError);
+                setIsSearchLoader(false);
+            })
+    }
+
     useEffect(() => {
         if (isFocused) {
             setIsSearchLoader(true);
@@ -49,52 +73,14 @@ const Search = ({ navigation }) => {
                 setNetwork(state.isConnected)
                 if (state.isConnected) {
                     initialLoading();
-
                 }
                 else {
                     setIsSearchLoader(false);
                     navigation.navigate("NetworkError");
                 }
             })
-            // console.log("done n search")
-
-            const initialLoading = async () => {
-                let token = await AsyncStorage.getItem("loginToken");
-                if (token) {
-                    dispatch(cartHandler(token)).then(unwrapResult)
-                        .then((originalPromiseResult) => {
-                            // console.log("CartList............. ", originalPromiseResult)
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            // console.log(" cart List failed Inside catch", rejectedValueOrSerializedError);
-                        })
-                    dispatch(userLoginHanlder(token)).then(unwrapResult)
-                        .then((originalPromiseResult) => {
-                            // console.log("User lists........... ", originalPromiseResult);
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            // console.log(" Inside catch", rejectedValueOrSerializedError);
-                        })
-                    dispatch(getWishListDataHandler(token))
-                }
-                // console.log("Search.............................")
-                dispatch(courseListHandler(token)).then(unwrapResult)
-                    .then((originalPromiseResult) => {
-                        // console.log("successfully returned to login with response CourseList ", )
-                        setIsSearchLoader(false);
-                    })
-                    .catch((rejectedValueOrSerializedError) => {
-                        // console.log(" course list failed Inside catch", rejectedValueOrSerializedError);
-                        setIsSearchLoader(false);
-                    })
-
-
-            }
-
         }
-
     }, [isFocused, network])
-
 
     // useEffect(() => {
     //     console.log(cartData?.data, "cartData");

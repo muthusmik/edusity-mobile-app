@@ -4,7 +4,7 @@ import {
     Text, Image,
     TouchableOpacity,
     Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView,StatusBar,Platform
+    Pressable, FlatList, StyleSheet, KeyboardAvoidingView, StatusBar, Platform
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import LoaderKit from 'react-native-loader-kit';
@@ -16,16 +16,17 @@ import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { cartListUrl } from '../services/constant';
+import { metrices } from '../constants/metrices';
+
 const CheckoutComplete = () => {
     const navigation = useNavigation();
     const Token = useSelector((state) => state.loginHandle.data)
-    useEffect(()=>{
-        const cartDelete=async()=>{
-            // console.log("deleted")
+
+    useEffect(() => {
+        const cartDelete = async () => {
             return await axios.delete(cartListUrl, {
                 headers: {
                     Authorization: `Bearer +${Token.data}`
-
                 }
             }).then(response => {
                 // console.log(response.data, "data recieved")
@@ -34,41 +35,31 @@ const CheckoutComplete = () => {
             })
         }
         cartDelete();
-
     }, [])
-    // console.log("inside Success Page")
+
     return (
         <View style={{ backgroundColor: COLORS.white }}>
-             <StatusBar
-                        animated={true}
-                        backgroundColor={COLORS.primary}
-                    />
-                    {/* {Platform.OS=='ios'?
-                    <View style={{height:"5%"}}>
-
-                    </View>:null} */}
-            <View style={{ width: "100%", height: "5%" }}>
-                <TouchableOpacity style={{ flexDirection: "column", alignItems: "flex-start", width: "8%", justifyContent: "center", borderWidth: 0, marginLeft: "5%" }}
-                    onPress={() => navigation.navigate('Cart')}
-                >
+            <StatusBar
+                animated={true}
+                backgroundColor={COLORS.primary}
+            />
+            {Platform.OS == "ios" ? <View style={{ height: "5%" }} /> : null}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()/* navigation.navigate("Cart") */}>
                     <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
-                </TouchableOpacity>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, backgroundColor: COLORS.primary, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate("Cart")}>
-                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.white} />
                 </TouchableOpacity>
                 <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Checkout</Text>
             </View>
             <KeyboardAvoidingView style={styles.mainContainer}>
-                <Image source={images.checkoutGif} resizeMode="cover" style={{ height: 300, width: 300 }} />
+                <View style={{ height: 300, width: "100%" }}>
+                    <Image source={images.checkoutGif} resizeMode="contain" style={{ width: "100%", height: "100%" }} />
+                </View>
                 <Text style={{ ...FONTS.robotomedium, fontSize: RFValue(18), color: COLORS.black }}>Hurray! Successfully Purchased</Text>
                 <View style={{ flexDirection: "row" }}>
                     <Text style={{ fontSize: RFValue(14), ...FONTS.robotoregular, flexDirection: "column" }}>Your Purchased Course will be shown in</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: 'MyCourse' })}>
-                        <Text style={{ color: "red",fontSize: RFValue(14), ...FONTS.robotoregular,flexDirection:"column" }}> MyCourses</Text>
+                        <Text style={{ color: "red", fontSize: RFValue(14), ...FONTS.robotoregular, flexDirection: "column" }}> MyCourses</Text>
                     </TouchableOpacity>
-                    
                 </View>
             </KeyboardAvoidingView>
         </View>
@@ -76,12 +67,21 @@ const CheckoutComplete = () => {
 }
 const styles = StyleSheet.create({
     mainContainer: {
-        height: "100%",
+        height: metrices(92),
         width: "100%",
-        // justifyContent:"center",
-        marginTop: "35%",
+        marginTop: metrices(18),
         alignItems: "center",
         backgroundColor: COLORS.white
     },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        color: COLORS.black,
+        backgroundColor: COLORS.primary,
+        height: metrices(8),
+        borderBottomStartRadius: 30,
+        borderBottomEndRadius: 30,
+        paddingHorizontal: 18
+    }
 });
 export default CheckoutComplete;
