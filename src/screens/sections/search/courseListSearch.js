@@ -3,7 +3,7 @@ import {
     View,
     Text, Image,
     TouchableOpacity,
-    FlatList, StyleSheet, ImageBackground, ActivityIndicator, Pressable, ToastAndroid, RefreshControl
+    FlatList, StyleSheet, ImageBackground, ToastAndroid, RefreshControl
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import axios from 'axios';
@@ -34,26 +34,25 @@ const CourseList = ({ allCourses, cartData }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const childRef = useRef(null);
+    const isFocused = useIsFocused();
     const ScrollRef = useRef(null);
     const redxitems = useSelector(state => state?.courseList?.data?.data);
     const getWishListData = useSelector(state => state?.getWishList?.data?.data)
-    const [cartArray, setCartArray] = useState([]);
     const totalPage = redxitems?.total_page;
     const totalCourses = redxitems?.total;
     const [flalistRefresh, setFlatListRefresh] = useState(false);
+    const [cartArray, setCartArray] = useState([]);
     const [showHeart, setShowHeart] = useState([]);
     const [Data, setData] = useState([]);
+    const [key, setKey] = useState("")
     const [loader, SetLoader] = useState(false);
-    const [cartLoad, setCartLoad] = useState(true);
-    const [currentId, setCurrentId] = useState("");
     const [network, setNetwork] = useState('')
     const [refreshList, setRefreshList] = useState(false);
     const [totalFilterPage, setTotalFilterPage] = useState(0);
     const [filterPageNo, setFilterPageNo] = useState(0);
     const [filteredCount, setFilterdCourse] = useState(null);
-    const isFocused = useIsFocused();
     const [page, setPage] = useState(1);
-    const [selectedLevel, setSelectedLevel] = useState(null);
+    const [selectedLevel, setSelectedLevel] = useState("");
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [submission, setSubmission] = useState(false);
     const [cartBtnLoader, setCartBtnLoader] = useState(false);
@@ -87,7 +86,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 }).catch((error) => {
                     setCartBtnLoader(false)
                     ToastAndroid.showWithGravity("Can't able remove in WishList, please try again later", ToastAndroid.SHORT, ToastAndroid.CENTER)
-                    console.error("Error................addwishList", error);
+                    console.error("Error................removewishList", error);
                 })
             }
             setFlatListRefresh(!flalistRefresh);
@@ -204,7 +203,6 @@ const CourseList = ({ allCourses, cartData }) => {
                     //  console.log(response.data.data.data, "newdata")
                     console.log("3 setdatasde");
                     setData(Data.concat(newdata));
-                    // setShowHeart(getWishListData?.map(a => a.ID))
                     setRefreshList(false);
                     return response.data
                 }).catch((err) => {
@@ -266,21 +264,13 @@ const CourseList = ({ allCourses, cartData }) => {
         } else {
             console.log("5 setdatasde");
             setData(allCourses.courses);
-            // console.log("All courses below setData.......", allCourses.courses)
-            // setShowHeart(getWishListData?.map(a => a.ID))
             setRefreshList(false);
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
             setPage(1);
             SetLoader(false);
-
         }
     }, [submission])
 
-    // useEffect(()=>{
-    //     console.log("changed",Data)
-    // },[Data])
-
-    const [key, setKey] = useState("")
     const initial = async () => {
         setRefreshList(true);
         SetLoader(true)
@@ -384,14 +374,12 @@ const CourseList = ({ allCourses, cartData }) => {
         } else if (name == "Sort-High-Low") {
             resultData = Data.slice().sort((a, b) => b.EnrollmentFee - a.EnrollmentFee)
             setData(resultData);
-            // setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) {
                 ScrollRef.current.scrollToOffset({ offset: 0, animated: true })
             };
         } else if (name == "Sort-Low-High") {
             resultData = Data.slice().sort((a, b) => a.EnrollmentFee - b.EnrollmentFee)
             setData(resultData);
-            // setShowHeart(getWishListData?.map(a => a.ID))
             if (contentVerticalOffset > 200) { ScrollRef.current.scrollToOffset({ offset: 0, animated: true }) };
         }
         setFlatListRefresh(!flalistRefresh);
@@ -400,15 +388,13 @@ const CourseList = ({ allCourses, cartData }) => {
     return (
         (loader) ?
             <View style={{ height: "100%", width: "100%", }}>
-                {/* <View style={[styles.overlay]} > */}
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                     <LoaderKit
                         style={{ width: 50, height: 50 }}
-                        name={'BallPulse'} // Optional: see list of animations below
-                        size={50} // Required on iOS
-                        color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                        name={'BallPulse'}
+                        size={50}
+                        color={COLORS.primary}
                     />
-                    {/* </View> */}
                 </ImageBackground>
             </View> :
             <View style={styles.mainContainer}>
@@ -577,11 +563,12 @@ const CourseList = ({ allCourses, cartData }) => {
                     {(!refreshList) ? (Data?.length != 0) ? <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular, }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text> : null
                         : <LoaderKit
                             style={{ width: 50, height: 25, marginLeft: "6%" }}
-                            name={'BallPulse'} // Optional: see list of animations below
-                            size={10} // Required on iOS
-                            color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
+                            name={'BallPulse'}
+                            size={10}
+                            color={COLORS.primary}
                         />}
                 </View>
+
                 <PopUpFilterModal
                     ref={childRef}
                     selectedLevel={selectedLevel}
@@ -590,7 +577,7 @@ const CourseList = ({ allCourses, cartData }) => {
                     setSelectedCategory={setSelectedCategory}
                     submission={submission}
                     setSubmission={setSubmission}
-                    style={{ margiTop: "15%" }} />
+                   /*  style={{ marginTop: "15%" }} */ />
             </View>
     );
 }

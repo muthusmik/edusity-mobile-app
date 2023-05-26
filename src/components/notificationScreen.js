@@ -86,11 +86,13 @@ const styles = StyleSheet.create({
         width: "100%",
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        backgroundColor: "#5f99f5",
+        backgroundColor: COLORS.white,
         padding: 10,
     },
     touchableStyle: {
-        backgroundColor: COLORS.white,
+        borderWidth: 0.5,
+        borderColor: COLORS.primary,
+        backgroundColor: COLORS.lightGray,
         marginBottom: 10,
         borderRadius: 6,
         padding: 8
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
     },
     titleStyle: {
         ...FONTS.robotoregular,
-        color: COLORS.white,
+        color: COLORS.primary,
         fontSize: 20,
         textAlign: "center",
         marginBottom: 12

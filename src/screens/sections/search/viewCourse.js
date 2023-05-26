@@ -15,8 +15,6 @@ import AntIcon from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import OctIcon from 'react-native-vector-icons/Octicons'
 import WebView from 'react-native-webview';
-import LoaderKit from 'react-native-loader-kit'
-// import StarRating from 'react-native-star-rating-widget';
 import { viewCourseHandler } from '../../../store/redux/viewCourse';
 import { cartHandler } from '../../../store/redux/cart';
 import { unwrapResult } from '@reduxjs/toolkit';
@@ -43,7 +41,6 @@ const ViewCourse = () => {
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
     const [cartArray, setCartArray] = useState([]);
-    const [wishData, setWishData] = useState([]);
     const [wishArr, setWishArr] = useState([]);
     const CartData = useSelector(state => state.cartList.data);
     // console.log("WishArray inside the viewCourse...........", wishArray);
@@ -60,14 +57,18 @@ const ViewCourse = () => {
     //     })
     // }
     useEffect(() => {
-        let ListWishId = [];
-        (wishArray).forEach((element) => {
-            var Data = (element.ID);
-            ListWishId.push(Data);
+        console.log("Inside the useEffect of wishArray")
+        if (wishArray) {
+            console.log("Inside the useEffect of wishArray if statement")
+            let ListWishId = [];
+            (wishArray).forEach((element) => {
+                var Data = (element.ID);
+                ListWishId.push(Data);
+            }
+            )
+            setWishArr(ListWishId)
+            setAddLoader(false)
         }
-        )
-        setWishArr(ListWishId)
-        setAddLoader(false)
     }, [wishArray])
 
     useEffect(() => {
@@ -86,7 +87,6 @@ const ViewCourse = () => {
                     navigation.navigate("NetworkError");
                 }
             })
-
         }
     }, [isFocused, network])
 
@@ -112,20 +112,12 @@ const ViewCourse = () => {
             setAddLoader(false)
         }
     }
-    // console.log("buuuuu",token);
-    const handleNavigation = () => {
-        if (token) {
-            navigation.navigate("Cart")
-        }
-        else {
-            navigation.navigate("Login");
-        }
-    }
 
-    const handlePurchased = () => {
-        // console.log("Purchased pressed");
+    const handleNavigation = (valueFromButton) => {
+        // console.log("value from button..........", valueFromButton)
         if (token) {
-            navigation.navigate('Home', { screen: 'MyCourse' })
+            valueFromButton === "Go to Cart" ?
+                navigation.navigate("Cart") : navigation.navigate('Home', { screen: 'MyCourse' })
         }
         else {
             navigation.navigate("Login");
@@ -333,18 +325,20 @@ const ViewCourse = () => {
                                             console.log("Add to cart") :
                                         console.log("Purchased")
                                     } */}
-                                    {(Data.data.recordsets[0][0].isPurchased === false) ?
-                                        (cartArray.includes(listData?.recordsets[0][0].ID)) ?
-                                            <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.gray, margin: "1%", borderWidth: 1, borderColor: COLORS.gray, padding: "3%" }} onPress={() => handleNavigation()}>
-                                                <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
-                                            </TouchableOpacity> :
-                                            <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
-                                                <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Cart</Text>
-                                            </TouchableOpacity> :
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.black, flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handlePurchased()}>
-                                            <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Purchased</Text>
-                                        </TouchableOpacity>
-                                    }
+                                    {/* {console.log("Cartarray..........", cartArray.length, cartArray.length != 0)} */}
+                                    {(cartArray.length != 0) ?
+                                        (Data.data.recordsets[0][0].isPurchased === false) ?
+                                            (cartArray.includes(listData?.recordsets[0][0].ID)) ?
+                                                <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.gray, margin: "1%", borderWidth: 1, borderColor: COLORS.gray, padding: "3%" }} onPress={() => handleNavigation("Go to Cart")}>
+                                                    <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Go to Cart</Text>
+                                                </TouchableOpacity> :
+                                                <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
+                                                    <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>Add To Cart</Text>
+                                                </TouchableOpacity> :
+                                            <TouchableOpacity style={{ backgroundColor: COLORS.black, flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleNavigation("Purchased")}>
+                                                <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Purchased</Text>
+                                            </TouchableOpacity>
+                                        : null}
                                 </View>
                             </View>
                             {(listData) ?
@@ -446,11 +440,10 @@ const ViewCourse = () => {
                                                             borderRadius: 8, padding: "5%"
                                                         }}
                                                     />}
-                                                <Text style={{ marginLeft: "5%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular, }}>{item.CourseName}</Text>
-                                                <Text style={{ marginLeft: "5%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular, }}>
-                                                    {item.Category} <Text style={{ margin: "1%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular, }}>({item.SubCategory})</Text>
+                                                <Text style={{ marginLeft: "5%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular }}>{item.CourseName}</Text>
+                                                <Text style={{ marginLeft: "5%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular }}>
+                                                    {item.Category} <Text style={{ margin: "1%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular }}>({item.SubCategory})</Text>
                                                 </Text>
-
                                             </TouchableOpacity>
                                         )}
                                         keyExtractor={(item, index) => index}

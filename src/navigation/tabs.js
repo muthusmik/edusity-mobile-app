@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, Button, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +13,9 @@ import BrandIcons from "react-native-vector-icons/Ionicons"
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import { color } from "@rneui/base";
 import { RFValue } from "react-native-responsive-fontsize";
-import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Login from '../screens/login/login';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 
@@ -36,8 +38,11 @@ const tabOptions = {
     },
 };
 
+
 const Tabs = () => {
+
     const navigation = useNavigation();
+   
     return (
         <Tab.Navigator
             initialRouteName={'Search'}

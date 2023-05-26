@@ -54,6 +54,7 @@ const Search = ({ navigation }) => {
                     // console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
                 })
         }
+        
         dispatch(courseListHandler(token)).then(unwrapResult)
             .then((originalPromiseResult) => {
                 // console.log("Inside the response of courseListHandler..........", originalPromiseResult)

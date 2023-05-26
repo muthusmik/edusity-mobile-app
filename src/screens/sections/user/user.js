@@ -27,14 +27,14 @@ import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
 import { DeactivateProfile, DeleteProfile } from '../../../services/userService';
 
-const { width } = Dimensions.get("screen");
 const FirstRoute = () => <General />;
 const SecondRoute = () => <ScrollView >< Security /></ScrollView>;
 const ThirdRoute = () => <ScrollView><AddCard /></ScrollView>;
 const FourthRoute = () => <ScrollView><PaymentMethods /></ScrollView>;
 const FifthRoute = () => <ScrollView>< Notifications /></ScrollView>;
+
 const Profile = () => {
-    const Token = useSelector(state => state.loginHandle.data.data);
+
     const LoginDetails = useSelector(state => state.userLoginHandle)
     const [userDetails, setUserDetails] = useState([])
     const [key, setKey] = useState("")
@@ -45,38 +45,27 @@ const Profile = () => {
     const layout = useWindowDimensions();
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
+
+    const initialLoading = async () => {
+        let token = await AsyncStorage.getItem("loginToken");
+        console.log("token.......................", token)
+        if (LoginDetails.data && token) {
+            setKey(token)
+            setUserDetails([LoginDetails?.data?.data])
+        } else {
+            navigation.replace('Login');
+            BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+            return () => {
+                BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
+            };
+        }
+    }
+
     useEffect(() => {
         if (isFocused) {
-            // console.log("Data in deed")
-            NetInfo.refresh().then(state => {
-                setNetwork(state.isConnected)
-                if (state.isConnected) {
-                    initialLoading();
-                }
-                else {
-                    navigation.navigate("NetworkError");
-                }
-            })
-            const initialLoading = async () => {
-
-                let token = await AsyncStorage.getItem("loginToken");
-                console.log("token.......................", token)
-                if (LoginDetails.data && token) {
-                    setKey(token)
-                    // console.log(LoginDetails)
-                    setUserDetails([LoginDetails?.data?.data])
-                    // console.log("data success", userDetails)
-                } else {
-                    navigation.replace('Login');
-                    BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
-                    return () => {
-                        BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
-                    };
-                }
-            }
-
+            initialLoading();
         }
-    }, [LoginDetails, isFocused, network])
+    }, [LoginDetails, isFocused])
 
     const createTwoButtonAlert = () =>
         Alert.alert(

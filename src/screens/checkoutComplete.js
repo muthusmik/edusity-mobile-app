@@ -7,12 +7,10 @@ import {
     Pressable, FlatList, StyleSheet, KeyboardAvoidingView, StatusBar, Platform
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import LoaderKit from 'react-native-loader-kit';
 import { images, icons, COLORS, FONTS, SIZES } from "../constants";
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { cartListUrl } from '../services/constant';
@@ -84,4 +82,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 18
     }
 });
+
 export default CheckoutComplete;
