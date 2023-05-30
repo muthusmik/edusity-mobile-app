@@ -18,8 +18,9 @@ import { cartListUrl, checkoutUrl, intentPayment } from '../services/constant';
 import { cartHandler } from '../store/redux/cart';
 import { viewCourseHandler } from '../store/redux/viewCourse';
 import NoData from './Exceptions/noCartData';
-import { razorpayKeyLive, stripepayKeyLive } from '../services/constant';
+import { razorpayKeyLive, stripepayKeyLive, STRIPE_PUBLIC_KEY } from '../services/constant';
 import OverlayLoader from '../components/overlayLoader';
+import Toast from 'react-native-simple-toast';
 
 const { width, height } = Dimensions.get('window');
 
@@ -81,7 +82,6 @@ const Cart = () => {
                     navigation.navigate("NetworkError");
                 }
             })
-
         }
     }, [isFocused, network])
 
@@ -248,120 +248,109 @@ const Cart = () => {
         );
     }
 
-    {/* Payment with regards to Location ******************** */ }
     const handleMakePayment = async (Data) => {
         console.log("Geolocation.countryCode.................", Geolocation.countryCode, "Data.........", Data[0]);
-        // if(Geolocation.countryCode=="IN"){
-        const session = Data[0].SessionID;
-        setDataSession(session);
-        console.log("session", session, Geolocation)
-        let pricing = Data[0].TotalAmount * 100
-        // let pricing = 1 * 100
-        var options = {
-            name: "Edusity",
-            description: "Test Transaction",
-            image: "../assets/icons/edusity-logo.png",
-            key: razorpayKeyLive,
-            order_id: dataSession,
-            currency: 'INR',
-            amount: pricing,
-            prefill: {
-                name: LoginData.data.firstName,
-                email: LoginData.data.email,
-                contact: "",
-            },
-        }
+        if (Geolocation.countryCode == "AG") {
+            const session = Data[0].SessionID;
+            setDataSession(session);
+            console.log("session", session, Geolocation)
+            let pricing = Data[0].TotalAmount * 100
+            // let pricing = 1 * 100
+            var options = {
+                name: "Edusity",
+                description: "Test Transaction",
+                image: "../assets/icons/edusity-logo.png",
+                key: razorpayKeyLive,
+                order_id: dataSession,
+                currency: 'INR',
+                amount: pricing,
+                prefill: {
+                    name: LoginData.data.firstName,
+                    email: LoginData.data.email,
+                    contact: "",
+                },
+            }
 
-        RazorpayCheckout.open(options)
-            .then(async (result) => {
-                // alert(`Success: ${result.razorpay_payment_id}`);
-                let Token = await AsyncStorage.getItem("loginToken");
-                var sessionId = { "sessionId": result.razorpay_payment_id }
-                const response = await axios.post(checkoutUrl + "?country=IN", sessionId, {
+            RazorpayCheckout.open(options)
+                .then(async (result) => {
+                    // alert(`Success: ${result.razorpay_payment_id}`);
+                    let Token = await AsyncStorage.getItem("loginToken");
+                    var sessionId = { "sessionId": result.razorpay_payment_id }
+                    const response = await axios.post(checkoutUrl + "?country=IN", sessionId, {
+                        headers: {
+                            Authorization: `Bearer ${Token}`,
+                        }
+                    }).then(result => {
+                        // console.log(result, "hebrew..............", sessionId, Token);
+                        navigation.navigate('Checkout')
+                    }).catch(err => {
+                        Toast.show("something went wrong in your payment process, so please try again later", Toast.LONG);
+                        console.log("err in Razorpay............", err)
+                    });
+                    // console.log(sessionId,"im th echeckout token.................", Token);
+                    // console.log("im the response of checkout data.......", response);
+                })
+                .catch(error => {
+                    // Toast.show(error, "RazorPay Rejection", Toast.LONG);
+                    alert(`Error: ${error.description}`);
+                    navigation.goBack();
+                    // console.log("im th echeckout error.................", error);
+                });
+        }
+        else {
+            console.log("India");
+            const { error } = await presentPaymentSheet();
+            if (error) {
+                Alert.alert(`Error code: ${error.code}`, error.message);
+                console.log("session", Data[0].SessionID);
+            } else {
+                Alert.alert('Success', 'The payment was confirmed successfully');
+
+                setReady(false);
+                const session = Data[0].SessionID;
+                // console.log(Data[0].SessionId)
+                const response = await axios.post(checkoutUrl + "?country=IN", { "sessionId": session }, {
                     headers: {
                         Authorization: `Bearer ${Token}`,
                     }
                 }).then(result => {
-                    // console.log(result, "hebrew..............", sessionId, Token);
+                    console.log(result, "result stripe", result);
 
                     navigation.navigate('Checkout')
                 }).catch(err => {
-                    // console.log("err in removal", err)
+                    console.log("err in removal", err)
                 });
-                // console.log(sessionId,"im th echeckout token.................", Token);
-                // console.log("im the response of checkout data.......", response);
-            })
-            .catch(error => {
-                // Toast.show(error, "RazorPay Rejection", Toast.LONG);
-                alert(`Error: ${error.description}`);
-                navigation.goBack();
-                // console.log("im th echeckout error.................", error);
-            });
-        // }
-        // else{
-        // console.log("India");
-        //     const {error} = await presentPaymentSheet();
-        //     if (error) {
-        //       Alert.alert(`Error code: ${error.code}`, error.message);
-        //       console.log("session",Data[0].SessionID);
-        //     } else {
-        //       Alert.alert('Success', 'The payment was confirmed successfully');
-
-        //       setReady(false);
-        //         const session = Data[0].SessionID;
-        //         // console.log(Data[0].SessionId)
-        //         const response = await axios.post(checkoutUrl + "?country=IN", {"sessionId":session}, {
-        //             headers: {
-        //                 Authorization: `Bearer ${Token}`,
-        //             }
-        //         }).then(result => {
-        //             console.log(result, "result stripe",result);
-
-        //             navigation.navigate('Checkout')
-        //         }).catch(err => {
-        //             console.log("err in removal", err)
-        //         });
-
-
-
-
-
-        //     }
-        // }
+            }
+        }
 
     };
     // useEffect(() => {
-    //     // console.log("im the setoverlay value", overlay)
+    //     console.log("im the setoverlay value", overlay)
     // }, [overlay])
-    /* useEffect(() => {
-         
-             setOverlay(null);
-         }
-         console.log("Im theoverlay", overlay,isFocused)
-     }, [isFocused]
-     ) */
-    // const renderOverlay = () => {
-    //     console.log("Im inisde the surc..........", overlay)
-    //     switch (overlay) {
-    //         case "stripe":
-    //             return (
-    //                 <StripePopup
-    //                     onClose={popupCloseHandler}
-    //                     cartItems={cartItems}
-    //                 ></StripePopup>
-    //             );
-    //         case "razorpay":
-    //             console.log("inside case razor");
-
-    //             // navigation.navigate("Razor",{dataSession,totalValue})
-    //             return <RazorpayOverlay onClose={popupCloseHandler} data={dataSession} pricing={totalValue} />;
-    //         default:
-    //             console.log("inside case null")
-    //             return null;
-    //     }
-    // };
+    // useEffect(() => {
+    //     console.log("Im theoverlay", overlay, isFocused)
+    //     setOverlay(null);
+    // }, [isFocused])
+    const renderOverlay = () => {
+        console.log("Im inisde the surc..........", overlay)
+        switch (overlay) {
+            case "stripe":
+                return (
+                    <StripePopup
+                        onClose={popupCloseHandler}
+                        cartItems={cartItems}
+                    ></StripePopup>
+                );
+            case "razorpay":
+                console.log("inside case razor");
+                // navigation.navigate("Razor",{dataSession,totalValue})
+                return <RazorpayOverlay onClose={popupCloseHandler} data={dataSession} pricing={totalValue} />;
+            default:
+                console.log("inside case null")
+                return null;
+        }
+    };
     // const RazorpayOverlay = (onClose, data, pricing) => {
-
     //     { console.log("im the price of total amount................", totalValue) }
     //     var options = {
     //         name: "Edusity",
@@ -408,7 +397,7 @@ const Cart = () => {
 
     return (
         <StripeProvider
-            publishableKey={stripepayKeyLive}
+            publishableKey={STRIPE_PUBLIC_KEY}
             merchantIdentifier="merchant.com.EdusityMobi"
         >
             <KeyboardAvoidingView style={styles.mainContainer}>

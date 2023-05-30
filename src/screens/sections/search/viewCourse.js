@@ -326,7 +326,7 @@ const ViewCourse = () => {
                                         console.log("Purchased")
                                     } */}
                                     {/* {console.log("Cartarray..........", cartArray.length, cartArray.length != 0)} */}
-                                    {(cartArray.length != 0) ?
+                                    {/* (cartArray.length != 0) ? */
                                         (Data.data.recordsets[0][0].isPurchased === false) ?
                                             (cartArray.includes(listData?.recordsets[0][0].ID)) ?
                                                 <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.gray, margin: "1%", borderWidth: 1, borderColor: COLORS.gray, padding: "3%" }} onPress={() => handleNavigation("Go to Cart")}>
@@ -338,7 +338,7 @@ const ViewCourse = () => {
                                             <TouchableOpacity style={{ backgroundColor: COLORS.black, flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", margin: "1%", borderWidth: 1, padding: "3%" }} onPress={() => handleNavigation("Purchased")}>
                                                 <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Purchased</Text>
                                             </TouchableOpacity>
-                                        : null}
+                                        /* : null */}
                                 </View>
                             </View>
                             {(listData) ?
