@@ -115,7 +115,7 @@ const MyCourse = () => {
 
 
     const handleViewNavigation = (item) => {
-        // console.log(item, "ID")
+        console.log(item, "ID")
         setLoader(true)
         dispatch(viewCourseHandler(item)).then(unwrapResult)
             .then((originalPromiseResult) => {
@@ -138,15 +138,14 @@ const MyCourse = () => {
                     backgroundColor={COLORS.primary}
                 />
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
-                    <View style={{ flexDirection: "row", padding: "2%" }}>
+                    <View style={{ flexDirection: "row", padding: "2%", alignItems: "center", justifyContent: "center" }}>
                         <View style={{ width: "70%", flexDirection: 'column' }}>
                             <Text style={{ color: COLORS.primary, marginHorizontal: "5%", ...FONTS.robotoregular }}>Your Courses: {CoursesCount}</Text>
                         </View>
-                        <View style={{ width: "30%", flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
-                            <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.primary, marginHorizontal: "2%", padding: "4%", borderRadius: 5 }} onPress={() => navigation.navigate("MyWebinars")}>
-                                {/* {console.log("Course/Count", CoursesCount)} */}
-                                <FeatherIcon name="play-circle" size={18} style={{ marginHorizontal: "1%" }} color={"white"} />
-                                <Text style={{ color: COLORS.white, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>
+                        <View style={{ width: "30%", flexDirection: 'column' }}>
+                            <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.primary, padding: 6, borderRadius: 5, alignItems: "center", justifyContent: "space-between" }} onPress={() => navigation.navigate("MyWebinars")}>
+                                <FeatherIcon name="play-circle" size={18} color={"white"} />
+                                <Text style={{ color: COLORS.white, ...FONTS.robotoregular }}>
                                     My Webinars</Text>
                             </TouchableOpacity>
                         </View>
@@ -154,7 +153,7 @@ const MyCourse = () => {
                     {(CoursesCount > 0) ?
                         <FlatList
                             data={Data}
-                            
+
                             // ref={ScrollRef}
                             // onScroll={event => {
                             //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
@@ -167,7 +166,7 @@ const MyCourse = () => {
                                 <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
                                     <View style={{ width: "100%", flexDirection: "row" }}>
                                         <View style={styles.coulmnImage}>
-                                        {/* {console.log("Data inside myCourse.........",Data)} */}
+                                            {/* {console.log("Data inside myCourse.........",Data)} */}
                                             {(item.imageFiles.length > 0) ?
                                                 <Image
                                                     source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}

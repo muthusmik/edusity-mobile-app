@@ -4,11 +4,10 @@ import {
     Text, Image,
     TouchableOpacity,
     Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Alert, Dimensions
+    Pressable, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Alert, Dimensions, Linking, ToastAndroid
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import LoaderKit from 'react-native-loader-kit';
 import { images, icons, COLORS, FONTS, SIZES } from "../constants";
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -19,8 +18,9 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
-import { getWebinars, generateWebinarToken, getCourseAnnnouncement } from '../services/webinars';
+import { getWebinars, generateWebinarToken } from '../services/webinars';
 import NoCourse from './Exceptions/noPurchasedCourse';
+import { viewCourseHandler } from '../store/redux/viewCourse';
 import NoWebinars from './Exceptions/noWebinars';
 import moment from 'moment';
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -28,9 +28,9 @@ import WebView from 'react-native-webview';
 
 const platformUsing = Platform.OS;
 const { width, height } = Dimensions.get('window')
-console.log("Platform that the app is running..........", platformUsing)
-const MyWebinars = ({ data }) => {
 
+const MyWebinars = ({ data }) => {
+    const dispatch = useDispatch();
     const navigation = useNavigation();
     const [Data, setData] = useState([]);
     const [loginToken, setLoginToken] = useState();
@@ -45,6 +45,23 @@ const MyWebinars = ({ data }) => {
     const [network, setNetwork] = useState('')
     const LoginData = useSelector(state => state.userLoginHandle.data)
     const username = LoginData?.data?.userName;
+    const [webminarUrl, setWebminarUrl] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const getwebinarslist = async () => {
+        setLoader(true);
+        let token = await AsyncStorage.getItem("loginToken");
+        setLoginToken(token);
+
+        console.log("Token from......", token, "Page........", page)
+        if (token) {
+            let webinarData = await getWebinars(token, page).then(data => {
+                console.log("webinar", data.data);
+                setData(data?.data);
+                setLoader(false);
+            }).catch((error) => { console.log("Catch error in getwebinars.........", error) })
+        }
+    }
 
     useEffect(() => {
         if (isFocused) {
@@ -57,75 +74,66 @@ const MyWebinars = ({ data }) => {
                     navigation.navigate("NetworkError");
                 }
             })
-            const getwebinarslist = async () => {
-                setLoader(true);
-                let token = await AsyncStorage.getItem("loginToken");
-                setLoginToken(token);
-                console.log("Token from......", token, "Page........", page)
-                if (token) {
-                    let webinarData = await getWebinars(token, page).then(data => {
-                        console.log("webinar", data.data);
-                        setData(data?.data);
-                        setLoader(false);
-                    }).catch((error) => { console.log("Catch error in getwebinars.........", error) })
-                    // let ment = await getCourseAnnnouncement(token).then(data => {
-                    //     console.log("getCourseAnnnouncement..........", data.data);
-                    //     setLoader(false);
-                    // }).catch((error) => { console.log("Catch error in anonunce.........", error) })
-                }
-
-            }
-
         }
     }, [isFocused, network])
+
     useEffect(() => {
         const getwebinarslist = async () => {
             if (page > 1) {
                 let webinarData = await getWebinars(loginToken, page).then(data => {
-                    // console.log(data.data, "onpage change");
                     let newdata = data?.data?.data
                     setData(Data.concat(newdata));
-                    // console.log(Data.length, "length of Data")
                     setRefreshList(false);
+                }).catch((error) => {
+                    ToastAndroid.showWithGravity("Something went wrong, please try again later", ToastAndroid.CENTER, ToastAndroid.LONG)
+                    console.log("Error in getWebinars list..........", error)
                 })
             }
         }
         getwebinarslist();
-
     }, [page])
     // https://backend-linux-login.azurewebsites.net/webinar/join?webinarId=208
 
     const getwebinarToken = async (id) => {
         setLoader(true);
         let webinarData = await generateWebinarToken(loginToken, id).then(data => {
-            console.log("Result of the generateWebinarToken...........", data.error);
             setLoader(false);
             return data;
         })
-        console.log("webinarData...........", webinarData)
-        if (webinarData?.error) {
-            console.log("Inside the if conidtion.......", webinarData?.message)
+        console.log("Data for response webminar url..............", webinarData);
+        if (webinarData?.error === true) {
             Alert.alert("Alert", webinarData.message)
-        } else {
-            //     let roomId=data.data.room;
-            console.log("Inside the else conidtion.......", webinarData?.error)
-            // Alert.alert("Ongoing process to make webinar success")
-            
-            Alert.alert(
-                "Info",
-                `Webinar room id is: ${webinarData.message}`,
-                [
-                    { text: "OK" }
-                ]
-            );
+        } else if (webinarData?.error === false) {
+            setWebminarUrl(webinarData.data)
+            setModalVisible(true)
+            ToastAndroid.showWithGravity("Now you will redirect to google chrome from Edusity", ToastAndroid.CENTER, ToastAndroid.LONG)
+            // const openURL = (url) => {
+            //     Linking.openURL(url)
+            //         .catch(error => console.error('Error opening URL:', error));
+            // }
+            // openURL(webinarData.data)
             // navigation.navigate("jitsiCall", { webinarData });
-
-                <WebView style={{ height: 200, width: "100%" }}
-                source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${data.data.room}` }}
-            /> 
         }
     }
 
+    const handleQuickView = (id) => {
+        if (network) {
+            setLoader(true);
+            dispatch(viewCourseHandler(id)).then(unwrapResult)
+                .then((originalPromiseResult) => {
+                    // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
+                    navigation.navigate("ViewCourse");
+                    setLoader(false);
+                })
+                .catch((rejectedValueOrSerializedError) => {
+                    navigation.navigate("ServerError");
+                    setLoader(false);
+                })
+        }
+        else {
+            navigation.navigate("NetworkError");
+        }
+    }
     return (
         (!loader) ?
             <View style={{ height: "100%" }}>
@@ -140,7 +148,7 @@ const MyWebinars = ({ data }) => {
                         <Text style={{ fontSize: RFValue(20), color: COLORS.white, ...FONTS.robotoregular }}>My Webinars</Text>
                     </View>
                 </View>
-                {(Data.length > 0) ?
+                {(Data?.length > 0) ?
                     <View style={{ paddingTop: 6, paddingHorizontal: 10, height: height - 60 }}>
                         <Text style={{ fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, marginBottom: 6 }}>Your Have <Text style={{ color: COLORS.primary }}>{Data.length} Upcoming Webinars</Text></Text>
                         <FlatList
@@ -192,6 +200,7 @@ const MyWebinars = ({ data }) => {
                                                 borderRadius: 5,
                                                 alignItems: "center"
                                             }}
+                                                onPress={() => handleQuickView(item.courseId)}
                                             >
                                                 <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>QUICK VIEW</Text>
                                             </TouchableOpacity>
@@ -217,6 +226,32 @@ const MyWebinars = ({ data }) => {
                         // onEndReachedThreshold={0.2}
                         // onEndReached={refresh}
                         />
+                        <View style={styles.centeredView}>
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={modalVisible}
+                                onRequestClose={() => {
+                                    Alert.alert('Modal has been closed.');
+                                    setModalVisible(!modalVisible);
+                                }}>
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <Text style={styles.modalText}>Hello World!</Text>
+                                        {/* {console.log("Inside retur if  ", webminarUrl)} */}
+                                        <WebView
+                                            source={{ uri: webminarUrl }}
+                                            style={{ marginTop: 10, maxHeight: height-80, width: 350, flex: 1 }}
+                                        />
+                                    </View>
+                                </View>
+                            </Modal>
+                            <Pressable
+                                style={[styles.button, styles.buttonOpen]}
+                                onPress={() => setModalVisible(true)}>
+                                <Text style={styles.textStyle}>Show Modal</Text>
+                            </Pressable>
+                        </View>
                     </View> :
                     <>
                         <View>
@@ -255,6 +290,46 @@ const styles = StyleSheet.create({
             width: 0,
             height: 2,
         },
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)'
+    },
+    modalView: {
+        width: "100%",
+        backgroundColor: 'white',
+        flex: 1,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
+    buttonClose: {
+        backgroundColor: '#2196F3',
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
 });
 export default MyWebinars;

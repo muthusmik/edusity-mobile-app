@@ -250,7 +250,7 @@ const Cart = () => {
 
     const handleMakePayment = async (Data) => {
         console.log("Geolocation.countryCode.................", Geolocation.countryCode, "Data.........", Data[0]);
-        if (Geolocation.countryCode == "AG") {
+        if (Geolocation.countryCode == "IN") {
             const session = Data[0].SessionID;
             setDataSession(session);
             console.log("session", session, Geolocation)
@@ -298,14 +298,12 @@ const Cart = () => {
                 });
         }
         else {
-            console.log("India");
             const { error } = await presentPaymentSheet();
             if (error) {
                 Alert.alert(`Error code: ${error.code}`, error.message);
                 console.log("session", Data[0].SessionID);
             } else {
                 Alert.alert('Success', 'The payment was confirmed successfully');
-
                 setReady(false);
                 const session = Data[0].SessionID;
                 // console.log(Data[0].SessionId)

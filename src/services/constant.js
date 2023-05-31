@@ -38,7 +38,7 @@ export const verifyUrl = baseUrl + "verify-otp";
 export const searchUrl = baseUrl + "search/course?search=";
 export const updateProfileUrl = baseUrl + "user/profile";
 export const checkoutUrl = baseUrl_payment + "v2/checkout";
-export const webinarListUrl = baseUrl + "webinar/all?startDate=2023%2001,01&endDate=2023%2010,31";
+export const webinarListUrl = baseUrl + "webinar/all?startDate=2023%2005,01&endDate=2023%2005,31";
 export const generateWebinarTokenUrl = baseUrl + "webinar/join?webinarId=";
 export const intentPayment = baseUrl_payment + "react-native-stripe-payment-sheet"
 export const userDeleteUrl = baseUrl_payment + "user/v1";
