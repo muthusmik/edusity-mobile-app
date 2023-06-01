@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
     View,
     Text, Image,
     TouchableOpacity,
     Modal,
-    Pressable, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Alert, Dimensions, Linking, ToastAndroid
+    Pressable, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Alert, Dimensions, Linking, ToastAndroid, PermissionsAndroid
 } from 'react-native';
+import { check, PERMISSIONS, request } from 'react-native-permissions';
 import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderKit from 'react-native-loader-kit';
@@ -25,6 +26,7 @@ import NoWebinars from './Exceptions/noWebinars';
 import moment from 'moment';
 import FeatherIcon from "react-native-vector-icons/Feather";
 import WebView from 'react-native-webview';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 
 const platformUsing = Platform.OS;
 const { width, height } = Dimensions.get('window')
@@ -47,6 +49,7 @@ const MyWebinars = ({ data }) => {
     const username = LoginData?.data?.userName;
     const [webminarUrl, setWebminarUrl] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+    const webViewRef = useRef(null);
 
     const getwebinarslist = async () => {
         setLoader(true);
@@ -92,7 +95,63 @@ const MyWebinars = ({ data }) => {
         }
         getwebinarslist();
     }, [page])
+
     // https://backend-linux-login.azurewebsites.net/webinar/join?webinarId=208
+
+    const requestPermissions = async () => {
+        const granted = await requestMicrophonePermission();
+        console.log("Inside the request permissions................granted", granted);
+        if (granted) {
+            // Permission granted, notify the WebView
+            setModalVisible(true)
+            webViewRef.current?.postMessage('microphonePermissionGranted');
+        } else {
+            // Permission denied, handle accordingly
+            ToastAndroid.showWithGravity("Your microphone permissions denied, please allow microphone/record audio permissions", ToastAndroid.CENTER, ToastAndroid.LONG)
+            console.log('Microphone permission denied');
+        }
+    };
+
+    const requestMicrophonePermission = async () => {
+        try {
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                    {
+                        title: 'Microphone Permission',
+                        message: 'This app needs access to your microphone.',
+                        buttonPositive: 'OK',
+                        buttonNegative: 'Cancel',
+                    }
+                );
+                return granted === PermissionsAndroid.RESULTS.GRANTED;
+                // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                //     console.log('Microphone permission granted');
+                //     return true
+                // } else {
+                //     ToastAndroid.showWithGravity("Your microphone permissions denied, please allow microphone/record audio permissions", ToastAndroid.CENTER, ToastAndroid.LONG)
+                //     console.log('Microphone permission denied');
+                // }
+            }
+        } catch (error) {
+            ToastAndroid.showWithGravity("Something went wrong, please try again later", ToastAndroid.CENTER, ToastAndroid.LONG)
+            console.log('Error requesting permissions:', error);
+        }
+        return false;
+    };
+
+    const handlePermissionRequest = async (permissionRequest) => {
+        console.log("Hiiiiiii................");
+        if (permissionRequest.permission === 'microphone') {
+            const granted = await requestMicrophonePermission();
+            if (granted) {
+                console.log("Hello......................");
+                permissionRequest.grant(permissionRequest.permission);
+            } else {
+                permissionRequest.deny();
+            }
+        }
+    };
 
     const getwebinarToken = async (id) => {
         setLoader(true);
@@ -100,18 +159,29 @@ const MyWebinars = ({ data }) => {
             setLoader(false);
             return data;
         })
-        console.log("Data for response webminar url..............", webinarData);
+        // console.log("Data for response webminar url..............", webinarData);
         if (webinarData?.error === true) {
             Alert.alert("Alert", webinarData.message)
         } else if (webinarData?.error === false) {
             setWebminarUrl(webinarData.data)
-            setModalVisible(true)
-            ToastAndroid.showWithGravity("Now you will redirect to google chrome from Edusity", ToastAndroid.CENTER, ToastAndroid.LONG)
-            // const openURL = (url) => {
-            //     Linking.openURL(url)
-            //         .catch(error => console.error('Error opening URL:', error));
-            // }
-            // openURL(webinarData.data)
+            // setModalVisible(true)
+            // requestPermissions()
+
+            const openURL = async (url) => {
+                // try {
+                //     await InAppBrowser.open(url, {
+                //         // You can customize the options here
+                //         // For example, you can specify the browser you want to use
+                //         // through the `preferredBarTintColor` and `preferredControlTintColor` options
+                //         // Please refer to the documentation for more available options
+                //     });
+                // } catch (error) {
+                //     console.log('Error opening in-app browser:', error);
+                // }
+                Linking.openURL(url)
+                    .catch(error => console.error('Error opening URL:', error));
+            }
+            openURL(webinarData.data)
             // navigation.navigate("jitsiCall", { webinarData });
         }
     }
@@ -228,29 +298,29 @@ const MyWebinars = ({ data }) => {
                         />
                         <View style={styles.centeredView}>
                             <Modal
-                                animationType="slide"
+                                animationType="fade"
                                 transparent={true}
                                 visible={modalVisible}
                                 onRequestClose={() => {
-                                    Alert.alert('Modal has been closed.');
-                                    setModalVisible(!modalVisible);
+                                    Alert.alert('Edusity-Virtual', 'Are you sure, you want to Exit/Close the  webinar meeting?', [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => console.log('Cancel Pressed'),
+                                            style: 'cancel',
+                                        },
+                                        { text: 'OK', onPress: () => setModalVisible(!modalVisible) },
+                                    ]);
                                 }}>
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <Text style={styles.modalText}>Hello World!</Text>
-                                        {/* {console.log("Inside retur if  ", webminarUrl)} */}
                                         <WebView
                                             source={{ uri: webminarUrl }}
-                                            style={{ marginTop: 10, maxHeight: height-80, width: 350, flex: 1 }}
+                                            onPermissionRequest={handlePermissionRequest}
+                                            style={{ maxHeight: height, width: width, flex: 1 }}
                                         />
                                     </View>
                                 </View>
                             </Modal>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => setModalVisible(true)}>
-                                <Text style={styles.textStyle}>Show Modal</Text>
-                            </Pressable>
                         </View>
                     </View> :
                     <>
@@ -264,9 +334,9 @@ const MyWebinars = ({ data }) => {
             <View style={{ height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
                 <LoaderKit
                     style={{ width: 50, height: 50 }}
-                    name={'BallPulse'} // Optional: see list of animations below
-                    size={50} // Required on iOS
-                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                    name={'BallPulse'}
+                    size={50}
+                    color={COLORS.primary}
                 />
             </View>
     )
@@ -295,7 +365,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.6)'
+        // backgroundColor: 'rgba(0,0,0,0.6)'
     },
     modalView: {
         width: "100%",

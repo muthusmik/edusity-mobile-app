@@ -19,18 +19,19 @@ import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
 import moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const UpcomingWebniarDashboard = ({ upcomingWebniarDetails }) => {
+const UpcomingWebniarDashboard = ({ upcomingWebinar }) => {
 
-    console.log("Inside the upcomingWebniarDetails...........", upcomingWebniarDetails)
     return (
         <View style={styles.container}>
             <View style={styles.announcementStyle}>
-                <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 16, marginBottom: 8 }}>Upcoming Webinars (<Text style={{ color: "red" }}>{(upcomingWebniarDetails?.length) ? upcomingWebniarDetails.length : "0"}</Text>)</Text>
-                {(upcomingWebniarDetails) ? <ScrollView>
-                    {upcomingWebniarDetails?.map((item, index) => (
+                <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 16, marginBottom: 8 }}>Upcoming Webinars (<Text style={{ color: "red" }}>{(upcomingWebinar?.length) ? upcomingWebinar.length : "0"}</Text>)</Text>
+                {(upcomingWebinar) ? <ScrollView>
+                    {upcomingWebinar?.map((item, index) => (
                         <TouchableOpacity key={item.id} style={styles.touchableStyle} onPress={() => { handleAnnouncement(item) }}>
-                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.name}</Text>
-                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{moment(item.activationDate).format("DD/MM/YYYY hh:mm A")}</Text>
+                            <Text style={{ color: COLORS.primary, ...FONTS.robotomedium }}>Webniar name: {item.eventName}</Text>
+                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Course name: {item.CourseName}</Text>
+                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Date: {moment(item.webinarDate).format("DD-MM-YYYY")}</Text>
+                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Time: {item.startTime}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView> :

@@ -68,6 +68,7 @@ export const getStudentStatistics = async (Token) => {
 export const getUpcommingWebniars = async (Token) => {
   return await axios.get(`${upcommingWebniarsUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
+      // console.log("Upcoming webinar...........",`${upcommingWebniarsUrl}`,response)
       return response.data
     })
     .catch((error) => {

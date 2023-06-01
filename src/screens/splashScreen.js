@@ -12,6 +12,7 @@ import * as RNLocalize from "react-native-localize";
 import { latitudeSet, longitudeSet, countryCodeSet, currencyTypeSet } from '../store/redux/geoLocation';
 import { useDispatch } from 'react-redux';
 import { getModeForUsageLocation } from 'typescript';
+import axios from 'axios';
 
 const SplashScreen = (props) => {
 
@@ -35,20 +36,31 @@ const SplashScreen = (props) => {
     })
   }
 
-  const getLocation = () => {
+  const getLocation = async () => {
+    // const locale = RNLocalize.getCountry();
+    // const currency = RNLocalize.getCurrencies()[0];
     Geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         dispatch(latitudeSet(position.coords.latitude));
         dispatch(longitudeSet(position.coords.longitude));
-        console.log("Position..............................", position.coords.latitude, position.coords.longitude);
-        dispatch(countryCodeSet(RNLocalize.getLocales()[1] ? RNLocalize.getLocales()?.[1]?.countryCode : RNLocalize.getLocales()?.[0]?.countryCode));
-        dispatch(currencyTypeSet(RNLocalize.getCurrencies()[1] ? RNLocalize.getCurrencies()?.[1] : RNLocalize.getCurrencies()?.[0]));
-        console.log("Inside the success Position country code...................", RNLocalize.getLocales()?.[1]?.countryCode);
-        console.log("Inside the success Position currencies.....................", RNLocalize.getCurrencies()?.[1]);
+        const response = await axios.get(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`
+        );
+        if (response?.data?.countryCode) {
+          const currencyResponse = await axios.get(
+            `https://restcountries.com/v3/alpha/${response?.data?.countryCode}`
+          );
+          dispatch(countryCodeSet(response.data.countryCode))
+          dispatch(currencyTypeSet(Object.keys(currencyResponse.data[0].currencies)[0]))
+        }
+        // const currencyResponse = await axios.get(
+        //   `https://restcountries.com/v3/alpha/${response?.data?.countryCode}`
+        // );
+        // dispatch(countryCodeSet(response.data.countryCode))
+        // dispatch(currencyTypeSet(Object.keys(currencyResponse.data[0].currencies)[0]))
         unsubscribe();
       },
       (error) => {
-        // See error code charts below.
         console.log("Error in getting Location details.......error code", error.code, "error message", error.message);
         console.log("Inside error of splash screen Country code..............................", RNLocalize.getLocales()[1] ? RNLocalize.getLocales()?.[1]?.countryCode : RNLocalize.getLocales()?.[0]?.countryCode);
         console.log("Inside error of splash screen Currencies..............................", RNLocalize.getCurrencies()[1] ? RNLocalize.getCurrencies()?.[1] : RNLocalize.getCurrencies()?.[0]);
@@ -64,27 +76,25 @@ const SplashScreen = (props) => {
     if (isFocused) {
       setTimeout(() => {
         const PermissionLocation = async () => {
-          // if(Platform.OS='android'){
-          // const granted = await PermissionsAndroid.request(
-          //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          //   {
-          //     title: 'Location Access Required',
-          //     message: 'This App needs to Access your location',
-          //   },
-          // );
-          // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          //   //To Check, If Permission is granted
-          //    console.log("Location Access provided");
-          //   getLocation();
-          // } else {
-          //   unsubscribe();
-          //   // navigation.navigate('Login');
-          //    console.log("cancelled")
-          // }
-          // }else if(Platform.OS='ios'){
-
-          getLocation();
-          //}
+          if (Platform.OS == 'android') {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              {
+                title: 'Location Access Required',
+                message: 'This App needs to Access your location',
+              },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              console.log("Location Access provided");
+              getLocation();
+            } else {
+              unsubscribe();
+              // navigation.navigate('Login');
+              console.log("cancelled")
+            }
+          } else if (Platform.OS == 'ios') {
+            getLocation();
+          }
         }
         PermissionLocation()
       }, 4000);
