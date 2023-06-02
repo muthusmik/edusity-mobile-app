@@ -350,7 +350,7 @@ const CourseList = ({ allCourses, cartData }) => {
                 .then((originalPromiseResult) => {
                     // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
                     navigation.navigate("ViewCourse");
-                    SetLoader(false);
+                    // SetLoader(false);
                 })
                 .catch((rejectedValueOrSerializedError) => {
                     navigation.navigate("ServerError");
@@ -415,8 +415,6 @@ const CourseList = ({ allCourses, cartData }) => {
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
                                 <View style={styles.mainTouchable}>
-                                    {/* {console.log("Dataaaaaaa", item.ID)} */}
-                                    {/* {console.log("GTfrfrfrfrfrfrfr",item)} */}
                                     <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
                                         <View style={{ width: "100%", flexDirection: "row" }}>
                                             <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>

@@ -3,7 +3,6 @@ import {
     View,
     Text,
     StyleSheet,
-    Image,
     TouchableOpacity,
     StatusBar,
     Pressable,
@@ -11,7 +10,6 @@ import {
     ScrollView,
     Dimensions
 } from 'react-native';
-
 import LoaderKit from 'react-native-loader-kit'
 import { RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,9 +19,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { userLoginHanlder } from '../../../store/redux/userLogin';
 import { cartHandler } from '../../../store/redux/cart';
 import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
-import { ActivityIndicator } from 'react-native-paper';
 import StudentDashboard from './studentDashboard';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SelectDropdown from 'react-native-select-dropdown';
 import { useIsFocused } from "@react-navigation/core";
@@ -31,7 +27,7 @@ import Toast from 'react-native-simple-toast';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
-import { getCourseAnnouncement, getStudentStatistics, getUpcommingWebniars } from "../../../services/webinars";
+import { getCourseAnnouncement, getStudentStatistics, getUpcommingWebniars, getTestList } from "../../../services/webinars";
 import CourseAnnouncementDashboard from "./courseAnnouncement";
 import UpcomingWebniarDashboard from "./upcomingWebniar";
 import NotificationScreen from '../../../components/notificationScreen';
@@ -39,25 +35,23 @@ import { metrices } from '../../../constants/metrices';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Dashboard = () => {
-    // console.log("iam inside DashBoard");
+
     const dispatch = useDispatch();
     const navigation = useNavigation();
     // const logiParam = route.params;
     const [loader, setLoader] = useState(false);
     const [userName, setUserName] = useState();
     const [drop, setDrop] = useState(false);
-    // console.log("As params=---->", logiParam)
     const LoginData = useSelector(state => state.userLoginHandle.data)
-    // console.log("LoginReduxData->", LoginData?.data?.role);
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
     const [courseAnnouncementDetails, setCourseAnnouncementDetails] = useState([])
     const [studentStatistics, setStudentStatistics] = useState([])
     const [upcomingWebniarDetails, setUpcomingWebniarDetails] = useState([])
+    const [testResults, setTestResults] = useState([]);
 
     useFocusEffect(
         React.useCallback(() => {
-            //   console.log('Home screen is focused');
             return () => {
                 setDropdownVisible(false)
             };
@@ -97,14 +91,13 @@ const Dashboard = () => {
             setLoader(true);
             dispatch(userLoginHanlder(token)).then(unwrapResult)
                 .then((originalPromiseResult) => {
-                    // console.log("successfully returned to login with response ", originalPromiseResult);
                     if (originalPromiseResult.data) {
                         const param = originalPromiseResult.data;
                         navigation.navigate('Home', {
                             screen: 'Dashboard',
                         });
                         dispatch(cartHandler(token)).then(unwrapResult)
-                            .then((originalPromiseResult) => { console.log("cartDataaaa", originalPromiseResult.data) })
+                            .then((originalPromiseResult) => { /* console.log("cartData.............", originalPromiseResult.data) */ })
                         setLoader(false);
                     } else {
                         setLoader(false);
@@ -114,8 +107,8 @@ const Dashboard = () => {
                 })
                 .catch((rejectedValueOrSerializedError) => {
                     setLoader(false);
-                    Toast.show("Something Went Wrong please try again!", Toast.LONG);
-                    console.log(" Inside catch", rejectedValueOrSerializedError);
+                    Toast.show("Something Went wrong, please try again later!", Toast.LONG);
+                    console.log(" Inside catch in of dashboard.........", rejectedValueOrSerializedError);
                 })
             let courseAnnouncementUrl = await getCourseAnnouncement(token).then(data => {
                 setCourseAnnouncementDetails(data?.message)
@@ -126,12 +119,14 @@ const Dashboard = () => {
                 setLoader(false);
             }).catch((error) => { console.log("Catch error in studentStatistics.........", error) })
             let UpcomingWebniars = await getUpcommingWebniars(token).then(data => {
-                console.log("getUpcommingWebniars.................", data.data)
-                setUpcomingWebniarDetails(data.data)
+                setUpcomingWebniarDetails(data?.data)
+                setLoader(false);
+            }).catch((error) => { console.log("Catch error in UpcomingWebniars.........", error) })
+            let testResults = await getTestList(token).then(data => {
+                setTestResults(data?.data)
                 setLoader(false);
             }).catch((error) => { console.log("Catch error in UpcomingWebniars.........", error) })
         } else {
-            // console.log("No Token")
             setLoader(false);
             navigation.navigate('Login');
             BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
@@ -164,7 +159,6 @@ const Dashboard = () => {
     //   }, []);
 
     function handleBackButtonClick() {
-        // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
         return true;
     }

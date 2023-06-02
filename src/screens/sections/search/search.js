@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     ImageBackground,
-    StatusBar, StyleSheet, KeyboardAvoidingView, ToastAndroid,
+    StatusBar, StyleSheet, KeyboardAvoidingView, ToastAndroid, BackHandler
 } from 'react-native';
 import LoaderKit from 'react-native-loader-kit';
 import { images, icons, COLORS, FONTS, SIZES } from "../../../constants";
@@ -18,6 +18,12 @@ import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 
+function handleBackButton() {
+    console.log("BackHandler Function inside the search.js");
+    BackHandler.exitApp();
+    return true;
+}
+
 const Search = ({ navigation }) => {
     const dispatch = useDispatch();
     const allCourses = useSelector((state) => state.courseList.data.data)
@@ -25,7 +31,6 @@ const Search = ({ navigation }) => {
     const [isSearchLoader, setIsSearchLoader] = useState(false);
     const cartCount = useSelector((state) => state.cartList.data.data);
     const [network, setNetwork] = useState('')
-    const [totalValue, setTotalValue] = useState(0);
     const isFocused = useIsFocused();
 
     const initialLoading = async () => {
@@ -54,7 +59,7 @@ const Search = ({ navigation }) => {
                     // console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
                 })
         }
-        
+
         dispatch(courseListHandler(token)).then(unwrapResult)
             .then((originalPromiseResult) => {
                 // console.log("Inside the response of courseListHandler..........", originalPromiseResult)
@@ -83,25 +88,10 @@ const Search = ({ navigation }) => {
         }
     }, [isFocused, network])
 
-    // useEffect(() => {
-    //     console.log(cartData?.data, "cartData");
-    //     if (Token) {
-    //         console.log(cartData, "cartData2");
-    //         if (cartData) {
-    //             let cartValue = 0
-    //             let course = cartData.Courses;
-    //             console.log(course, "course detail")
-    //             setData(cartData);
-    //             for (let i = 0; i < course.length; i++) {
-    //                 cartValue = cartValue + course[i].enrollmentFee;
-
-    //             }
-    //             setTotalValue(cartValue);
-    //         }
-    //     }
-    //     // console.log("Log cart details length ",(cartData.Courses).length);
-    // }, [cartData])
-
+    useEffect(() => {
+        navigation.addListener("blur", () => { BackHandler.removeEventListener("hardwareBackPress", handleBackButton); })
+        navigation.addListener("focus", () => { BackHandler.addEventListener("hardwareBackPress", handleBackButton); })
+    }, [handleBackButton])
 
     return (
         <KeyboardAvoidingView style={styles.mainContainer}>
@@ -117,9 +107,9 @@ const Search = ({ navigation }) => {
                         <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                             <LoaderKit
                                 style={{ width: 50, height: 50 }}
-                                name={'BallPulse'} // Optional: see list of animations below
-                                size={50} // Required on iOS
-                                color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                                name={'BallPulse'} 
+                                size={50} 
+                                color={COLORS.primary} 
                             />
                         </ImageBackground>
                     </View> :
@@ -128,8 +118,6 @@ const Search = ({ navigation }) => {
                             <SearchScreen isSearchLoader={isSearchLoader} setIsSearchLoader={setIsSearchLoader} cartCount={cartCount} />
                         </View>
                         <View style={{ width: "100%", paddingBottom: "6%", height: "92%" }}>
-                            {/* {console.log("carrrrrrarrt", wishListed)} */}
-
                             <CourseList allCourses={allCourses} cartData={cartData} />
                         </View>
                     </View>

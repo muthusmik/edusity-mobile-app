@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
 import { webinarListUrl, generateWebinarTokenUrl, courseAnnouncementUrl, testListUrl, upcommingWebniarsUrl, studentStatisticsUrl, baseUrl } from "./constant";
-import { Platform } from "react-native";
-import { View } from "react-native";
 import moment from "moment/moment";
 
 export const getWebinars = async (Token, page) => {
@@ -21,8 +17,7 @@ export const getWebinars = async (Token, page) => {
     // .get(`${webinarListUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
     .get(baseUrl + `webinar/all?startDate=${firstDay}&endDate=${lastDay}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
-      console.log("Webinar Courses inside the webinar.js api calling resonse.........", response.data);
-      // console.log("URL used is.......", `${webinarListUrl}`);
+
       return response.data;
     })
     .catch((res) => {
@@ -36,7 +31,6 @@ export const generateWebinarToken = async (Token, id) => {
   return await axios
     .get(baseUrl + `webinar/join?webinarId=${id}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
-      console.log("Response for generateWebinarTokenUrl.......", response.data);
       return response.data;
     })
     .catch((res) => {
@@ -68,7 +62,6 @@ export const getStudentStatistics = async (Token) => {
 export const getUpcommingWebniars = async (Token) => {
   return await axios.get(`${upcommingWebniarsUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
-      // console.log("Upcoming webinar...........",`${upcommingWebniarsUrl}`,response)
       return response.data
     })
     .catch((error) => {
@@ -79,8 +72,7 @@ export const getUpcommingWebniars = async (Token) => {
 export const getTestList = async (Token) => {
   return await axios.get(`${testListUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
-      console.log("Response for testListUrl........", response)
-      return response
+      return response.data
     })
     .catch((error) => {
       console.log("Catch inside the testListUrl.......", error);

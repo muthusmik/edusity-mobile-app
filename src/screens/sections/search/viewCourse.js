@@ -291,10 +291,11 @@ const ViewCourse = () => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={{ color: COLORS.black, fontSize: RFValue(20), ...FONTS.robotomedium, textAlign: "right", top: "5%", marginRight: "8%" }}>
-                                    $ {listData.recordsets?.[0][0].EnrollmentFee}.00
-                                </Text>
-
+                                {(Data.data.recordsets[0][0].isPurchased === false) ?
+                                    <Text style={{ color: COLORS.black, fontSize: RFValue(20), ...FONTS.robotomedium, textAlign: "right", top: "5%", marginRight: "8%" }}>
+                                        $ {listData.recordsets?.[0][0].EnrollmentFee}
+                                    </Text> : null
+                                }
                             </View>
                         </View>
                         <View style={{ backgroundColor: COLORS.white }}>

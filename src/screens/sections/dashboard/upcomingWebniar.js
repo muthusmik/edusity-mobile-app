@@ -20,12 +20,12 @@ import moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const UpcomingWebniarDashboard = ({ upcomingWebinar }) => {
-
+    
     return (
         <View style={styles.container}>
             <View style={styles.announcementStyle}>
                 <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 16, marginBottom: 8 }}>Upcoming Webinars (<Text style={{ color: "red" }}>{(upcomingWebinar?.length) ? upcomingWebinar.length : "0"}</Text>)</Text>
-                {(upcomingWebinar) ? <ScrollView>
+                {(upcomingWebinar.length !== 0) ? <ScrollView>
                     {upcomingWebinar?.map((item, index) => (
                         <TouchableOpacity key={item.id} style={styles.touchableStyle} onPress={() => { handleAnnouncement(item) }}>
                             <Text style={{ color: COLORS.primary, ...FONTS.robotomedium }}>Webniar name: {item.eventName}</Text>
@@ -36,7 +36,7 @@ const UpcomingWebniarDashboard = ({ upcomingWebinar }) => {
                     ))}
                 </ScrollView> :
                     <View style={{ height: "70%", alignItems: "center", justifyContent: "center" }}>
-                        <Text style={{ ...FONTS.h2, color: COLORS.black }}>Upcoming webinar not found</Text>
+                        <Text style={{ ...FONTS.h4 , color: COLORS.black }}>Upcoming webinar not found</Text>
                     </View>
                 }
             </View>

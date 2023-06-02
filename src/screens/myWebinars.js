@@ -6,7 +6,6 @@ import {
     Modal,
     Pressable, FlatList, StyleSheet, KeyboardAvoidingView, Platform, Alert, Dimensions, Linking, ToastAndroid, PermissionsAndroid
 } from 'react-native';
-import { check, PERMISSIONS, request } from 'react-native-permissions';
 import { RFValue } from 'react-native-responsive-fontsize';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderKit from 'react-native-loader-kit';
@@ -14,9 +13,7 @@ import { images, icons, COLORS, FONTS, SIZES } from "../constants";
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import { useIsFocused } from "@react-navigation/core";
 import NetInfo from '@react-native-community/netinfo';
 import { getWebinars, generateWebinarToken } from '../services/webinars';
@@ -27,6 +24,7 @@ import moment from 'moment';
 import FeatherIcon from "react-native-vector-icons/Feather";
 import WebView from 'react-native-webview';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import { check, request, RESULTS } from 'react-native-permissions';
 
 const platformUsing = Platform.OS;
 const { width, height } = Dimensions.get('window')
@@ -36,12 +34,8 @@ const MyWebinars = ({ data }) => {
     const navigation = useNavigation();
     const [Data, setData] = useState([]);
     const [loginToken, setLoginToken] = useState();
-    const [totalCourses, setTotalCourse] = useState(0);
-    const [totalPage, setTotalPage] = useState(0);
     const [refreshList, setRefreshList] = useState(false);
     const [loader, setLoader] = useState(false);
-    const [flalistRefresh, setFlatListRefresh] = useState(false);
-    const [CoursesCount, setCourseCount] = useState(0);
     const [page, setPage] = useState(1);
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
@@ -114,7 +108,7 @@ const MyWebinars = ({ data }) => {
 
     const requestMicrophonePermission = async () => {
         try {
-            if (Platform.OS === 'android') {
+            if (platformUsing === 'android') {
                 const granted = await PermissionsAndroid.request(
                     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                     {
@@ -125,13 +119,6 @@ const MyWebinars = ({ data }) => {
                     }
                 );
                 return granted === PermissionsAndroid.RESULTS.GRANTED;
-                // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                //     console.log('Microphone permission granted');
-                //     return true
-                // } else {
-                //     ToastAndroid.showWithGravity("Your microphone permissions denied, please allow microphone/record audio permissions", ToastAndroid.CENTER, ToastAndroid.LONG)
-                //     console.log('Microphone permission denied');
-                // }
             }
         } catch (error) {
             ToastAndroid.showWithGravity("Something went wrong, please try again later", ToastAndroid.CENTER, ToastAndroid.LONG)
@@ -156,35 +143,77 @@ const MyWebinars = ({ data }) => {
     const getwebinarToken = async (id) => {
         setLoader(true);
         let webinarData = await generateWebinarToken(loginToken, id).then(data => {
-            setLoader(false);
             return data;
+        }).catch((error) => {
+            setLoader(false);
+            ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.LONG, ToastAndroid.CENTER)
         })
         // console.log("Data for response webminar url..............", webinarData);
         if (webinarData?.error === true) {
-            Alert.alert("Alert", webinarData.message)
+            setLoader(false);
+            Alert.alert("Alert", webinarData.message);
         } else if (webinarData?.error === false) {
-            setWebminarUrl(webinarData.data)
-            // setModalVisible(true)
+            setWebminarUrl(webinarData.data);
+            setLoader(false);
+            setModalVisible(true)
             // requestPermissions()
-
+            // CheckPermissions(webinarData.data)
             const openURL = async (url) => {
-                // try {
-                //     await InAppBrowser.open(url, {
-                //         // You can customize the options here
-                //         // For example, you can specify the browser you want to use
-                //         // through the `preferredBarTintColor` and `preferredControlTintColor` options
-                //         // Please refer to the documentation for more available options
-                //     });
-                // } catch (error) {
-                //     console.log('Error opening in-app browser:', error);
-                // }
-                Linking.openURL(url)
-                    .catch(error => console.error('Error opening URL:', error));
+                try {
+                    await InAppBrowser.open(url);
+                } catch (error) {
+                    console.log('Error opening in-app browser:', error);
+                }
+                // Linking.openURL(url).catch(error => console.error('Error opening URL:', error));
             }
-            openURL(webinarData.data)
+            // openURL(webinarData.data)
             // navigation.navigate("jitsiCall", { webinarData });
         }
     }
+    const CheckPermissions = (uriFromFunction) => {
+        const uri = uriFromFunction;
+
+        const determineRequiredPermission = (uri) => {
+            console.log("determineRequiredPermission...............", uri);
+            if (Platform.OS === 'android') {
+                return PermissionsAndroid.PERMISSIONS.RECORD_AUDIO;
+            } else if (Platform.OS === 'ios') {
+                return 'microphone';
+            }
+        };
+
+        const checkPermissions = async () => {
+            const permission = determineRequiredPermission(uri);
+            console.log("New permission..................", permission);
+            try {
+                const status = await check(permission);
+                if (status === RESULTS.GRANTED) {
+                    setModalVisible(true)
+                    console.log('Permission granted');
+                } else if (status === RESULTS.DENIED) {
+                    requestPermission(permission);
+                }
+            } catch (error) {
+                console.log('Permission check error:', error);
+            }
+        };
+        checkPermissions();
+
+        const requestPermission = async (permission) => {
+            try {
+                const status = await request(permission);
+                if (status === RESULTS.GRANTED) {
+                    console.log('Permission granted');
+                } else {
+                    console.log('Permission denied');
+                }
+            } catch (error) {
+                console.log('Permission request error:', error);
+            }
+        };
+
+        return null;
+    };
 
     const handleQuickView = (id) => {
         if (network) {
@@ -207,7 +236,7 @@ const MyWebinars = ({ data }) => {
     return (
         (!loader) ?
             <View style={{ height: "100%" }}>
-                {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
+                {platformUsing === 'ios' ? <View style={{ height: "5%" }} /> : null}
                 <View style={{ height: 60, backgroundColor: COLORS.primary, flexDirection: "row", alignItems: "center" }} >
                     {/* <View style={{ flexDirection: "column", width: "30%", marginHorizontal: "2%", marginVertical: "3%", }}> */}
                     <TouchableOpacity style={{ marginLeft: 20, borderWidth: 0 }} onPress={() => navigation.goBack()}>
@@ -315,6 +344,24 @@ const MyWebinars = ({ data }) => {
                                     <View style={styles.modalView}>
                                         <WebView
                                             source={{ uri: webminarUrl }}
+                                            // source={{
+                                            //     html:
+                                            //         `
+                                            //     <!DOCTYPE html>
+                                            //     <html>
+                                            //       <body>
+                                            //         <h1>Welcome to my website!</h1>
+                                            //         <a href=${webminarUrl}>Click here to open the URI</a>
+                                            //         <script>
+                                            //           function redirectToURI() {
+                                            //             window.location.href = ${webminarUrl};
+                                            //           }
+                                            //         </script>
+                                            //         <button onclick="redirectToURI()">Click here to open the URI with JavaScript</button>
+                                            //       </body>
+                                            //     </html>
+                                            //   `
+                                            // }}
                                             onPermissionRequest={handlePermissionRequest}
                                             style={{ maxHeight: height, width: width, flex: 1 }}
                                         />

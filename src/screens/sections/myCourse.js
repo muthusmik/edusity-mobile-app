@@ -58,7 +58,7 @@ const MyCourse = () => {
                 setLoginToken(token);
                 if (token) {
                     let purchasedData = await purchasedCourses(token, page).then(data => {
-                        console.log(data.data, "hello");
+                        console.log("Purchased courses..............", data.data);
                         setData(data?.data?.data);
                         setTotalCourse(data?.data.total);
                         setTotalPage(data?.data.total_page)
@@ -75,7 +75,6 @@ const MyCourse = () => {
                     };
                 }
             }
-
         }
     }, [isFocused, network])
 
@@ -106,7 +105,6 @@ const MyCourse = () => {
     }, [page])
 
     const refresh = () => {
-
         if (page < totalPage) {
             setPage(page + 1);
             setRefreshList(true);
@@ -127,7 +125,6 @@ const MyCourse = () => {
                 // console.log(" Inside catch", rejectedValueOrSerializedError);
                 setLoader(false)
             })
-
     };
 
     return (
@@ -153,7 +150,6 @@ const MyCourse = () => {
                     {(CoursesCount > 0) ?
                         <FlatList
                             data={Data}
-
                             // ref={ScrollRef}
                             // onScroll={event => {
                             //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
@@ -166,7 +162,6 @@ const MyCourse = () => {
                                 <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
                                     <View style={{ width: "100%", flexDirection: "row" }}>
                                         <View style={styles.coulmnImage}>
-                                            {/* {console.log("Data inside myCourse.........",Data)} */}
                                             {(item.imageFiles.length > 0) ?
                                                 <Image
                                                     source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
@@ -203,14 +198,14 @@ const MyCourse = () => {
                                                 alignItems: "center"
                                             }}
                                                 onPressIn={() => { handleViewNavigation(item.ID) }}>
-                                                <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}> Start Now</Text>
+                                                <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Start Now</Text>
                                             </TouchableOpacity>
 
                                         </View>
                                     </View>
                                     <View style={{ paddingHorizontal: "2%" }}>
                                         <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10) }}>Description:</Text>
-                                        <WebView style={{ height: 200, width: "100%" }}
+                                        <WebView style={{ height: 200, width: "100%", flex: 1 }}
                                             scalesPageToFit={false}
                                             source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${item.Description}` }}
                                         />
