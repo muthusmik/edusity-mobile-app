@@ -28,6 +28,7 @@ import { baseUrl, baseUrl_payment } from '../../../services/constant';
 import { getWishListedCourses } from '../../../services/wishlist';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 import OverlayLoader from '../../../components/overlayLoader';
+import { metrices } from '../../../constants/metrices';
 
 const CourseList = ({ allCourses, cartData }) => {
 
@@ -348,7 +349,6 @@ const CourseList = ({ allCourses, cartData }) => {
             SetLoader(true);
             dispatch(viewCourseHandler(item.ID)).then(unwrapResult)
                 .then((originalPromiseResult) => {
-                    // console.log("successfully returned to login with response CourseList ", originalPromiseResult);
                     navigation.navigate("ViewCourse");
                     // SetLoader(false);
                 })
@@ -400,7 +400,6 @@ const CourseList = ({ allCourses, cartData }) => {
             <View style={styles.mainContainer}>
                 {cartBtnLoader ? <OverlayLoader /> : null}
                 {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
-                {/* {console.log("Data length............", Data?.length !== 0, "Show heart.........", showHeart.length > 0)} */}
                 {(Data?.length !== 0) ?
                     <>
                         <FlatList
@@ -414,128 +413,123 @@ const CourseList = ({ allCourses, cartData }) => {
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
                                 // (!item.isPurchased) ?
-                                <View style={styles.mainTouchable}>
-                                    <View style={{ backgroundColor: COLORS.white, marginVertical: "1%", marginHorizontal: "2%", borderRadius: 10, padding: "2%" }}>
-                                        <View style={{ width: "100%", flexDirection: "row" }}>
-                                            <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "35%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
-                                                <View style={styles.coulmnImage}>
-                                                    {(item?.imageFiles?.fileName) ?
-                                                        <Image
-                                                            source={{ uri: "https://cdn.edusity.com/" + item?.imageFiles?.fileName }}
-                                                            resizeMode="contain"
+                                <View style={styles.mainStyle}>
+                                    <View style={{ width: "100%", flexDirection: "row" }}>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "45%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
+                                            <View style={styles.coulmnImage}>
+                                                {(item?.imageFiles?.fileName) ?
+                                                    <Image
+                                                        source={{ uri: "https://cdn.edusity.com/" + item?.imageFiles?.fileName }}
+                                                        resizeMode="stretch"
+                                                        style={{
+                                                            width: "100%",
+                                                            height: 130,
+                                                            borderRadius: 8
+                                                        }}
+                                                    /> : <Image
+                                                        source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
+                                                        resizeMode="stretch"
 
-                                                            style={{
-                                                                width: "98%",
-                                                                height: 130,
-                                                                margin: "1%",
-                                                                borderRadius: 8
-                                                            }}
-                                                        /> : <Image
-                                                            source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
-                                                            resizeMode="contain"
-
-                                                            style={{
-                                                                width: "88%",
-                                                                height: 100,
-                                                                margin: "1%",
-                                                                borderRadius: 8
-                                                            }}
-                                                        />}
-                                                </View>
-                                            </TouchableOpacity>
-                                            <View style={{ width: "65%", flexDirection: "column", padding: "1%" }}>
-                                                <View style={{ width: "100%", flexDirection: "row", borderWidth: 0 }}>
-                                                    <View style={{ width: "90%", flexDirection: "column" }}>
-                                                        <Text style={{ fontSize: RFValue(16), marginVertical: "2%", color: COLORS.black, ...FONTS.robotomedium }}>{(item.CourseName) ? item.CourseName : "N/A"}{"\n"}
-                                                            <Text style={{ fontSize: RFValue(10), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
-                                                    </View>
-                                                    {key ? <TouchableOpacity onPress={() => handleWishlist(item.ID)} style={{ width: "10%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
-                                                        {!(showHeart?.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
-                                                            <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
-                                                    </TouchableOpacity> : null}
-                                                </View>
-                                                <Text style={{ padding: "1%" }}>
+                                                        style={{
+                                                            width: "88%",
+                                                            height: 100,
+                                                            borderRadius: 8
+                                                        }}
+                                                    />}
+                                            </View>
+                                        </TouchableOpacity>
+                                        <View style={{ width: "55%", paddingLeft: metrices(1) }}>
+                                            <View style={{ width: "100%" }}>
+                                                <Text style={{ fontSize: RFValue(16), color: COLORS.black, ...FONTS.robotomedium }}>{(item.CourseName) ? item.CourseName : "N/A"}{"\n"}
+                                                    <Text style={{ fontSize: RFValue(10), color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
+                                            </View>
+                                            <View style={{ width: "100%", flexDirection: "row" }}>
+                                                <View style={{ width: "80%", flexDirection: "row", alignItems: "center" }}>
                                                     <Image
                                                         source={icons.LevelIcon}
                                                         resizeMode="contain"
                                                         style={{ width: RFValue(15), height: RFValue(15), }}
                                                     />
-                                                    <Text style={{ fontSize: RFValue(13), marginVertical: "2%", color: COLORS.black, ...FONTS.robotoregular }} > {(item.Level) ? item.Level : "N/A"}</Text>
-                                                </Text>
-                                                <View style={styles.details}>
-                                                    <View style={{ flexDirection: "column", width: "100%" }}>
-                                                        <View style={{ flexDirection: "row", width: "100%" }}>
-                                                            <View style={{ flexDirection: "column", width: "70%" }}>
-                                                                <Text style={{ padding: "2%" }}>
-                                                                    <Image
-                                                                        source={icons.Tutor}
-                                                                        resizeMode="contain"
-                                                                        style={{ width: RFValue(15), height: RFValue(15), }}
-                                                                    />
-                                                                    <Text style={styles.Brand}>  {(item.instructorName) ? item.instructorName : "N/A"}</Text></Text>
-                                                                <Text style={styles.ratings}>
-                                                                    <View>
-                                                                        <Rating
-                                                                            type='star'
-                                                                            ratingCount={(item.StarRating) ? item.StarRating : 5}
-                                                                            imageSize={RFValue(16)}
-                                                                            showRating={false}
-                                                                            isDisabled={true}
-                                                                            ratingColor='#8830c4'
-                                                                        />
-                                                                    </View>
-                                                                </Text>
-                                                            </View>
-                                                        </View>
-                                                    </View>
+                                                    <Text style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }} > {(item.Level) ? item.Level : "N/A"}</Text>
                                                 </View>
-                                                <View style={{ alignItems: "center" }}>
-                                                    <Text style={styles.location}>${(item.EnrollmentFee) ? item.EnrollmentFee : "N/A"}</Text>
-                                                </View>
+                                                {key ? <TouchableOpacity onPress={() => handleWishlist(item.ID)} style={{ width: "20%", flexDirection: "column", alignItems: "center", justifyContent: "space-around" }}>
+                                                    {!(showHeart?.includes(item.ID)) ? <MCIcon name="cards-heart-outline" size={RFValue(20)} color={"red"} /> :
+                                                        <MCIcon name="cards-heart" size={RFValue(20)} color={"red"} />}
+                                                </TouchableOpacity> : null}
                                             </View>
+
+                                            <View style={{ flexDirection: "row", width: "100%", alignItems: "center" }}>
+                                                <View style={{ width: "10%" }}>
+                                                    <Image
+                                                        source={icons.Tutor}
+                                                        resizeMode="contain"
+                                                        style={{ width: RFValue(15), height: RFValue(15), }}
+                                                    />
+                                                </View>
+                                                <Text style={[styles.Brand, { width: "90%" }]}>{(item.instructorName) ? item.instructorName : "N/A"}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={styles.location}>Price: ${(item.EnrollmentFee) ? item.EnrollmentFee : "N/A"}</Text>
+                                            </View>
+                                            <Text style={styles.ratings}>
+                                                <View>
+                                                    <Rating
+                                                        type='star'
+                                                        ratingCount={(item.StarRating) ? item.StarRating : 5}
+                                                        imageSize={RFValue(16)}
+                                                        showRating={false}
+                                                        isDisabled={true}
+                                                        ratingColor='#8830c4'
+                                                    />
+                                                </View>
+                                            </Text>
                                         </View>
-                                        {/* {console.log("Ispurchased..............",item.isPurchased,"Item ID.........",item.ID)}
-                                       {console.log("item..............",item)} */}
-                                        {(!item.isPurchased) ?
-                                            <View style={{ flexDirection: "row", marginVertical: "2%" }}>
-                                                {/* <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
+                                    </View>
+                                    {console.log("Ispurchased..............", item.isPurchased, "Item ID.........", item.ID)}
+                                    {console.log("item..............", item)}
+                                    {(!item.isPurchased) ?
+                                        <View style={{ flexDirection: "row", marginVertical: "2%" }}>
+                                            {/* <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
 
                                                     <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
                                                         <MCIcon name="cart-heart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column", alignSelf: "center" }} />
                                                         <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Buy Now</Text>
                                                     </TouchableOpacity>
                                                 </View> */}
-                                                {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
-                                                <View style={{ flexDirection: "column", width: "50%", alignItems: "center", alignSelf: "flex-end" }}>
-                                                    {!(cartArray.includes(item.ID)) ?
-                                                        <>
-                                                            {(cartBtnLoader != item.ID) ?
-                                                                <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
-                                                                    <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                                    <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
-                                                                </TouchableOpacity> :
-                                                                <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent: "center", padding: "4%", alignItems: "center", borderRadius: 10 }} >
-                                                                    <LoaderKit
-                                                                        style={{ width: RFValue(20), height: RFValue(20) }}
-                                                                        name={'BallPulse'} // Optional: see list of animations below
-                                                                        size={50} // Required on iOS
-                                                                        color={COLORS.white} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
-                                                                    />
-                                                                </View>}
-                                                        </>
-                                                        :
-                                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
-                                                            <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                            <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View Cart</Text>
-                                                        </TouchableOpacity>
-                                                    }
-                                                </View>
-                                            </View> :
-                                            <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
-                                                <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
-                                            </View>}
-                                    </View>
+                                            {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
+                                            <View style={{ flexDirection: "column", width: "50%", alignItems: "center", alignSelf: "flex-end" }}>
+                                                {!(cartArray.includes(item.ID)) ?
+                                                    <>
+                                                        {(cartBtnLoader != item.ID) ?
+                                                            <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
+                                                                <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                                                <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
+                                                            </TouchableOpacity> :
+                                                            <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent: "center", padding: "4%", alignItems: "center", borderRadius: 10 }} >
+                                                                <LoaderKit
+                                                                    style={{ width: RFValue(20), height: RFValue(20) }}
+                                                                    name={'BallPulse'}
+                                                                    size={50} 
+                                                                    color={COLORS.white} 
+                                                                />
+                                                            </View>}
+                                                    </>
+                                                    :
+                                                    <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
+                                                        <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                                        <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View Cart</Text>
+                                                    </TouchableOpacity>
+                                                }
+                                            </View>
+                                        </View> :
+                                        <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
+                                            <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
+                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
+                                        </View>}
+                                    <TouchableOpacity onPress={() => handleViewNavigation(item)} style={styles.infoButton}>
+                                        <MCIcon name="information" size={RFValue(16)} color={COLORS.primary} />
+                                        <Text style={[styles.Brand, { color: COLORS.black }]}>{"  "}For more info</Text>
+                                    </TouchableOpacity>
                                 </View>
                             )
                             }
@@ -587,14 +581,21 @@ const styles = StyleSheet.create({
         borderBottomStartRadius: 5,
         borderBottomEndRadius: 5,
     },
-    mainTouchable: {
-        shadowColor: COLORS.primary,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 2.25,
-        shadowRadius: 3.84,
+    mainStyle: {
+        backgroundColor: COLORS.white,
+        marginHorizontal: metrices(1),
+        borderRadius: 6,
+        marginBottom: 8,
+        padding: metrices(1)
+    },
+    infoButton: {
+        width: "100%",
+        paddingVertical: "1%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        borderTopWidth: 1,
+        borderTopColor: COLORS.lightGray
     },
     searchContainer: {
         backgroundColor: COLORS.white,
@@ -629,9 +630,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "#000"
     },
-    details: { flexDirection: "row", justifyContent: "space-between", paddingBottom: 5 },
     Brand: {
-        fontSize: RFValue(12, 580), ...FONTS.robotoregular, color: COLORS.gray,
+        fontSize: RFValue(12, 580), ...FONTS.robotoregular, color: COLORS.gray
     },
     location: {
         fontSize: RFValue(16, 580), ...FONTS.robotomedium, color: COLORS.black, color: COLORS.primary
@@ -640,17 +640,7 @@ const styles = StyleSheet.create({
         fontSize: 10, color: COLORS.black,
     },
     coulmnImage: {
-        width: "100%",
-        flexDirection: "column",
-        // alignItems: "center",
-        // justifyContent: "space-around",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        width: "100%"
     }
 });
 

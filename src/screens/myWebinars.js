@@ -170,6 +170,14 @@ const MyWebinars = ({ data }) => {
             // navigation.navigate("jitsiCall", { webinarData });
         }
     }
+    const handleMessage = (event) => {
+        const data = JSON.parse(event.nativeEvent.data);
+        console.log("Data in handleMessage...........", data);
+        // if (data.type === 'requestPermission') {
+        //     // Handle permission request from the WebView
+        //     requestPermission(data.permission);
+        // }
+    };
     const CheckPermissions = (uriFromFunction) => {
         const uri = uriFromFunction;
 
@@ -343,7 +351,9 @@ const MyWebinars = ({ data }) => {
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
                                         <WebView
+                                            ref={webViewRef}
                                             source={{ uri: webminarUrl }}
+                                            onMessage={handleMessage}
                                             // source={{
                                             //     html:
                                             //         `
@@ -362,7 +372,7 @@ const MyWebinars = ({ data }) => {
                                             //     </html>
                                             //   `
                                             // }}
-                                            onPermissionRequest={handlePermissionRequest}
+                                            // onPermissionRequest={handlePermissionRequest}
                                             style={{ maxHeight: height, width: width, flex: 1 }}
                                         />
                                     </View>

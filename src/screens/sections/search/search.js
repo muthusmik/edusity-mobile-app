@@ -26,10 +26,10 @@ function handleBackButton() {
 
 const Search = ({ navigation }) => {
     const dispatch = useDispatch();
-    const allCourses = useSelector((state) => state.courseList.data.data)
-    const cartData = useSelector((state) => state.cartList.data.data)
+    const allCourses = useSelector((state) => state.courseList?.data.data)
+    const cartData = useSelector((state) => state.cartList?.data.data)
     const [isSearchLoader, setIsSearchLoader] = useState(false);
-    const cartCount = useSelector((state) => state.cartList.data.data);
+    const cartCount = useSelector((state) => state.cartList?.data.data);
     const [network, setNetwork] = useState('')
     const isFocused = useIsFocused();
 
@@ -62,12 +62,17 @@ const Search = ({ navigation }) => {
 
         dispatch(courseListHandler(token)).then(unwrapResult)
             .then((originalPromiseResult) => {
-                // console.log("Inside the response of courseListHandler..........", originalPromiseResult)
+                console.log("Inside the response of courseListHandler..........", originalPromiseResult)
+                if (originalPromiseResult == "error") {
+                    console.log("Inside if condition...........", typeof (originalPromiseResult));
+                    navigation.navigate("ServerError");
+                }
                 setIsSearchLoader(false);
             })
             .catch((rejectedValueOrSerializedError) => {
-                ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
-                // console.log("Inside the catch of courseListHandler................", rejectedValueOrSerializedError);
+                navigation.navigate("ServerError");
+                // ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                console.log("Inside the catch of courseListHandler................", rejectedValueOrSerializedError);
                 setIsSearchLoader(false);
             })
     }
@@ -107,9 +112,9 @@ const Search = ({ navigation }) => {
                         <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                             <LoaderKit
                                 style={{ width: 50, height: 50 }}
-                                name={'BallPulse'} 
-                                size={50} 
-                                color={COLORS.primary} 
+                                name={'BallPulse'}
+                                size={50}
+                                color={COLORS.primary}
                             />
                         </ImageBackground>
                     </View> :

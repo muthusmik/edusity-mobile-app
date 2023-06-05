@@ -14,6 +14,7 @@ export const courseListHandler = createAsyncThunk('posts/courseListcall', async 
         return response.data
     }).catch((err) => {
         console.log("Inisde Catch Error response for courseListUrl.........", err)
+        return "error"
     })
     // try {
     //     const result = await fetch(courseUrl);
