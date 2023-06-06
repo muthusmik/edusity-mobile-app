@@ -447,7 +447,7 @@ const Cart = () => {
                                         <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "8%", fontSize: RFValue(10), ...FONTS.robotomedium }}>Total items : {(cartData?.data?.Courses)?.length}</Text>
                                     </View>
                                     <View style={{ flex: 1, flexDirection: "column", width: "60%", alignItems: "flex-end" }}>
-                                        <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(10), ...FONTS.robotoregular, textAlign: "right" }}>SubTotal{"\n"}
+                                        <Text style={{ color: COLORS.black, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(10), ...FONTS.robotoregular, textAlign: "right" }}>Total{"\n"}
                                             <Text style={{ color: COLORS.primary, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(15), ...FONTS.robotomedium }}> ${totalValue.toFixed(2)}</Text> {"\n"}
                                             <Text style={{ color: COLORS.black, fontSize: RFValue(6), ...FONTS.robotoregular, textAlign: "right" }}>+ TAXES WILL BE ADDED AT CHECKOUT IF APPLICABLE</Text>
                                         </Text>
@@ -455,12 +455,12 @@ const Cart = () => {
                                 </View>
                                 <View style={{ flexDirection: "row", height: "35%", width: "100%", }}>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.gray, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => { deleteCart(), setLoader(true) }}>
-                                            <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Empty the Cart</Text>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => { deleteCart(), setLoader(true) }}>
+                                            <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Empty Cart</Text>
                                         </TouchableOpacity>
                                     </View>
                                     <View style={{ flexDirection: "column", width: "50%", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.primary, borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => /* AlertPayment() */ handleMakePayment(Data)}>
+                                        <TouchableOpacity style={{ backgroundColor: "green", borderRadius: 10, width: "90%", height: "90%", justifyContent: "center" }} onPress={() => /* AlertPayment() */ handleMakePayment(Data)}>
                                             <Text style={{ color: COLORS.white, padding: "2%", marginHorizontal: "5%", fontSize: RFValue(14), ...FONTS.robotoregular, textAlign: "center" }}>Proceed
                                                 {/* {'\n'} */}
                                                 {/* <Text style={{ color: COLORS.white, marginHorizontal: "5%", fontSize: RFValue(8), ...FONTS.robotoregular, textAlign: "center" }}>You Will Be Redirected To Razor Pay </Text> */}

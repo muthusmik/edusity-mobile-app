@@ -39,32 +39,36 @@ const Search = ({ navigation }) => {
             dispatch(cartHandler(token)).then(unwrapResult)
                 .then((originalPromiseResult) => {
                     // console.log("Inside the cartHandler............. ", originalPromiseResult)
-                    dispatch(userLoginHanlder(token)).then(unwrapResult)
-                        .then((originalPromiseResult) => {
-                            // console.log("Inside the userLoginHanlder............. ", originalPromiseResult)
-                            dispatch(getWishListDataHandler(token)).then((originalPromiseResult) => {
-                                // console.log("Inside the getWishListDataHandler............. ", originalPromiseResult)
-                            }).catch((rejectedValueOrSerializedError) => {
-                                // console.log("Inside the catch of getWishListDataHandler............. ", rejectedValueOrSerializedError)
-                                ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                    if (originalPromiseResult.error === true) {
+                        ToastAndroid.showWithGravity(originalPromiseResult.message, ToastAndroid.CENTER, ToastAndroid.LONG)
+                        navigation.navigate("Login");
+                    }
+                    else if (originalPromiseResult.error === false) {
+                        dispatch(userLoginHanlder(token)).then(unwrapResult)
+                            .then((originalPromiseResult) => {
+                                // console.log("Inside the userLoginHanlder............. ", originalPromiseResult)
+                                dispatch(getWishListDataHandler(token)).then((originalPromiseResult) => {
+                                    // console.log("Inside the getWishListDataHandler............. ", originalPromiseResult)
+                                }).catch((rejectedValueOrSerializedError) => {
+                                    // console.log("Inside the catch of getWishListDataHandler............. ", rejectedValueOrSerializedError)
+                                    ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                                })
                             })
-                        })
-                        .catch((rejectedValueOrSerializedError) => {
-                            ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
-                            // console.log("Inside the catch of userLoginHanlder............", rejectedValueOrSerializedError);
-                        })
+                            .catch((rejectedValueOrSerializedError) => {
+                                ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
+                                // console.log("Inside the catch of userLoginHanlder............", rejectedValueOrSerializedError);
+                            })
+                    }
                 })
                 .catch((rejectedValueOrSerializedError) => {
                     ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
-                    // console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
+                    console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
                 })
         }
 
         dispatch(courseListHandler(token)).then(unwrapResult)
             .then((originalPromiseResult) => {
-                console.log("Inside the response of courseListHandler..........", originalPromiseResult)
                 if (originalPromiseResult == "error") {
-                    console.log("Inside if condition...........", typeof (originalPromiseResult));
                     navigation.navigate("ServerError");
                 }
                 setIsSearchLoader(false);

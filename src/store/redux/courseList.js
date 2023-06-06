@@ -35,10 +35,7 @@ export const courseListSlice = createSlice({
     },
     reducers: {},
     extraReducers: (builder) => {
-        // Add reducers for additional action types here, and handle loading state as needed
-        // console.log(courseListHandler, "search response")
         builder.addCase(courseListHandler.fulfilled, (state, action) => {
-            // console.log("state action", state);
             state.data = action.payload;
         })
     },

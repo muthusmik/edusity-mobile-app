@@ -412,9 +412,8 @@ const CourseList = ({ allCourses, cartData }) => {
                             keyExtractor={item => item.ID}
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
-                                // (!item.isPurchased) ?
                                 <View style={styles.mainStyle}>
-                                    <View style={{ width: "100%", flexDirection: "row" }}>
+                                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
                                         <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "45%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
                                             <View style={styles.coulmnImage}>
                                                 {(item?.imageFiles?.fileName) ?
@@ -476,7 +475,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                     <Rating
                                                         type='star'
                                                         ratingCount={(item.StarRating) ? item.StarRating : 5}
-                                                        imageSize={RFValue(16)}
+                                                        imageSize={RFValue(14)}
                                                         showRating={false}
                                                         isDisabled={true}
                                                         ratingColor='#8830c4'
@@ -485,51 +484,45 @@ const CourseList = ({ allCourses, cartData }) => {
                                             </Text>
                                         </View>
                                     </View>
-                                    {console.log("Ispurchased..............", item.isPurchased, "Item ID.........", item.ID)}
-                                    {console.log("item..............", item)}
+                                    <View style={{ borderBottomColor: COLORS.lightGray, borderBottomWidth: 1, width: "100%", marginVertical: metrices(1) }} />
                                     {(!item.isPurchased) ?
-                                        <View style={{ flexDirection: "row", marginVertical: "2%" }}>
-                                            {/* <View style={{ flexDirection: "column", width: "50%", justifyContent: "center", alignItems: "center" }}>
-
-                                                    <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => navigation.navigate("Cart")} >
-                                                        <MCIcon name="cart-heart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column", alignSelf: "center" }} />
-                                                        <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Buy Now</Text>
-                                                    </TouchableOpacity>
-                                                </View> */}
-                                            {/* {console.log("This is value", (cartArray.includes(`${item.ID}`)))} */}
-                                            <View style={{ flexDirection: "column", width: "50%", alignItems: "center", alignSelf: "flex-end" }}>
+                                        <View style={styles.buttonRow}>
+                                            <View style={styles.buttonColumn}>
                                                 {!(cartArray.includes(item.ID)) ?
                                                     <>
                                                         {(cartBtnLoader != item.ID) ?
-                                                            <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleAddCart(item.ID)} >
-                                                                <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                                <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>Add to Cart</Text>
+                                                            <TouchableOpacity style={styles.addCartButton} onPress={() => handleAddCart(item.ID)} >
+                                                                <MCIcon name="cart-plus" size={RFValue(20)} color={"white"} style={styles.iconAddCart} />
+                                                                <Text style={styles.addCartText}>Add to Cart</Text>
                                                             </TouchableOpacity> :
                                                             <View style={{ backgroundColor: COLORS.primary, width: "80%", justifyContent: "center", padding: "4%", alignItems: "center", borderRadius: 10 }} >
                                                                 <LoaderKit
                                                                     style={{ width: RFValue(20), height: RFValue(20) }}
                                                                     name={'BallPulse'}
-                                                                    size={50} 
-                                                                    color={COLORS.white} 
+                                                                    size={50}
+                                                                    color={COLORS.white}
                                                                 />
                                                             </View>}
                                                     </>
                                                     :
-                                                    <TouchableOpacity style={{ backgroundColor: COLORS.primary, width: "80%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
-                                                        <MCIcon name="cart" size={RFValue(20)} color={"white"} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
-                                                        <Text style={{ color: "white", ...FONTS.robotoregular, marginLeft: "6%" }}>View Cart</Text>
+                                                    <TouchableOpacity style={styles.addCartButton} onPress={() => handleViewCart()} >
+                                                        <MCIcon name="cart" size={RFValue(20)} color={"white"} style={styles.iconAddCart} />
+                                                        <Text style={styles.addCartText}>View Cart</Text>
                                                     </TouchableOpacity>
                                                 }
+                                            </View>
+                                            <View style={styles.buttonColumn}>
+                                                <TouchableOpacity style={styles.addCartButton} onPress={() => handleViewNavigation(item)} >
+                                                    <MCIcon name="information" size={RFValue(20)} color={COLORS.white} style={styles.iconAddCart} />
+                                                    <Text style={styles.addCartText}>For more info</Text>
+                                                </TouchableOpacity>
                                             </View>
                                         </View> :
                                         <View style={{ backgroundColor: COLORS.white, width: "90%", flexDirection: "row", padding: "4%", alignItems: "center", borderRadius: 10 }} onPress={() => handleViewCart()} >
                                             <MCIcon name="check-decagram-outline" size={RFValue(20)} color={COLORS.primary} style={{ marginHorizontal: "5%", flexDirection: "column" }} />
                                             <Text style={{ color: COLORS.primary, ...FONTS.robotoregular, marginLeft: "6%" }}>Already Purchased</Text>
                                         </View>}
-                                    <TouchableOpacity onPress={() => handleViewNavigation(item)} style={styles.infoButton}>
-                                        <MCIcon name="information" size={RFValue(16)} color={COLORS.primary} />
-                                        <Text style={[styles.Brand, { color: COLORS.black }]}>{"  "}For more info</Text>
-                                    </TouchableOpacity>
+
                                 </View>
                             )
                             }
@@ -550,7 +543,6 @@ const CourseList = ({ allCourses, cartData }) => {
                     onPressItem={name => { handleFiltertype(name) }}
                 />
 
-
                 <View style={{ width: "100%", alignItems: "center" }}>
                     {(!refreshList) ? (Data?.length != 0) ? <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular, }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text> : null
                         : <LoaderKit
@@ -569,33 +561,49 @@ const CourseList = ({ allCourses, cartData }) => {
                     setSelectedCategory={setSelectedCategory}
                     submission={submission}
                     setSubmission={setSubmission}
-                   /*  style={{ marginTop: "15%" }} */ />
+                />
             </View>
     );
 }
 
 const styles = StyleSheet.create({
     mainContainer: {
-        height: "100%",
-        width: "100%",
-        borderBottomStartRadius: 5,
-        borderBottomEndRadius: 5,
+        height: metrices(83.6),
+        width: "100%"
     },
     mainStyle: {
         backgroundColor: COLORS.white,
         marginHorizontal: metrices(1),
         borderRadius: 6,
-        marginBottom: 8,
+        marginBottom: 10,
         padding: metrices(1)
     },
-    infoButton: {
+    buttonRow: {
         width: "100%",
-        paddingVertical: "1%",
         flexDirection: "row",
+        justifyContent: "space-evenly"
+    },
+    buttonColumn: {
+        width: "45%"
+    },
+    addCartButton: {
+        backgroundColor: COLORS.buttonOne,
+        width: "100%",
+        flexDirection: "row",
+        height: metrices(4),
         alignItems: "center",
         justifyContent: "center",
-        borderTopWidth: 1,
-        borderTopColor: COLORS.lightGray
+        borderRadius: 5
+    },
+    addCartText: {
+        color: "white",
+        ...FONTS.robotoregular,
+        fontSize: 18,
+        width: "76%"
+    },
+    iconAddCart: {
+        marginLeft: "5%",
+        width: "16%"
     },
     searchContainer: {
         backgroundColor: COLORS.white,
@@ -634,7 +642,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(12, 580), ...FONTS.robotoregular, color: COLORS.gray
     },
     location: {
-        fontSize: RFValue(16, 580), ...FONTS.robotomedium, color: COLORS.black, color: COLORS.primary
+        fontSize: RFValue(16, 580), ...FONTS.robotoregular, color: COLORS.primary
     },
     ratings: {
         fontSize: 10, color: COLORS.black,

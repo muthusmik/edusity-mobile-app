@@ -4,10 +4,9 @@ import {
     Text,
     StatusBar,
     StyleSheet,
-    TouchableOpacity, BackHandler, Image, Dimensions, useWindowDimensions, TextInput, Alert
+    TouchableOpacity, BackHandler, Alert
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Colors } from 'react-native-paper';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { icons, COLORS, FONTS, } from '../../../constants';
@@ -39,12 +38,8 @@ const Profile = () => {
     const [userDetails, setUserDetails] = useState([])
     const [key, setKey] = useState("")
     const navigation = useNavigation();
-    // console.log("LoginDetails......", userDetails)
-    const [active, setActive] = useState(0)
     const [index, setIndex] = React.useState(0);
-    const layout = useWindowDimensions();
     const isFocused = useIsFocused();
-    const [network, setNetwork] = useState('')
 
     const initialLoading = async () => {
         let token = await AsyncStorage.getItem("loginToken");
@@ -154,10 +149,7 @@ const Profile = () => {
                         animated={true}
                         backgroundColor={COLORS.primary}
                     />
-                    {/* {Platform.OS=='ios'?
-                    <View style={{height:"5%"}}>
-
-                    </View>:null} */}
+                    {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
                     <View style={{ flexDirection: 'row', justifyContent: "center", paddingBottom: "5%", position: "relative", backgroundColor: COLORS.primary }}>
                         <View style={{ backgroundColor: COLORS.primary, width: '100%', position: 'absolute' }} />
                         <LinearGradient colors={["#bfe9ff", "#bfe9ff"]} style={{ marginVertical: "4%", flexDirection: 'row', width: "90%", borderRadius: 10, justifyContent: "space-around", padding: "6%" }}>
@@ -165,8 +157,8 @@ const Profile = () => {
                                 <Avatar
                                     size={80}
                                     rounded
-                                    title={userDetails[0].firstName.charAt(0).toUpperCase() + userDetails[0].lastName.charAt(0).toUpperCase()}
-                                    containerStyle={{ backgroundColor: "red", fontFamily: 'Roboto-Regular', }}
+                                    title={userDetails[0]?.firstName.charAt(0).toUpperCase() + userDetails[0]?.lastName.charAt(0).toUpperCase()}
+                                    containerStyle={{ backgroundColor: "red", fontFamily: 'Roboto-Regular' }}
                                 />
                                 {/* <TouchableOpacity onPress={() =>  deactivateTwoButtonAlert()} style={{ marginTop: "5%", flexDirection: "row" }} >
                                     <MCIcon name="broadcast-off" size={RFValue(18)} color={COLORS.primary} />
