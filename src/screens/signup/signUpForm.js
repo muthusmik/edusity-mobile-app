@@ -26,7 +26,7 @@ import { RFC_2822 } from "moment";
 import axios from "axios";
 import { RFValue } from "react-native-responsive-fontsize";
 import { OTPUrl } from '../../services/constant';
-import { height } from "deprecated-react-native-prop-types/DeprecatedImagePropType";
+
 const Form = () => {
     const navigation = useNavigation()
     const dispatch = (useDispatch());
@@ -45,7 +45,6 @@ const Form = () => {
         console.log(data == undefined ? true : false)
         if (!!data || (data != null)) {
             setLoader(true);
-            console.log("hello", data)
             const SignupForm = {
                 "firstName": data.firstName,
                 "lastName": data.lastName,
@@ -71,7 +70,6 @@ const Form = () => {
                             //let url = "https://backend-linux-login.azurewebsites.net/send-otp"
                             await axios.post(OTPUrl, { "email": data.email }).then(response => (
                                 console.log("Forgot api", response.data),
-
                                 navigation.navigate("OtpPage", { emailforOtp })
                             )).catch(err =>
                                 console.log("error", err))
@@ -80,7 +78,6 @@ const Form = () => {
                         }
                     } else {
                         setLoader(false);
-
                         Toast.show(originalPromiseResult.errormessage, "Please Verify the link in your email and try to login", Toast.LONG);
                     }
                 }
@@ -88,155 +85,150 @@ const Form = () => {
                 .catch((rejectedValueOrSerializedError) => {
                     setLoader(false);
                     Toast.show("Something went wrong please try after some time!", Toast.LONG);
-                    // console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
         } else {
             console.log("No Data")
         }
     }, [data]);
 
-
-
-
-
     return (
         <View style={{ width: "100%", alignItems: "center" }}>
-          {  loader ?
-            <View> 
-            <LoaderKit
-                style={{ height: 25 }}
-                name={'Pacman'} // Optional: see list of animations below
-                size={10} // Required on iOS
-                color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
-            />
-            </View>:
-            <>
-           <View style={{ width: "85%" }}>
-                <InputBox
-                    inputOutline
-                    label={'First Name'}
-                    value={firstName}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    name={"FirstName"}
-                    //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}}  />}
-                    onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
-                    containerStyles={{padding:"5%"}}
-                />
-                {formErrors && formErrors.firstName ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.firstName}
-                        </Text>
-                    </View> : null}
-            </View>
-            <View style={{ width: "85%"}}>
-                <InputBox
-                    inputOutline
-                    label={'Last Name'}
-                    customLabelStyle={{ ...FONTS.robotoregular,}}
-                    value={lastName}
-                    name={"LastName"}
-                    //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
-                    onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
-                />
-                {formErrors && formErrors.lastName ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.lastName}</Text>
-                    </View> : null}
-            </View>
+            {loader ?
+                <View>
+                    <LoaderKit
+                        style={{ height: 25 }}
+                        name={'Pacman'}
+                        size={10}
+                        color={COLORS.primary}
+                    />
+                </View> :
+                <>
+                    <View style={{ width: "85%" }}>
+                        <InputBox
+                            inputOutline
+                            label={'First Name'}
+                            value={firstName}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            name={"FirstName"}
+                            //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}}  />}
+                            onChangeText={e => { handleChange(e, "firstName"), setFirstName(e) }}
+                            containerStyles={{ padding: "5%" }}
+                        />
+                        {formErrors && formErrors.firstName ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.firstName}
+                                </Text>
+                            </View> : null}
+                    </View>
+                    <View style={{ width: "85%" }}>
+                        <InputBox
+                            inputOutline
+                            label={'Last Name'}
+                            customLabelStyle={{ ...FONTS.robotoregular, }}
+                            value={lastName}
+                            name={"LastName"}
+                            //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
+                            onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
+                        />
+                        {formErrors && formErrors.lastName ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.lastName}</Text>
+                            </View> : null}
+                    </View>
 
 
 
-            <View style={{ width: "85%" }}>
-                <InputBox
-                    inputOutline
-                    label={'Email'}
-                    value={email}
-                    name={"Email"}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    //leftIcon={<MCI name={'email'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
-                    onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
-                />
-                {formErrors && formErrors.email ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.email}</Text>
-                    </View> : null}
-            </View>
+                    <View style={{ width: "85%" }}>
+                        <InputBox
+                            inputOutline
+                            label={'Email'}
+                            value={email}
+                            name={"Email"}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            //leftIcon={<MCI name={'email'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
+                            onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
+                        />
+                        {formErrors && formErrors.email ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.email}</Text>
+                            </View> : null}
+                    </View>
 
 
 
-            <View style={{ width: "85%"}}>
-                <InputBox
-                    inputOutline
-                    label={'Password'}
-                    value={password}
-                    name={"Password"}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
-                    //rightIcon={<FontAwesome5 name={'eye'} size={23} style={{color:COLORS.primary,right:"40%"}}  />}
-                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
-                    secureTextEntry={true}
-                    // rightIcon={<Image
-                    //     source={icons.Edusitylogo}
-                    //     resizeMode="contain"
-                    //     style={{
-                    //         width: '5%',
-                    //         height: '5%',
-                    //     }}
-                    // />}
-                    // passHideIcon={<FontAwesome  name={'eye-slash'} size={5}/>}
-                    onChangeText={e => { handleChange(e, "password"), setPassword(e) }}
-                />
-                {formErrors && formErrors.password ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.password}</Text>
-                    </View> : null}
-            </View>
-            <View style={{ width: "85%"}}>
-                <InputBox
-                    inputOutline
-                    label={' Confirm Password'}
-                    value={confirmPassword}
-                    secureTextEntry={true}
-                    // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
-                    // rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
-                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{color:COLORS.primary}} />}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
-                />
-                {formErrors && formErrors.password2 ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.password2}</Text>
-                    </View> : null}
-            </View>
+                    <View style={{ width: "85%" }}>
+                        <InputBox
+                            inputOutline
+                            label={'Password'}
+                            value={password}
+                            name={"Password"}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
+                            //rightIcon={<FontAwesome5 name={'eye'} size={23} style={{color:COLORS.primary,right:"40%"}}  />}
+                            passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
+                            secureTextEntry={true}
+                            // rightIcon={<Image
+                            //     source={icons.Edusitylogo}
+                            //     resizeMode="contain"
+                            //     style={{
+                            //         width: '5%',
+                            //         height: '5%',
+                            //     }}
+                            // />}
+                            // passHideIcon={<FontAwesome  name={'eye-slash'} size={5}/>}
+                            onChangeText={e => { handleChange(e, "password"), setPassword(e) }}
+                        />
+                        {formErrors && formErrors.password ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.password}</Text>
+                            </View> : null}
+                    </View>
+                    <View style={{ width: "85%" }}>
+                        <InputBox
+                            inputOutline
+                            label={' Confirm Password'}
+                            value={confirmPassword}
+                            secureTextEntry={true}
+                            // leftIcon={<MCI name={'form-textbox-password'} size={18} style={{color:COLORS.primary}} />}
+                            // rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
+                            passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
+                        />
+                        {formErrors && formErrors.password2 ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.password2}</Text>
+                            </View> : null}
+                    </View>
 
 
-            <View style={{ width: "85%",}}>
-                <InputBox
-                    inputOutline
-                    label={'UserName'}
-                    value={userName}
-                    //leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
-                />
-                {formErrors && formErrors.userName ?
-                    <View style={{ ...styles.ErrorCont }}>
-                        <Text style={{ ...styles.ErrorText }}>{formErrors.userName}</Text>
-                    </View> : null}
-            </View>
-            <View style={{ width: "85%", }}>
-                <InputBox
-                    inputOutline
-                    label={'Phone'}
-                    value={phone}
-                    maxLength={10}
-                    // leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "phoneNumber"), setPhone(e) }}
-                />
-                {formErrors && formErrors.phoneNumber ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.phoneNumber}</Text></View> : null}
-            </View>
-            {/* <Text  style={{color: COLORS.black ,fontSize:RFValue(13),...FONTS.robotomedium, marginHorizontal: "10%",marginTop:"2%"}}>Choose your Role:</Text>
+                    <View style={{ width: "85%", }}>
+                        <InputBox
+                            inputOutline
+                            label={'UserName'}
+                            value={userName}
+                            //leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
+                        />
+                        {formErrors && formErrors.userName ?
+                            <View style={{ ...styles.ErrorCont }}>
+                                <Text style={{ ...styles.ErrorText }}>{formErrors.userName}</Text>
+                            </View> : null}
+                    </View>
+                    <View style={{ width: "85%", }}>
+                        <InputBox
+                            inputOutline
+                            label={'Phone'}
+                            value={phone}
+                            maxLength={10}
+                            // leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
+                            customLabelStyle={{ ...FONTS.robotoregular }}
+                            onChangeText={e => { handleChange(e, "phoneNumber"), setPhone(e) }}
+                        />
+                        {formErrors && formErrors.phoneNumber ? <View style={{ ...styles.ErrorCont }}><Text style={{ ...styles.ErrorText }}>{formErrors.phoneNumber}</Text></View> : null}
+                    </View>
+                    {/* <Text  style={{color: COLORS.black ,fontSize:RFValue(13),...FONTS.robotomedium, marginHorizontal: "10%",marginTop:"2%"}}>Choose your Role:</Text>
             <View style={{ width: "85%",borderWidth:0, flexDirection: "row", height: "10%", alignItems: "center", justifyContent: "space-around" }}>
            
                 <TouchableOpacity style={{ ...styles.checkbox, ...{ backgroundColor: (checked=="3")?COLORS.primary:COLORS.lightGray } }} onPressIn={()=>setChecked("3")}>
@@ -247,26 +239,26 @@ const Form = () => {
                 </TouchableOpacity >
             </View> */}
 
-            {formErrors && formErrors.signundef ?
-                <View style={{ ...styles.ErrorCont }}>
-                    <Text style={{ ...styles.ErrorText }}>{formErrors.signundef}</Text>
-                </View> : null}
+                    {formErrors && formErrors.signundef ?
+                        <View style={{ ...styles.ErrorCont }}>
+                            <Text style={{ ...styles.ErrorText }}>{formErrors.signundef}</Text>
+                        </View> : null}
 
-            <TouchableOpacity
-                style={[styles.shadow, { width: '100%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%",marginBottom:"5%" }]}
-                onPress={e => { handleSubmit(e, 2) }}
-            >
-                <LinearGradient
-                    style={{ height: '100%', width: '30%', alignItems: 'center', justifyContent: 'center', borderRadius: 20,margin:10 }}
-                    colors={['#46aeff', '#5884ff']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                >
-                    <Text style={{ color: COLORS.white, ...FONTS.body3 }}>Sign Up</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-            </>
-}
+                    <TouchableOpacity
+                        style={{ width: '46%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "6%", marginBottom: "4%" }}
+                        onPress={e => { handleSubmit(e, 2) }}
+                    >
+                        <LinearGradient
+                            style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 20, margin: 10 }}
+                            colors={['#9494d6', '#AF2DF8']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                        >
+                            <Text style={{ color: COLORS.white, ...FONTS.body3 }}>Sign Up</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </>
+            }
         </View>
 
     )
@@ -297,10 +289,9 @@ const styles = StyleSheet.create({
         fontSize: 16, padding: "8%",
         ...FONTS.robotoregular,
     },
-    // ErrorCont:{
-    //     marginVertical:"1%"
-
-    // },
+    ErrorCont: {
+        marginTop: 4
+    },
     ErrorText: {
         color: "red",
         ...FONTS.robotoregular,

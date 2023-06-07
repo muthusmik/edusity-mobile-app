@@ -6,7 +6,8 @@ export const COLORS = {
     // base colors
     primary: "#8830c4", // purple
     secondary: "#cacfd9",   // Gray
-    buttonOne: "#9440e3",
+    buttonOne: "#AF2DF8",
+    edusity: "#AF2DF8",
     black: "#1E1F20",
     white: "#FFFFFF",
     lightGray: "#eff2f5",

@@ -1,6 +1,3 @@
-
-
-
 //dev
 // export const baseUrl="https://backend-linux-login.azurewebsites.net/";
 // export const baseUrl_payment="https://backend-linux-payment.azurewebsites.net/";
@@ -21,8 +18,8 @@ export const BBB_WEBINAR_API_URL = "https://live2.u3academy.org/edusity/api/"
 export const BBB_WEBINAR_API_SECRET = "TidrghpknQYRib9vYkgYz49cYPY8rul4YVa1m2V6Q"
 
 export const loginUrl = baseUrl + "login";
-export const signupUrl = baseUrl + "sign-up";
-export const forgotPasswordUrl = baseUrl + "forgot-password";
+export const signupUrl = baseUrl + "sign-up"; //https://dev-login.edusity.com/sign-up
+export const forgotPasswordUrl = baseUrl + "forgot-password"; //https://dev-login.edusity.com/forgot-password
 export const verificationLinkUrl = baseUrl + "get-verification-link";
 export const passwordResetUrl = baseUrl + "reset";
 export const userUrl = baseUrl + "user";

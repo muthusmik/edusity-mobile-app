@@ -10,9 +10,8 @@ import {
     ImageBackground,
     Pressable,
     Dimensions,
-    StatusBar,TouchableOpacity
+    StatusBar, TouchableOpacity
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
 import Form from './signUpForm';
@@ -27,44 +26,37 @@ const SignUp = ({ navigation }) => {
     return (
         <View style={{ backgroundColor: COLORS.white }}>
             <StatusBar
-                        animated={true}
-                        backgroundColor={COLORS.primary}
-                    />
-                 {Platform.OS=='ios'?
-                    <View style={{height:"5%"}}>
-
-                    </View>:null}
+                animated={true}
+                backgroundColor={COLORS.primary}
+            />
+            {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
 
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }} >
-            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                <TouchableOpacity style={{ marginLeft: "4%"}} onPress={() => navigation.goBack()}>
-                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
-                </TouchableOpacity>
-            </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%", borderWidth: 0, }}>
-                        <Image
-                            source={icons.Edusitylogo} 
-                            resizeMode="contain"
-                            style={{
-                                width: '50%',
-                                height: '60%',
-                            }}
-                        />
-                    </View>
-                    <View style={{ alignItems: 'center',paddingBottom:"1%" }}>
-                        <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22),marginTop:"5%" }}>Sign Up</Text>
-                    </View>
-                    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "72%" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%" }}>
+                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
+                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%" }}>
+                    <Image
+                        source={icons.Edusitylogo}
+                        resizeMode="contain"
+                        style={{
+                            width: '50%',
+                            height: '60%',
+                        }}
+                    />
+                </View>
+                <View style={{ alignItems: 'center', paddingBottom: "1%", marginTop: "4%" }}>
+                    <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22) }}>Sign Up</Text>
+                </View>
+                <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "72%" }}>
                     <View style={{ width: "100%", alignItems: "center" }}>
                         <Form />
-                        <Pressable style={{ borderWidth: 0 }} onPress={() => navigation.navigate("Login")}>
+                        <Pressable onPress={() => navigation.navigate("Login")}>
                             <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
-                                <Text style={{ color: COLORS.blue, ...FONTS.robotoregular }}> Sign In</Text></Text>
+                                <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign In</Text></Text>
                         </Pressable>
-                        {/* <Pressable style={{ borderWidth: 0 }} onPress={() => navigation.navigate("NetworkError")}>
-                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
-                                <Text style={{ color: COLORS.blue, ...FONTS.robotoregular }}> Network</Text></Text>
-                        </Pressable> */}
                     </View>
                 </ScrollView>
             </ImageBackground>
@@ -73,7 +65,6 @@ const SignUp = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-
     containterfull: {
         width: Dimensions.get("window").width, //for full screen
         height: Dimensions.get("window").height //for full screen

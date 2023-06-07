@@ -16,7 +16,6 @@ import FA5 from 'react-native-vector-icons/FontAwesome5'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import OctIcon from 'react-native-vector-icons/Octicons'
-import WebView from 'react-native-webview';
 import { viewCourseHandler } from '../../../store/redux/viewCourse';
 import { cartHandler } from '../../../store/redux/cart';
 import { unwrapResult } from '@reduxjs/toolkit';
@@ -30,6 +29,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { getWishListedCourses, wishListRemoverApi, wishListApi } from '../../../services/wishlist';
 import { getWishListDataHandler } from '../../../store/redux/getWishListData';
 import OverlayLoader from '../../../components/overlayLoader';
+import WebView from 'react-native-render-html';
 
 const ViewCourse = () => {
     const dispatch = useDispatch();
@@ -218,7 +218,7 @@ const ViewCourse = () => {
                                     <TouchableOpacity style={{ margin: "0%" }} onPress={shareLink}>
                                         <MCIcon name="share-variant" size={RFValue(18)} color={COLORS.white} />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={{ margin: "0%" }} onPress={() => navigation.navigate("Cart")}>
+                                    <TouchableOpacity style={{ margin: "0%" }} onPress={() => handleNavigation("Go to Cart")}>
                                         <MCIcon name="cart-variant" size={RFValue(20)} color={COLORS.white} />
                                     </TouchableOpacity>
                                 </View>
@@ -280,16 +280,16 @@ const ViewCourse = () => {
                                 <View style={{ width: "50%" }}>
                                     <View style={styles.infoDetails}>
                                         <MCIcon name="clock-check" size={20} color={COLORS.primary} style={{ width: "14%" }} />
-                                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular, fontSize: RFValue(10), width: "86%" }}>Created on: {(listData?.recordsets?.[0][0].CreatedOn) ? moment(listData.recordsets?.[0][0].CreatedOn).format("MMM DD, YYYY") : "N/A"}</Text>
+                                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular, fontSize: RFValue(12), width: "86%" }}>Created on: {(listData?.recordsets?.[0][0].CreatedOn) ? moment(listData.recordsets?.[0][0].CreatedOn).format("MMM DD, YYYY") : "N/A"}</Text>
                                     </View>
                                     <View style={styles.infoDetails}>
                                         <FontAwesome name="language" size={20} color={COLORS.primary} style={{ width: "14%" }} />
-                                        <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular, width: "86%" }}>Language: {(listData?.recordsets?.[0][0].Language) ? listData?.recordsets?.[0][0].Language : "N/A"}</Text>
+                                        <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular, width: "86%" }}>Language: {(listData?.recordsets?.[0][0].Language) ? listData?.recordsets?.[0][0].Language : "N/A"}</Text>
                                     </View>
                                     <View style={styles.infoDetails}>
                                         <FA5 name="chalkboard-teacher" size={20} color={COLORS.primary} style={{ width: "14%" }} />
                                         <TouchableOpacity onPress={() => navigation.navigate("ViewInstructorProfile", listData.recordsets?.[0][0].instructorInfo)} style={{ width: "86%" }}>
-                                            <Text style={{ color: COLORS.black, fontSize: RFValue(11), ...FONTS.robotoregular }}>{listData.recordsets?.[0][0].instructorInfo.firstName} {listData.recordsets?.[0][0].instructorInfo.lastName}{'\n'}
+                                            <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular }}>{listData.recordsets?.[0][0].instructorInfo.firstName} {listData.recordsets?.[0][0].instructorInfo.lastName}{'\n'}
                                                 <Text style={{ color: COLORS.primary, fontSize: RFValue(8) }}>View instructor profile</Text>
                                             </Text>
                                         </TouchableOpacity>
@@ -300,7 +300,7 @@ const ViewCourse = () => {
                                         {(listData?.recordsets?.[0][0].Rating == null) ?
                                             <View style={styles.infoDetails}>
                                                 <FontAwesome name="star" size={20} color={COLORS.primary} style={{ width: "14%" }} />
-                                                <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular, width: "86%" }}>{"   "}Ratings: 0</Text>
+                                                <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular, width: "86%" }}>{"   "}Ratings: 0</Text>
                                             </View> :
                                             <View style={{ backgroundColor: "#e9ddf1" }}>
                                                 <Rating
@@ -317,113 +317,137 @@ const ViewCourse = () => {
                                     </Text>
                                     <View style={styles.infoDetails}>
                                         <FontAwesome name="street-view" size={20} color={COLORS.primary} style={{ width: "14%" }} />
-                                        <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular, width: "86%" }}>Course views: {(listData?.recordsets?.[0][0].courseViews) ? listData?.recordsets?.[0][0].courseViews : "N/A"}</Text>
+                                        <Text style={{ color: COLORS.black, fontSize: RFValue(12), ...FONTS.robotoregular, width: "86%" }}>Course views: {(listData?.recordsets?.[0][0].courseViews) ? listData?.recordsets?.[0][0].courseViews : "N/A"}</Text>
                                     </View>
 
-                                    {(Data.data.recordsets[0][0].isPurchased === false) ?
-                                        <Text style={{ color: COLORS.black, fontSize: RFValue(20), ...FONTS.robotomedium }}>Price: ${listData?.recordsets?.[0][0].EnrollmentFee}
-                                        </Text> : null
-                                    }
+                                    <TouchableOpacity>
+                                        <Text style={{ color: COLORS.black, fontSize: RFValue(18), ...FONTS.robotomedium }}>Price: ${listData?.recordsets?.[0][0].EnrollmentFee}</Text>
+                                        <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotomedium }}>Got a Discount code?</Text>
+                                    </TouchableOpacity>
+
+
                                 </View>
                             </View>
                         </View>
                         <View style={{ backgroundColor: COLORS.white, borderColor: "red", paddingHorizontal: metrices(1) }}>
-                            <View style={{ marginTop: "2%" }}>
-                                {/* {(Data.data.recordsets[0][0].isPurchased === false) ?
+                            {token &&
+                                <View style={{ marginTop: "2%" }}>
+                                    {/* {(Data.data.recordsets[0][0].isPurchased === false) ?
                                     <TouchableOpacity style={{ width: "90%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.primary, marginHorizontal: "5%", marginTop: "5%", padding: "3%" }}>
                                         <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Buy Now</Text>
                                     </TouchableOpacity> :
                                     null
                                 } */}
-                                <View style={{ flexDirection: "row" }}>
-                                    {(Data.data.recordsets[0][0].isPurchased === false && wishArray) ?
-                                        !(wishArr.includes(listData?.recordsets[0][0].ID)) ?
-                                            <TouchableOpacity style={[styles.wishListbutton, { backgroundColor: COLORS.primary, borderColor: COLORS.primary }]} onPress={() => addToWishlist(listData?.recordsets[0][0].ID)}>
-                                                <Text style={styles.wishListText}>Add To Wishlist</Text>
-                                            </TouchableOpacity> :
-                                            <TouchableOpacity style={[styles.wishListbutton, { backgroundColor: COLORS.black }]} onPress={() => removeFromWishlist(listData?.recordsets[0][0].ID)}>
-                                                <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Remove from Wishlist</Text>
-                                            </TouchableOpacity>
-                                        :
-                                        null}
-                                    {/* {console.log("Purchased..........", (Data.data.recordsets[0][0].isPurchased === false))}
-                                    {console.log("Includes in cart..........", cartArray.includes(listData?.recordsets[0][0].ID), "cartArray....", cartArray, "id...........", listData?.recordsets[0][0].ID)}
-                                    {(Data.data.recordsets[0][0].isPurchased === false) ?
-                                        (cartArray.includes(listData?.recordsets[0][0].ID)) ?
-                                            console.log("Go to cart") : console.log("Add to cart") :
-                                        console.log("Purchased")
-                                    } */}
-                                    {/* {console.log("Cartarray..........", cartArray.length, cartArray.length != 0)} */}
-                                    {/* (cartArray.length != 0) ? */
-                                        (Data.data.recordsets[0][0].isPurchased === false) ?
-                                            (cartArray.includes(listData?.recordsets[0][0].ID)) ?
-                                                <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.black, margin: "1%", borderWidth: 1, borderColor: COLORS.black, padding: "3%" }} onPress={() => handleNavigation("Go to Cart")}>
-                                                    <Text style={styles.wishListText}>Go to Cart</Text>
+
+                                    <View style={{ flexDirection: "row" }}>
+                                        {(Data.data.recordsets[0][0].isPurchased === false && wishArray) ?
+                                            !(wishArr.includes(listData?.recordsets[0][0].ID)) ?
+                                                <TouchableOpacity style={[styles.wishListbutton, { backgroundColor: COLORS.primary, borderColor: COLORS.primary }]} onPress={() => addToWishlist(listData?.recordsets[0][0].ID)}>
+                                                    <Text style={styles.wishListText}>Add To Wishlist</Text>
                                                 </TouchableOpacity> :
-                                                <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.buttonOne, margin: "1%", borderWidth: 1, borderColor: COLORS.buttonOne, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
-                                                    <Text style={styles.wishListText}>Add To Cart</Text>
-                                                </TouchableOpacity> :
-                                            <TouchableOpacity style={styles.isPurchased} onPress={() => handleNavigation("Purchased")}>
-                                                <Text style={styles.wishListText}>Purchased</Text>
-                                            </TouchableOpacity>
+                                                <TouchableOpacity style={[styles.wishListbutton, { backgroundColor: COLORS.black }]} onPress={() => removeFromWishlist(listData?.recordsets[0][0].ID)}>
+                                                    <Text style={{ color: COLORS.white, fontSize: RFValue(12), ...FONTS.robotoregular }}>Remove from Wishlist</Text>
+                                                </TouchableOpacity>
+                                            :
+                                            null}
+
+                                        {/* (cartArray.length != 0) ? */
+                                            (Data.data.recordsets[0][0].isPurchased === false) ?
+                                                (cartArray.includes(listData?.recordsets[0][0].ID)) ?
+                                                    <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.black, margin: "1%", borderWidth: 1, borderColor: COLORS.black, padding: "3%" }} onPress={() => handleNavigation("Go to Cart")}>
+                                                        <Text style={styles.wishListText}>Go to Cart</Text>
+                                                    </TouchableOpacity> :
+                                                    <TouchableOpacity style={{ flexDirection: "column", width: (Data.data.recordsets[0][0].isPurchased) ? "96%" : "48%", alignItems: "center", justifyContent: "center", backgroundColor: COLORS.buttonOne, margin: "1%", borderWidth: 1, borderColor: COLORS.buttonOne, padding: "3%" }} onPress={() => handleAddCart(listData?.recordsets[0][0].ID)}>
+                                                        <Text style={styles.wishListText}>Add To Cart</Text>
+                                                    </TouchableOpacity> :
+                                                <TouchableOpacity style={styles.isPurchased} onPress={() => handleNavigation("Purchased")}>
+                                                    <Text style={styles.wishListText}>Purchased</Text>
+                                                </TouchableOpacity>
                                         /* : null */}
+                                    </View>
+                                    <View style={styles.separator} />
                                 </View>
-                                <View style={styles.separator} />
-                            </View>
+                            }
+
+
                             {(listData?.recordsets[0][0]?.goals?.length != 0) ?
                                 <View style={styles.componentshadow}>
                                     <View style={styles.courseStyles}>
                                         <View style={{ flexDirection: "row" }}>
-                                            <MCIcon name="target" size={RFValue(20)} color={"red"} />
-                                            <Text style={styles.titles}>{" "}COURSE HIGHLIGHTS</Text>
+                                            {/* <MCIcon name="target" size={RFValue(20)} color={"red"} /> */}
+                                            <Text style={styles.titles}>COURSE HIGHLIGHTS</Text>
                                         </View>
                                     </View>
                                     {(listData?.recordsets[0][0].goals).map((item, index) => {
                                         return (
                                             <View style={styles.mapItems}>
-                                                <Text key={index} style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><AntIcon name="checkcircleo" size={12} color={COLORS.primary} />{" "}{(item?.name).trim()}</Text>
+                                                <Text key={index} style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}>{/* <AntIcon name="checkcircleo" size={12} color={COLORS.primary} /> */}{(item?.name).trim()}</Text>
                                             </View>)
                                     })}
                                     <View style={styles.separator} />
                                 </View> : null
                             }
 
+                            {(listData?.recordsets[0][0]?.preRequisites?.length != 0) ?
+                                <View style={styles.componentshadow}>
+                                    <View style={styles.courseStyles}>
+                                        <View style={{ flexDirection: "row" }}>
+                                            {/* <MCIcon name="notebook" size={RFValue(20)} color={"red"} /> */}
+                                            <Text style={styles.titles}>COURSE REQUIREMENTS</Text>
+                                        </View>
+                                    </View>
+                                    {(listData?.recordsets[0][0].preRequisites).map((item, index) => {
+                                        return (
+                                            <View style={styles.mapItems}>
+                                                <Text key={index} style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}>{index + 1}. {item?.name}</Text>
+                                            </View>)
+                                    })}
+                                    <View style={styles.separator} />
+                                </View> :
+                                null
+                            }
+
                             {(listData?.recordsets[0][0]?.syllabus?.length != 0) ?
                                 <View style={styles.componentshadow}>
                                     <View style={styles.courseStyles}>
                                         <View style={{ flexDirection: "row" }}>
-                                            <Fontisto name="angelist" size={RFValue(20)} color={"red"} />
-                                            <Text style={styles.titles}>{" "}COURSE SYLLABUS</Text>
+                                            {/* <Fontisto name="angelist" size={RFValue(20)} color={"red"} /> */}
+                                            <Text style={styles.titles}>COURSE SYLLABUS</Text>
                                         </View>
                                     </View>
                                     <View style={styles.mapItems}>
                                         {(listData?.recordsets[0][0].syllabus).map((item, index) => {
                                             return (
-                                                <Text key={index} style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}>
-                                                    <AntIcon name="checkcircleo" size={RFValue(12)} color={COLORS.primary} />{" "}{(item?.name).trim()}</Text>
+                                                <Text key={index} style={{ fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}>{/* <AntIcon name="checkcircleo" size={RFValue(12)} color={COLORS.primary} /> */}{(item?.name).trim()}</Text>
                                             )
                                         })}
                                     </View>
                                     <View style={styles.separator} />
                                 </View> : null
                             }
-
+                            
                             {(listData?.recordsets[0][0]?.Description.length != 0) ?
                                 <View style={styles.componentshadow}>
                                     <View style={styles.courseStyles}>
                                         <View style={{ flexDirection: "row" }}>
-                                            <MCIcon name="notebook" size={RFValue(20)} color={"red"} />
-                                            <Text style={styles.titles}>{" "}COURSE DESCRIPTION</Text>
+                                            {/* <MCIcon name="notebook" size={RFValue(20)} color={"red"} /> */}
+                                            <Text style={styles.titles}>COURSE DESCRIPTION</Text>
                                         </View>
                                     </View>
                                     <View style={styles.mapItems}>
-                                        <WebView style={{ width: "100%", height: metrices(22) }}
+                                        <WebView
+                                            source={{ html: listData?.recordsets[0][0].Description }}
+                                            contentWidth="100%"
+                                            baseStyle={{ fontSize: 14, fontFamily: "Roboto-Regular", color: COLORS.black }}
+                                            renderersProps={{ p: { style: { marginLeft: 0 } } }}
+                                        />
+                                        {/* <WebView style={{ width: "100%", paddingVertical: "5%" }}
                                             source={{
                                                 html: `<div>${listData?.recordsets[0][0].Description && typeof listData?.recordsets[0][0].Description === 'string' ? listData?.recordsets[0][0].Description.replace(/(<br>|[\n\r]+)/g, ' ').trim() : ''
                                                     }</div>`
                                             }}
                                             scalesPageToFit={false}
-                                        />
+                                        /> */}
                                     </View>
                                     <View style={styles.separator} />
                                 </View> :
@@ -433,8 +457,8 @@ const ViewCourse = () => {
                             <View style={styles.componentshadow}>
                                 <View style={styles.courseStyles}>
                                     <View style={{ flexDirection: "row" }}>
-                                        <OctIcon name="checklist" size={RFValue(20)} color={"red"} />
-                                        <Text style={styles.titles}>{" "}This Includes</Text>
+                                        {/* <OctIcon name="checklist" size={RFValue(20)} color={"red"} /> */}
+                                        <Text style={styles.titles}>This Includes</Text>
                                     </View>
                                 </View>
                                 <View style={styles.mapItems}>
@@ -447,12 +471,32 @@ const ViewCourse = () => {
                                 <View style={styles.separator} />
                             </View>
 
+                            {(listData?.recordsets[0][0]?.faqs?.length != 0) ?
+                                <View style={styles.componentshadow}>
+                                    <View style={styles.courseStyles}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            {/* <AntIcon name="key" size={RFValue(16)} color={"red"} /> */}
+                                            <Text style={styles.titles}>COURSE FAQS</Text>
+                                        </View>
+                                    </View>
+                                    {(listData?.recordsets[0][0].faqs).map((item, index) => {
+                                        return (
+                                            <View style={styles.mapItems}>
+                                                <Text key={index} style={{ margin: "1%", fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, }}>{index + 1}. {item?.question}</Text>
+                                                <Text key={index} style={{ marginLeft: "4%", fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, }}>{item?.answer} </Text>
+                                            </View>)
+                                    })}
+                                    <View style={styles.separator} />
+                                </View> :
+                                null
+                            }
+
                             {(listData?.recordsets[0][0]?.relatedCourses.length != 0) ?
                                 <View style={styles.componentshadow}>
                                     <View style={styles.courseStyles}>
                                         <View style={{ flexDirection: "row" }}>
-                                            <MCIcon name="book" size={RFValue(20)} color={"red"} />
-                                            <Text style={styles.titles}>{" "}Related Course's</Text>
+                                            {/* <MCIcon name="book" size={RFValue(20)} color={"red"} /> */}
+                                            <Text style={styles.titles}>Related Course's</Text>
                                         </View>
                                     </View>
 
@@ -467,25 +511,15 @@ const ViewCourse = () => {
                                                         <Image
                                                             source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
                                                             resizeMode="contain"
-                                                            style={{
-                                                                width: "96%",
-                                                                height: RFValue(100),
-                                                                margin: "2%",
-                                                                borderTopLeftRadius: 20, borderBottomRightRadius: 20, padding: "5%"
-                                                            }}
+                                                            style={styles.flatlistImages}
                                                         /> : <Image
                                                             source={{ uri: "https://cdn.edusity.com/" + "courses/2528/de3d968f-0f08-4383-8fe1-3278e996ae15.png" }}
                                                             resizeMode="contain"
-                                                            style={{
-                                                                width: "96%",
-                                                                height: RFValue(100),
-                                                                margin: "2%",
-                                                                borderTopLeftRadius: 20, borderBottomRightRadius: 20, padding: "5%"
-                                                            }}
+                                                            style={styles.flatlistImages}
                                                         />}
-                                                    <Text style={{ marginLeft: "2%", fontSize: RFValue(12), color: COLORS.primary, ...FONTS.robotomedium }}>{item.CourseName}</Text>
-                                                    <Text style={{ margin: "2%", fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular }}>
-                                                        {item.Category} <Text style={{ fontSize: RFValue(12), color: COLORS.black, ...FONTS.robotoregular }}>({item.SubCategory})</Text>
+                                                    <Text style={{ marginLeft: "2%", fontSize: RFValue(14), color: COLORS.primary, ...FONTS.robotomedium }}>{item.CourseName}</Text>
+                                                    <Text style={{ margin: "2%", fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular }}>
+                                                        {item.Category} <Text style={{ fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular }}>({item.SubCategory})</Text>
                                                     </Text>
                                                 </TouchableOpacity>
                                             )}
@@ -495,25 +529,6 @@ const ViewCourse = () => {
                                     <View style={styles.separator} />
                                 </View>
                                 : null
-                            }
-
-                            {(listData?.recordsets[0][0]?.faqs?.length != 0) ?
-                                <View style={styles.componentshadow}>
-                                    <View style={{ width: "100%", justifyContent: "center" }}>
-                                        <Text style={styles.titles}>
-                                            <AntIcon name="key" size={RFValue(16)} color={"red"} />{" "}COURSE FAQS
-                                        </Text>
-                                    </View>
-                                    {(listData?.recordsets[0][0].faqs).map((item, index) => {
-                                        return (
-                                            <View style={{ width: "90%", left: "4%" }}>
-                                                <Text key={index} style={{ margin: "1%", fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, }}>{item?.question} </Text>
-                                                <Text key={index} style={{ marginLeft: "4%", fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, }}><AntIcon name="checkcircleo" size={12} color={COLORS.primary} /> {item?.answer} </Text>
-                                            </View>)
-                                    })}
-                                    <View style={styles.separator} />
-                                </View> :
-                                null
                             }
                         </View>
                         {/* <View style={{ padding: metrices(2) }} /> */}
@@ -535,7 +550,7 @@ const styles = StyleSheet.create({
     componentFlatlist: {
         backgroundColor: COLORS.lightGray,
         height: "100%",
-        width: metrices(26),
+        width: metrices(38),
         marginRight: metrices(1.5),
         borderWidth: 1,
         borderColor: COLORS.gray,
@@ -544,9 +559,17 @@ const styles = StyleSheet.create({
     courseStyles: {
         width: "100%"
     },
+    flatlistImages: {
+        width: "96%",
+        height: metrices(24),
+        margin: "2%",
+        borderTopLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        padding: "5%"
+    },
     mapItems: {
         width: "90%",
-        left: "8%"
+        left: "4%"
     },
     mainTouchable: {
         shadowColor: COLORS.primary,
@@ -634,7 +657,8 @@ const styles = StyleSheet.create({
     titles: {
         fontSize: RFValue(15),
         color: COLORS.primary,
-        ...FONTS.robotomedium
+        ...FONTS.robotomedium,
+        textDecorationLine: "underline"
     }
 });
 export default ViewCourse;

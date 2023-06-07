@@ -16,7 +16,6 @@ import {
     Keyboard,
     StatusBar,
     Platform
-
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import InputBox from 'react-native-floating-label-inputbox';
@@ -24,18 +23,18 @@ import AntIcons from "react-native-vector-icons/AntDesign";
 import { SocialIcon } from 'react-native-elements'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useDispatch, useSelector } from 'react-redux';
+import LoaderKit from 'react-native-loader-kit';
 import { unwrapResult } from '@reduxjs/toolkit';
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-simple-toast';
-
 import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
 import useForm from "../../components/validate/useForm";
 import validate from "../../components/validate/validate";
 import { loginHanlder } from '../../store/redux/login';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { userLoginHanlder } from '../../store/redux/userLogin';
-import { ActivityIndicator } from 'react-native-paper';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { metrices } from '../../constants/metrices';
 
 const Login = () => {
     const { handleChange, details, handleSubmit, formErrors, data, formValues } = useForm(validate);
@@ -48,11 +47,11 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [token, setToken] = useState(null);
     const [loader, setLoader] = useState(false);
-    // const [geoLocation,setlocation]=useSelector(state=>state.geoLocationPicker);
-    // console.log(geoLocation,"geoLocation")
+
     const forgothandler = () => {
         navigation.navigate("ForgotPassword")
     }
+
     // useEffect(() => {
     //     console.log(Object.keys(formValues).length, "kk")
     //     if (formErrors && Object.keys(formErrors).length > 0) {
@@ -69,38 +68,25 @@ const Login = () => {
 
     // Api action only onchange of the username 
     useEffect(() => {
-        // console.log("hello", data && Object.keys(data).length)
         if (data && Object.keys(data).length > 1) {
             setLoader(true);
             dispatch(loginHanlder(data))
                 .then(unwrapResult)
                 .then(async (originalPromiseResult) => {
-                    // console.log("successfully returned to login with response ", originalPromiseResult.data);
-                    if (originalPromiseResult.data) {
-                        console.log("After that Login success.......", originalPromiseResult.data)
+                    if (originalPromiseResult == "error") {
+                        navigation.navigate("ServerError");
+                    }
+                    else if (originalPromiseResult.error == true) {
+                        setErrorLogin(originalPromiseResult.message)
+                        setLoader(false);
+                    }
+                    else if (originalPromiseResult.error == false) {
                         setErrorLogin("");
                         await AsyncStorage.setItem('loginToken', originalPromiseResult.data.token);
-                        // console.log(await AsyncStorage.getItem('loginToken'), "helloooo")
-                        // console.log(originalPromiseResult.data)
                         setToken(originalPromiseResult.data.token)
-                    } else {
-                        setLoader(false);
-                        // console.log(originalPromiseResult.errormessage, "error")
-                        Toast.show(originalPromiseResult.errormessage, Toast.LONG);
-                        setErrorLogin(originalPromiseResult.errormessage)
-                        if (originalPromiseResult.errorCode == 2238) {
-                            setErrorLogin("Username and Password not Found. Please Create an Account")
-                            Toast.show(originalPromiseResult.errormessage, Toast.LONG);
-                            // console.log(errorLogin, "error in login")
-                        } else if (originalPromiseResult.errorCode == 2219) {
-                            setErrorLogin("Please verify the mail sent and try again")
-                            Toast.show(originalPromiseResult.errormessage, Toast.LONG);
-                            // console.log(errorLogin, "error in login")
-                        }
                     }
                 })
                 .catch((rejectedValueOrSerializedError) => {
-                    // console.log(" Inside catch", rejectedValueOrSerializedError);
                     Toast.show("Something went wrong please try after some time!", Toast.LONG);
                     setLoader(false);
                 })
@@ -111,27 +97,24 @@ const Login = () => {
     }, [data]);
 
     useEffect(() => {
-        // console.log(AsyncStorage.getItem("loginToken"), "token value on disptach")
         if (token) {
             dispatch(userLoginHanlder(token)).then(unwrapResult)
                 .then((originalPromiseResult) => {
-                    // console.log("successfully returned to login with response ", originalPromiseResult.errorCode);
                     if (originalPromiseResult.data) {
                         setEmail("");
                         setPassword("");
-
                         const param = originalPromiseResult.data;
                         navigation.navigate('Home', {
                             screen: 'Dashboard',
                             params: { param },
                         });
-                        setLoader(false);
                     } else {
                         setLoader(false);
                         Toast.show("Something Went Wrong please try again!", Toast.LONG);
                     }
                 })
                 .catch((rejectedValueOrSerializedError) => {
+                    Toast.show("Something Went Wrong please try again!", Toast.LONG);
                     // console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
         }
@@ -141,9 +124,6 @@ const Login = () => {
         // }
 
     }, [token])
-    useEffect(() => {
-        // console.log(errorPassword, password, "password error")
-    }, [errorPassword])
 
     const handleEmailBox = () => {
         if (errorEmail) {
@@ -151,133 +131,108 @@ const Login = () => {
         }
     }
     const handlePasswordBox = () => {
-        // console.log("box pass")
         if (errorPassword) {
             setPassword(""), setErrorPassword("");
         }
     }
 
     return (
-
-
         <KeyboardAvoidingView style={styles.container}>
             <StatusBar
                 animated={true}
                 backgroundColor={COLORS.primary}
             />
-            {Platform.OS == 'ios' ?
-                <View style={{ height: "5%" }}>
-
-                </View> : null}
+            {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             {(loader) ?
                 <View style={{ height: "100%", width: "100%", }}>
                     <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                        <ActivityIndicator size="large" />
+                        <LoaderKit
+                            style={{ width: 50, height: 50 }}
+                            name={'BallPulse'}
+                            size={50}
+                            color={COLORS.primary}
+                        />
                     </ImageBackground>
                 </View>
-
                 :
-
-                <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
-
-                    <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: metrices(100), width: "100%" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                         <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
                             <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', }}>
+                    <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(4) }}>
                         <Image
                             source={icons.Edusitylogo}
                             resizeMode="contain"
                             style={{
                                 width: '50%',
-                                height: '60%',
+                                height: '64%'
                             }}
                         />
                     </View>
-                    <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', }}>
+                    <View style={{ height: metrices(8), alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 23 }}>Sign In</Text>
                     </View>
-                    <View style={{ flex: 0.5, alignItems: 'center', }}>
-                        <View style={{ width: "80%", }}>
-                            {/* <Text style={styles.label}>Email</Text> */}
-                            {/* */}
-                            {/* <Text style={{color: COLORS.black, fontSize: RFValue(15) }}>Email / Username</Text> */}
-                            <Pressable onPressIn={() => handleEmailBox()} style={{ height: 100 }}>
-                                {/* style={{ ...styles.textView, ...{ borderColor: (errorLogin || errorEmail) ? "red" : "gray", shadowColor: (errorLogin) ? "red" : COLORS.primary, } }} */}
-
-                                {/* <TextInput placeholder='Enter your Email'
-                                placeholderTextColor={COLORS.gray}
-                                style={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.black, } }}
-                                value={email}
-                                selectionColor={COLORS.blue} */}
+                    <View style={{ alignItems: 'center' }}>
+                        <View style={styles.textBoxContainer}>
+                            <Pressable onPressIn={() => handleEmailBox()}>
                                 <InputBox
                                     inputOutLine
                                     label={"Email"}
                                     value={email}
-                                    style={{ color: COLORS.black }}
-                                    // labelStyle={{ fontSize:RFValue(18), }}
+                                    style={styles.inputText}
                                     rightIcon={<FontAwesome5 name={'user-graduate'} size={20} style={{ color: COLORS.primary }} />}
                                     customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
                                     onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }}
-                                    containerStyles={{ margin: "5%" }} />
+                                />
                             </Pressable>
-                            {formErrors && formErrors.emailorusername ?
-                                <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
-                                : null}
+                            <View style={styles.errorContainer}>
+                                {formErrors && formErrors.emailorusername ?
+                                    <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
+                                    : null}
+                            </View>
                         </View>
 
-                        <View style={{ width: "80%", }}>
-                            {/* <Text style={styles.label}>Password</Text> */}
-                            {/* <Text style={{color: COLORS.black, fontSize: RFValue(15) }}>Password</Text> */}
-                            <Pressable
-                                // style={{ ...styles.textView, ...{ borderColor: (errorLogin || errorPassword) ? "red" : "gray", shadowColor: (errorLogin) ? "red" : COLORS.primary, } }}
-                                onPressIn={() => handlePasswordBox()} >
-                                {/* <TextInput name="Password" placeholder='Enter Password'
-                                placeholderTextColor={COLORS.gray}
-                                value={password}
-                                secureTextEntry={(errorPassword) ? false:true}
-                                style={{ ...styles.textInput, ...{ color: (errorLogin || errorPassword) ? "red" : COLORS.black, } }}
-                                selectionColor={COLORS.blue} */}
+                        <View style={styles.textBoxContainer}>
+                            <Pressable onPressIn={() => handlePasswordBox()} >
                                 <InputBox
                                     inputOutLine
                                     label={"Password"}
                                     value={password}
                                     secureTextEntry={errorPassword ? false : true}
-                                    style={{ color: COLORS.black }}
+                                    style={styles.inputText}
                                     rightIcon={<FontAwesome5 name={'eye'} size={18} style={{ color: COLORS.primary }} />}
                                     passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
-                                    labelStyle={{ fontSize: RFValue(12), }}
+                                    // labelStyle={{ fontSize: RFValue(12),color:"red" }}
                                     showPasswordContainerStyle={{ height: 1900 }}
                                     containerStyles={{ margin: "20%", height: "100%" }}
-                                    customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary, } }}
-                                    onChangeText={e => { handleChange(e, "loginpassword"), setErrorLogin(""), setPassword(e), setErrorPassword(null) }} />
-                                {formErrors && formErrors.loginpassword ?
-                                    <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
-                                    : null}
+                                    customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
+                                    onChangeText={e => { handleChange(e, "loginpassword"), setErrorLogin(""), setPassword(e), setErrorPassword(null) }}
+                                />
                             </Pressable>
-
-                            <TouchableOpacity style={{ left: "62%", marginVertical: "1%" }} onPress={() => forgothandler()}>
-                                <Text style={{ color: COLORS.blue, ...FONTS.robotoregular }}>Forgot Password?</Text>
-                            </TouchableOpacity>
                         </View>
-                        <View style={{ marginTop: "1%" }}>
-                            {/* {console.log("vvbyuybybybyy",errorlogin)} */}
+                        <TouchableOpacity style={[styles.textBoxContainer, { alignItems: "flex-end" }]} onPress={() => forgothandler()}>
+                            <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}>Forgot Password?</Text>
+                        </TouchableOpacity>
+                        <View style={{ height: metrices(3), width: "80%", alignItems: "center" }}>
+                            {formErrors && formErrors.loginpassword ?
+                                <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
+                                : null}
                             {errorLogin ? (
-                                <View>
-                                    <Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{errorLogin}</Text>
+                                <View >
+                                    <Text style={styles.ErrorText}>{errorLogin}</Text>
                                 </View>) : null}
-                            {formErrors && formErrors.loginundef ? (<View><Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{formErrors.loginundef}</Text></View>) : null}
+                            {formErrors && formErrors.loginundef ? (<View><Text style={styles.ErrorText}>{formErrors.loginundef}</Text></View>) : null}
                         </View>
-
 
                         <TouchableOpacity
-                            style={[styles.shadow, { width: '50%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "3%" }]}
+                            style={{ width: '42%', height: 42, alignItems: 'center', justifyContent: 'center', marginTop: "1%" }}
                             onPress={e => { handleSubmit(e, 1), Keyboard.dismiss }} disabled={false}
                         >
                             <LinearGradient
-                                style={{ height: '100%', width: '60%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
-                                colors={['#46aeff', '#5884ff']}
+                                style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
+                                colors={['#9494d6', '#AF2DF8']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                             >
@@ -286,7 +241,7 @@ const Login = () => {
                         </TouchableOpacity>
                         <Pressable style={{ marginTop: "3%" }} onPress={() => navigation.navigate("SignUp")}>
                             <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Don't have an account?
-                                <Text style={{ color: COLORS.blue, ...FONTS.robotoregular }}> Sign Up</Text></Text>
+                                <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign Up</Text></Text>
                         </Pressable>
 
                         {/* <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "1%" }}> Or</Text>
@@ -314,10 +269,8 @@ const Login = () => {
                             </Pressable>
                         </View> */}
                     </View>
-
                 </ImageBackground>}
         </KeyboardAvoidingView>
-
     );
 };
 
@@ -330,23 +283,16 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100
     },
-    textView: {
-        width: "80%",
-        // alignItems: "center",
-        marginTop: "1%",
-        marginLeft: "5%",
-        padding: 2,
-        backgroundColor: COLORS.white,
-        borderWidth: 2, borderRadius: 20,
+    inputText: {
+        color: COLORS.black,
         ...FONTS.robotoregular,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
+        fontSize: 18
+    },
+    textBoxContainer: {
+        width: "80%"
+    },
+    errorContainer: {
+        height: metrices(2)
     },
     label: {
         color: COLORS.black,
@@ -359,13 +305,13 @@ const styles = StyleSheet.create({
         color: COLORS.black,
         backgroundColor: COLORS.white,
         fontSize: RFValue(14),
-        width: "45%",
+        width: "20%",
         ...FONTS.robotoregular,
     },
     textPassword: {
         color: COLORS.black,
         backgroundColor: COLORS.white,
-        width: "26%",
+        width: "26%", borderWidth: 2,
         fontSize: RFValue(14),
         ...FONTS.robotoregular,
         borderWidth: 0
