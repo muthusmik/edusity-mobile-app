@@ -26,49 +26,49 @@ import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 // Api Call
 
 
-const OtpPage = ({route}) => {
+const OtpPage = ({ route }) => {
     const [otp, setOtp] = useState();
-    const navigation=useNavigation();
+    const navigation = useNavigation();
     const containerStyle = { width: 40, borderBottomWidth: 4, ...FONTS.robotoregular }
     const handleChange = (value) => {
         setOtp(value)
     }
-    const verifyApi=async()=>{
-        let payload={
-            "email": route.params.emailforOtp,
+    const verifyApi = async () => {
+        let payload = {
+            "email": route.params.data,
             "otp": otp
         }
         //let url="https://backend-linux-login.azurewebsites.net/verify-otp"
-        await axios.post(verifyUrl,payload).then(response =>{
+        await axios.post(verifyUrl, payload).then(response => {
             // console.log("Forgot api",response.data)
             // console.log("Forgot api",payload)
-            if (response.data.message=='Email verified successfully.'){
+            if (response.data.message == 'Email verified successfully.') {
                 Alert.alert(
                     "Signup Success",
                     "User have been added successfully! You can now Login",
                     [
                         {
-                            text:"ok",
-                            onPress:()=>navigation.navigate("Login")
+                            text: "ok",
+                            onPress: () => navigation.navigate("Login")
                         }
                     ]
                 )
                 // Toast.show(response.data.message,"User successfully created ,you can now login using your email and password", Toast.LONG);
-            }else{
+            } else {
                 Toast.show(response.data.message, Toast.LONG);
             }
-            
-    }).catch(err=> console.log("error",err))
+
+        }).catch(err => console.log("error", err))
     }
-    const verifyOtpFunction=()=>{
+    const verifyOtpFunction = () => {
         // console.log("I am work/ing!!!!!");
         Alert.alert(
             "Signup Success",
             "User have been added successfully!",
             [
                 {
-                    text:"ok",
-                    onPress:()=>navigation.navigate("Login")
+                    text: "ok",
+                    onPress: () => navigation.navigate("Login")
                 }
             ]
         )
@@ -79,17 +79,17 @@ const OtpPage = ({route}) => {
     // console.log(loginData, "loginData")
     return (
         <KeyboardAvoidingView style={styles.container}>
-             <StatusBar
-                        animated={true}
-                        backgroundColor={COLORS.primary}
-                    />
-                    {Platform.OS=='ios'?<View style={{height:"5%"}}/>:null}
+            <StatusBar
+                animated={true}
+                backgroundColor={COLORS.primary}
+            />
+            {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
-            <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
-                <TouchableOpacity style={{ marginLeft: "4%"}} onPress={() => navigation.navigate('Home',{screen:'Search'})}>
-                    <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
-                </TouchableOpacity>
-            </View>
+                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%", borderBottomStartRadius: 30, borderBottomEndRadius: 30 }}>
+                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home', { screen: 'Search' })}>
+                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                    </TouchableOpacity>
+                </View>
                 <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "10%" }}>
                     <Image
                         source={icons.Edusitylogo}
@@ -102,11 +102,11 @@ const OtpPage = ({route}) => {
                 </View>
                 <View style={{ flex: 0.1, top: "15%", alignItems: "center" }}>
                     <Text style={{ color: COLORS.black, fontSize: RFValue(18, 580), ...FONTS.robotomedium }}>OTP Verification</Text>
-                    <Text style={{ color: COLORS.primary, fontSize: RFValue(16),marginTop:"5%", ...FONTS.robotoregular }}>Please enter the OTP, which is received in your registered email address.</Text>
+                    <Text style={{ color: COLORS.primary, fontSize: RFValue(16), marginTop: "5%", ...FONTS.robotoregular }}>Please enter the OTP, which is received in your registered email address.</Text>
                 </View>
                 <View style={{ flex: 0.1, top: "20%", width: "50%", alignSelf: "center" }}>
                     <OTPTextView
-                        handleTextChange={(value) => {setOtp(value) }}
+                        handleTextChange={(value) => { setOtp(value) }}
                         textInputStyle={containerStyle}
                         inputCount={4}
                         inputCellLength={1}
@@ -115,7 +115,7 @@ const OtpPage = ({route}) => {
                 </View>
                 <TouchableOpacity
                     style={{ width: '32%', height: 40, alignSelf: 'center', top: "25%" }}
-                    onPress={()=>{verifyApi(),console.log("okok")}}
+                    onPress={() => { verifyApi(), console.log("okok") }}
                 >
                     <LinearGradient
                         style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 25 }}

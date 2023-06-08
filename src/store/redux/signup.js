@@ -6,8 +6,8 @@ import { signupUrl } from '../../services/constant';
 
 
 export const signUpHanlder = createAsyncThunk('posts/signupPostcall', async (data, thunkAPI) => {
+    
     const headers = { 'Content-Type': 'application/json' }
-
     return await axios.post(signupUrl, data, { headers: headers }).then(response => {
         return response.data
     }).catch((err) => {

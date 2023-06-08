@@ -425,7 +425,7 @@ const ViewCourse = () => {
                                     <View style={styles.separator} />
                                 </View> : null
                             }
-                            
+
                             {(listData?.recordsets[0][0]?.Description.length != 0) ?
                                 <View style={styles.componentshadow}>
                                     <View style={styles.courseStyles}>
@@ -462,11 +462,11 @@ const ViewCourse = () => {
                                     </View>
                                 </View>
                                 <View style={styles.mapItems}>
-                                    <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><AntIcon name="youtube" size={RFValue(13)} color={COLORS.primary} /> of video material</Text>
-                                    <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><FontAwesome name="language" size={RFValue(13)} color={COLORS.primary} /> Languanges: English</Text>
-                                    <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><AntIcon name="clouddownloado" size={RFValue(13)} color={COLORS.primary} /> Downloadable Resources</Text>
-                                    <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><AntIcon name="mobile1" size={RFValue(13)} color={COLORS.primary} /> Access from mobile and tablet</Text>
-                                    <Text style={{ margin: "1%", fontSize: RFValue(13), color: COLORS.black, ...FONTS.robotoregular }}><MCIcon name="brain" size={RFValue(13)} color={COLORS.primary} /> Self paced learning!</Text>
+                                    <Text style={styles.includeStyle}><AntIcon name="youtube" size={RFValue(13)} color={COLORS.primary} /> of video material</Text>
+                                    <Text style={styles.includeStyle}><FontAwesome name="language" size={RFValue(13)} color={COLORS.primary} /> Languanges: English</Text>
+                                    <Text style={styles.includeStyle}><AntIcon name="clouddownloado" size={RFValue(13)} color={COLORS.primary} /> Downloadable Resources</Text>
+                                    <Text style={styles.includeStyle}><AntIcon name="mobile1" size={RFValue(13)} color={COLORS.primary} /> Access from mobile and tablet</Text>
+                                    <Text style={styles.includeStyle}><MCIcon name="brain" size={RFValue(13)} color={COLORS.primary} /> Self paced learning!</Text>
                                 </View>
                                 <View style={styles.separator} />
                             </View>
@@ -570,6 +570,12 @@ const styles = StyleSheet.create({
     mapItems: {
         width: "90%",
         left: "4%"
+    },
+    includeStyle: {
+        margin: "1%",
+        fontSize: RFValue(13),
+        color: COLORS.black,
+        ...FONTS.robotoregular
     },
     mainTouchable: {
         shadowColor: COLORS.primary,

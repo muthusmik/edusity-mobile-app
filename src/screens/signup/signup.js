@@ -1,6 +1,4 @@
-
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     ScrollView,
@@ -10,6 +8,7 @@ import {
     ImageBackground,
     Pressable,
     Dimensions,
+    Keyboard,
     StatusBar, TouchableOpacity
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -18,10 +17,23 @@ import Form from './signUpForm';
 import useForm from '../../components/validate/useForm';
 import validate from '../../components/validate/validate';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-
+import LoaderKit from 'react-native-loader-kit';
+import { metrices } from '../../constants/metrices';
 
 const SignUp = ({ navigation }) => {
+
     const { handleChange, details, handleSubmit, formErrors, data } = useForm(validate);
+    const [loader, setLoader] = useState(false);
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+    const [verificationEmail, setVerificationEmail] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+        setIsKeyboardOpen(true);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+        setIsKeyboardOpen(false);
+    });
 
     return (
         <View style={{ backgroundColor: COLORS.white }}>
@@ -30,35 +42,51 @@ const SignUp = ({ navigation }) => {
                 backgroundColor={COLORS.primary}
             />
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
-
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }} >
-                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%" }}>
-                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
-                    </TouchableOpacity>
-                </View>
-                <View style={{ alignItems: 'center', justifyContent: 'center', height: "10%" }}>
-                    <Image
-                        source={icons.Edusitylogo}
-                        resizeMode="contain"
-                        style={{
-                            width: '50%',
-                            height: '60%',
-                        }}
-                    />
-                </View>
-                <View style={{ alignItems: 'center', paddingBottom: "1%", marginTop: "4%" }}>
-                    <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22) }}>Sign Up</Text>
-                </View>
-                <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: "72%" }}>
-                    <View style={{ width: "100%", alignItems: "center" }}>
-                        <Form />
-                        <Pressable onPress={() => navigation.navigate("Login")}>
-                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
-                                <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign In</Text></Text>
-                        </Pressable>
-                    </View>
-                </ScrollView>
+                {loader ?
+                    <View style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
+                        <LoaderKit
+                            style={{ width: 50, height: 50 }}
+                            name={'BallPulse'}
+                            size={50}
+                            color={COLORS.primary}
+                        />
+                    </View> :
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: isKeyboardOpen ? metrices(35) : 0 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+                            <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
+                                <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10) }}>
+                            <Image
+                                source={icons.Edusitylogo}
+                                resizeMode="contain"
+                                style={{
+                                    width: '50%',
+                                    height: '60%'
+                                }}
+                            />
+                        </View>
+                        <View style={{ alignItems: 'center', paddingBottom: "1%", marginTop: "4%" }}>
+                            <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22) }}>Sign Up</Text>
+                        </View>
+                        <View style={{ width: "100%", alignItems: "center" }}>
+                            <Form
+                                setLoader={setLoader}
+                                verificationEmail={verificationEmail}
+                                setVerificationEmail={setVerificationEmail}
+                                errorMessage={errorMessage}
+                                setErrorMessage={setErrorMessage}
+                            />
+                            <Pressable onPress={() => navigation.navigate("Login")}>
+                                <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
+                                    <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign In</Text></Text>
+                            </Pressable>
+                            <View style={{ height: 8 }} />
+                        </View>
+                    </ScrollView>
+                }
             </ImageBackground>
         </View>
     );

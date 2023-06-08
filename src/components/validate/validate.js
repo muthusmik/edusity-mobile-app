@@ -1,6 +1,5 @@
 const validate = (details) => {
   const formErrors = {};
-  console.log("passowrd present", details)
   //Login page or sign in
   if (details.emailorusername !== undefined) {
     if (details.emailorusername.length == 0) {
@@ -12,10 +11,10 @@ const validate = (details) => {
     }
   }
   //Sign up
- if (details.email !== undefined) {
+  if (details.email !== undefined) {
     if (details.email.length == 0) {
       formErrors.email = "Email is required!";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(details.email)) {
+    } else if (!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(details.email)) {
       formErrors.email = "This is not a valid email format!";
     }
   }
@@ -23,7 +22,7 @@ const validate = (details) => {
   if (details.forgotemail !== undefined) {
     if (details.forgotemail.length == 0) {
       formErrors.forgotemail = "Email is required!";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(details.forgotemail)) {
+    } else if (!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(details.forgotemail)) {
       formErrors.forgotemail = "This is not a valid email format!";
     }
   }
@@ -37,7 +36,6 @@ const validate = (details) => {
   }
   //login password loginpassword
   if (details.loginpassword !== undefined) {
-    console.log(details.loginpassword, "checking")
     if (details.loginpassword.length == 0) {
       formErrors.loginpassword = "Password is required!";
     }
@@ -47,7 +45,7 @@ const validate = (details) => {
     if (details.password.length == 0) {
       formErrors.password = "Password is required!";
     } else if (!/^[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(details.password)) {
-      formErrors.password = "A minimum 8 characters should contain a combination of uppercase,lowercase and number";
+      formErrors.password = "A minimum 8 characters should contain a combination of uppercase, lowercase and number";
     }
   }
   //Sign Up confirm password
@@ -58,25 +56,25 @@ const validate = (details) => {
         formErrors.password2 = " Confirm password is required!";
       }
       else if (details.password2 !== details.password) {
-        formErrors.password2 = "Confirm password doesn't match!";
+        formErrors.password2 = "Confirm password didn't match to the password!";
       }
     }
   }
-  
+
   if (details.firstName !== undefined) {
     if (details.firstName.length < 3) {
       formErrors.firstName = "First Name must have minimun 3 characters!";
     }
-    if (details.firstName.length >15 ) {
+    if (details.firstName.length > 15) {
       formErrors.firstName = "First Name must not exceed more than 15 characters!";
     }
   }
 
- if (details.lastName !== undefined) {
-    if (details.lastName.length <3 ) {
+  if (details.lastName !== undefined) {
+    if (details.lastName.length < 3) {
       formErrors.lastName = "Last Name must have minimun 3 characters!";
     }
-    if (details.lastName.length >15 ) {
+    if (details.lastName.length > 15) {
       formErrors.lastName = "Last Name must not exceed more than 15 characters!";
     }
   }
@@ -88,7 +86,6 @@ const validate = (details) => {
       formErrors.userName = "User Name should contain lower case alphabets only and atleast 1 numeric value";
     }
   }
-
 
   return formErrors;
 };

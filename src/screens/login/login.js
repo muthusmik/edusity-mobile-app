@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -144,7 +143,7 @@ const Login = () => {
             />
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             {(loader) ?
-                <View style={{ height: "100%", width: "100%", }}>
+                <View style={{ height: "100%", width: "100%" }}>
                     <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                         <LoaderKit
                             style={{ width: 50, height: 50 }}
@@ -215,7 +214,7 @@ const Login = () => {
                         <TouchableOpacity style={[styles.textBoxContainer, { alignItems: "flex-end" }]} onPress={() => forgothandler()}>
                             <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}>Forgot Password?</Text>
                         </TouchableOpacity>
-                        <View style={{ height: metrices(3), width: "80%", alignItems: "center" }}>
+                        <View style={{ height: metrices(4), width: "80%", alignItems: "center" }}>
                             {formErrors && formErrors.loginpassword ?
                                 <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
                                 : null}

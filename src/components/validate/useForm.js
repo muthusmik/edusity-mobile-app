@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 
 
 const useForm = (validate) => {
-    const [ details] = useState({});
-    var [data,setData]=useState()
-    const [formValues, setFormValues] = useState(details);
-    const [formErrors, setFormErrors] = useState({});
-    const [isSubmit, setIsSubmit] = useState(false);
-  
+  const [details] = useState({});
+  var [data, setData] = useState()
+  const [formValues, setFormValues] = useState(details);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
 
-    const handleChange = (e,name) => {
+
+  const handleChange = (e, name) => {
     // const { name, value } = e.target;
-    console.log(formValues);
-    setFormValues({ ...formValues, [name]:e});
+    console.log("formValues inside the useForm.js.............", formValues);
+    setFormValues({ ...formValues, [name]: e });
 
   };
 
@@ -85,23 +85,21 @@ const useForm = (validate) => {
         }
         break;
     }
-    console.log('formValues handlesubmit', formValues);
+    console.log('formValuesinside the handlesubmit.............', formValues);
     //setFormErrors(validate(formValues));
     setIsSubmit(true);
-    console.log("hello");
   };
 
-    useEffect(() => {
-    console.log(formErrors),"errors";
+  useEffect(() => {
+    console.log("formErrors................", formErrors);
     if (Object.keys(formErrors).length === 0 && isSubmit) {
-        console.log(formValues,'formValues'); 
+      console.log('formValues inside formerrors..............', formValues);
       setData(formValues);
-      console.log(data);
     }
-  },[formErrors]);
-  
+  }, [formErrors]);
 
-   return { handleChange, details, handleSubmit,formErrors,data,formValues}
+
+  return { handleChange, details, handleSubmit, formErrors, data, formValues }
 
 }
 export default useForm;
