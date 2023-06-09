@@ -51,11 +51,12 @@ const SignUp = ({ navigation }) => {
                             size={50}
                             color={COLORS.primary}
                         />
-                    </View> :
+                    </View>
+                    :
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: isKeyboardOpen ? metrices(35) : 0 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
-                            <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                                <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                            <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
+                                <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
                             </TouchableOpacity>
                         </View>
                         <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10) }}>

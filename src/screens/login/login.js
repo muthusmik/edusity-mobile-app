@@ -156,8 +156,11 @@ const Login = () => {
                 :
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: metrices(100), width: "100%" }}>
                     <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
-                        <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
-                            <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                        {/* <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
+                            <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
+                        </TouchableOpacity> */}
+                        <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
+                            <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
                         </TouchableOpacity>
                     </View>
                     <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(4) }}>

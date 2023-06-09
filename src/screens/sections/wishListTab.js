@@ -31,7 +31,7 @@ const MyCourseWishListTab = () => {
         <TabBar
             {...props}
             activeColor={"yellow"}
-            inactiveColor={COLORS.black}
+            inactiveColor={COLORS.white}
             indicatorStyle={{
                 backgroundColor: "yellow",
                 borderWidth: 1.8,

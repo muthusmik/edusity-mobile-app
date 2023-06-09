@@ -117,10 +117,8 @@ const WishListScreen = () => {
     }
 
     const addToCart = async (id) => {
-        console.log("Inside the add to cart...........", id)
         setAddLoader(true)
         let result = await addtoCart(id, loginToken).then(response => {
-            console.log("Inside the add to cart...........", response)
             if (response.error) { ToastAndroid.showWithGravity(response.message, ToastAndroid.TOP, ToastAndroid.LONG) }
             dispatch(cartHandler(loginToken));
         }).catch(() => {
@@ -162,7 +160,7 @@ const WishListScreen = () => {
                 {addLoader ? <OverlayLoader /> : null}
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
                     <>
-                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>Your WishLists are {Data.length}</Text>
+                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>No of WishLists: {Data.length}</Text>
                     </>
                     {(Data.length >= 1) ?
                         <FlatList
@@ -176,8 +174,8 @@ const WishListScreen = () => {
                             // extraData={flalistRefresh}
                             overScrollMode={'never'}
                             renderItem={({ item }) => (
-                                <View style={{ backgroundColor: COLORS.white, marginHorizontal: "2%", marginBottom: "2%", borderRadius: 10 }}>
-                                    <View style={{ width: "100%", flexDirection: "row" }}>
+                                <View style={styles.flatListContainer}>
+                                    <View style={{ width: "100%", flexDirection: "row", padding: 10 }}>
                                         <View style={styles.coulmnImage}>
                                             <Image
                                                 source={{ uri: "https://cdn.edusity.com/" + item.fileName }}
@@ -189,32 +187,24 @@ const WishListScreen = () => {
                                                 }}
                                             />
                                         </View>
-                                        <View style={{ flexDirection: "column", width: "60%", marginVertical: "5%", marginHorizontal: "2%" }}>
-                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
-                                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
-                                            <View style={{ flexDirection: "row", width: "100%" }}>
+                                        <View style={styles.columnDetails}>
+                                            <Text style={{ color: COLORS.primary, ...FONTS.robotomedium, fontSize: 16 }}>{item.CourseName}</Text>
+                                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular, fontSize: 14 }}>{item.Category}</Text>
+                                            <View style={styles.buttonContainer}>
                                                 {!(cartArray.includes(item.ID)) ?
                                                     <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.primary }]} onPressIn={() => { addToCart(item.ID) }}>
-                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Add to Cart</Text>
+                                                        <Text style={styles.buttonText}>Add to Cart</Text>
                                                     </TouchableOpacity> :
                                                     <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.gray }]} onPressIn={() => { navigation.navigate("Cart") }}>
-                                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>View Cart</Text>
+                                                        <Text style={styles.buttonText}>View Cart</Text>
                                                     </TouchableOpacity>
                                                 }
                                                 <TouchableOpacity style={[styles.button, { backgroundColor: "red" }]} onPressIn={() => { removeFromList(item.ID) }}>
-                                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Remove</Text>
+                                                    <Text style={styles.buttonText}>Remove</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
                                     </View>
-                                    {/* <View style={{ paddingHorizontal: "2%" }}>
-                                        <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(10) }}>Description:</Text>
-                                        <WebView style={{ height: 200, width: "100%" }}
-                                            scalesPageToFit={false}
-                                            source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${item.Description}` }}
-                                        />
-                                         <Text style={{color:COLORS.black,fontWeight:"800",fontSize:RFValue(8)}}>{item.Description}</Text> 
-                                    </View> */}
                                 </View>
                             )}
                         // onEndReachedThreshold={0.2}
@@ -228,9 +218,9 @@ const WishListScreen = () => {
                         {(!refreshList) ? null
                             : <LoaderKit
                                 style={{ height: 25 }}
-                                name={'Pacman'} // Optional: see list of animations below
-                                size={10} // Required on iOS
-                                color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',
+                                name={'Pacman'} 
+                                size={10}
+                                color={COLORS.primary} 
                             />}
                     </View> */}
                 </View>
@@ -239,50 +229,50 @@ const WishListScreen = () => {
             <View style={{ height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
                 <LoaderKit
                     style={{ width: 50, height: 50 }}
-                    name={'BallPulse'} // Optional: see list of animations below
-                    size={50} // Required on iOS
-                    color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                    name={'BallPulse'}
+                    size={50}
+                    color={COLORS.primary}
                 />
             </View>
     );
 }
 const styles = StyleSheet.create({
+    flatListContainer: {
+        backgroundColor: COLORS.white,
+        marginHorizontal: 10,
+        marginBottom: 10,
+        borderRadius: 10
+    },
     coulmnImage: {
-        width: "35%",
+        width: "40%",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-around",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        paddingHorizontal: "2%",
-        marginVertical: "2%",
+        justifyContent: "space-around"
+    },
+    columnDetails: {
+        flexDirection: "column",
+        width: "60%",
+        paddingLeft: 6,
+        alignItems: "center"
+    },
+    buttonText: {
+        color: COLORS.white,
+        ...FONTS.robotoregular,
+        fontSize: RFValue(10)
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        width: "100%",
+        alignItems: "center",
+        marginTop: 20,
+        justifyContent: "space-evenly"
     },
     button: {
         width: "40%",
         padding: "5%",
-        marginHorizontal: "1%",
         flexDirection: "column",
-        marginVertical: "15%",
         borderRadius: 10,
         alignItems: "center"
-    },
-    overlay: {
-        flex: 1,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-        justifyContent: "center"
-        , alignItems: "center"
     }
 })
 export default WishListScreen;

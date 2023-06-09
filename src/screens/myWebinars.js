@@ -257,7 +257,7 @@ const MyWebinars = ({ data }) => {
                 </View>
                 {(Data?.length > 0) ?
                     <View style={{ paddingTop: 6, paddingHorizontal: 10, height: height - 60 }}>
-                        <Text style={{ fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, marginBottom: 6 }}>Your Have <Text style={{ color: COLORS.primary }}>{Data.length} Upcoming Webinars</Text></Text>
+                        <Text style={{ fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, marginBottom: 6 }}>Upcoming Webinars: <Text style={{ color: COLORS.primary }}>{Data.length}</Text></Text>
                         <FlatList
                             data={Data}
                             // ref={ScrollRef}
