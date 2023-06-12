@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { getModeForUsageLocation } from 'typescript';
 import axios from 'axios';
 
-const SplashScreen = (props) => {
+const SplashScreenTwo = (props) => {
 
   const [authLoaded, setAuthLoaded] = useState(false);
   const [animationLoaded, setAnimationLoaded] = useState(false);
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplashScreen;
+export default SplashScreenTwo;

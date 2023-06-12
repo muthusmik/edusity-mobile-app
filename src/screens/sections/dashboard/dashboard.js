@@ -53,11 +53,11 @@ const Dashboard = () => {
     useFocusEffect(
         React.useCallback(() => {
             return () => {
-                setDropdownVisible(false)
+                SplashScreen.hide();
             };
         }, [])
     );
-
+   
     // useEffect(() => {
     //     // console.log("done and dusted..........", LoginData)
     //     if (LoginData) {

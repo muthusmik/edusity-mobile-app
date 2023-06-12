@@ -70,6 +70,7 @@
     "react-native-select-dropdown": "^3.1.0",
     "react-native-share": "^8.2.2",
     "react-native-simple-toast": "^1.1.4",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-star-rating-widget": "^1.4.0",
     "react-native-svg": "^12.1.0",
     "react-native-svg-transformer": "^1.0.0",

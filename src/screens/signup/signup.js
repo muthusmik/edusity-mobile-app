@@ -19,6 +19,7 @@ import validate from '../../components/validate/validate';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import LoaderKit from 'react-native-loader-kit';
 import { metrices } from '../../constants/metrices';
+import Top_Bar from '../../components/topBar';
 
 const SignUp = ({ navigation }) => {
 
@@ -54,11 +55,12 @@ const SignUp = ({ navigation }) => {
                     </View>
                     :
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: isKeyboardOpen ? metrices(35) : 0 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+                        {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                             <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
-                                <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
+                                <MCIcon name="keyboard-backspace" size={RFValue(28)} color={COLORS.black} />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
+                        <Top_Bar />
                         <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10) }}>
                             <Image
                                 source={icons.Edusitylogo}

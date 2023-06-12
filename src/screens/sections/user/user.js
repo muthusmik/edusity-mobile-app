@@ -43,12 +43,12 @@ const Profile = () => {
 
     const initialLoading = async () => {
         let token = await AsyncStorage.getItem("loginToken");
-        console.log("token.......................", token)
         if (LoginDetails.data && token) {
             setKey(token)
             setUserDetails([LoginDetails?.data?.data])
         } else {
-            navigation.replace('Login');
+            console.log("User.js to Login............");
+            navigation.navigate('Login', "user");
             BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
             return () => {
                 BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
@@ -91,24 +91,17 @@ const Profile = () => {
         );
 
     const handleDeactivate = async () => {
-        //setLoader(true)
         await DeactivateProfile(key).then(
-            //  AsyncStorage.removeItem("loginToken").then(
             navigation.navigate("Home", { screen: "Search" })
-            // )
         )
     }
 
     const handleLogout = async () => {
-        //setLoader(true)
         await AsyncStorage.removeItem("loginToken").then(
-            // setLoader(false),
-            // console.log("done removing"),
             navigation.navigate("Home", { screen: "Search" })
         )
     }
     function handleBackButtonClick() {
-        // console.log("navigation done")
         navigation.navigate('Home', { screen: 'Search' });
         return true;
     }

@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import LinearGradient from 'react-native-linear-gradient';
 import { icons, images, COLORS, FONTS, SIZES } from '../../constants';
+import { metrices } from '../../constants/metrices';
 import useForm from "../../components/validate/useForm";
 import validate from "../../components/validate/validate";
 import { forgotPasswordHanlder } from '../../store/redux/forgotPassword';
@@ -128,9 +129,9 @@ const ForgotPassword = ({ navigation }) => {
         <KeyboardAvoidingView style={styles.container}>
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: "8%" }}>
-                    <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.goBack()}>
-                        <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
+                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+                    <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
+                        <MCIcon name="keyboard-backspace" size={RFValue(28)} color={COLORS.black} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "6%" }}>

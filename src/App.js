@@ -1,21 +1,15 @@
-import React ,{useEffect, useState}from "react";
-import {
-    Image,
-    TouchableOpacity
-} from 'react-native';
+import React, { useEffect } from "react";
 import { createStackNavigator, CardStyleInterpolators, } from "@react-navigation/stack";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { images, icons, COLORS, FONTS, SIZES } from "./constants";
 import { RFValue } from "react-native-responsive-fontsize";
-
-import SplashScreen from "./screens/splashScreen";
+import SplashScreen from 'react-native-splash-screen';
+import SplashScreenTwo from "./screens/splashScreen";
 import 'react-native-gesture-handler';
-// screens
 import Login from "./screens/login/login";
 import SignUp from "./screens/signup/signup";
 import OtpPage from "./screens/signup/otp"
 import ForgotPassword from "./screens/login/forgotPassword";
-// extra screens
 import SearchScreen from "./screens/sections/search/searchScreen";
 import ViewCourse from "./screens/sections/search/viewCourse";
 import ViewInstructorProfile from "./screens/sections/search/viewInstructorProfile";
@@ -43,6 +37,11 @@ const theme = {
 const Stack = createStackNavigator();
 
 const App = () => {
+
+    useEffect(() => {
+        SplashScreen.hide();
+    }, [])
+
     return (
         <NavigationContainer theme={theme}>
             <Stack.Navigator
@@ -56,7 +55,7 @@ const App = () => {
                 <Stack.Screen
                     name="Splash"
                     options={{ animationEnabled: false, header: () => null }}
-                    component={SplashScreen}
+                    component={SplashScreenTwo}
                 />
                 {/* <Stack.Screen
                     name="Geolocation"
@@ -78,7 +77,7 @@ const App = () => {
                     options={{ animationEnabled: false, header: () => null }}
                     component={ServerErrorPage}
                 />
-                   <Stack.Screen
+                <Stack.Screen
                     name="MyWebinars"
                     options={{ headerShown: false }}
                     component={MyWebinars}
@@ -185,7 +184,7 @@ const App = () => {
                     component={ViPlayer}
                     options={{ headerShown: false }}
                 />
-                    < Stack.Screen
+                < Stack.Screen
                     name="Razor"
                     component={RazorPay}
                     options={{ headerShown: false }}

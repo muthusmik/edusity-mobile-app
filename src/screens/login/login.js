@@ -34,8 +34,10 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { userLoginHanlder } from '../../store/redux/userLogin';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { metrices } from '../../constants/metrices';
+import Top_Bar from '../../components/topBar';
 
-const Login = () => {
+const Login = (route) => {
+    console.log("Login route..................", route.route.params)
     const { handleChange, details, handleSubmit, formErrors, data, formValues } = useForm(validate);
     const dispatch = (useDispatch());
     const navigation = useNavigation();
@@ -46,7 +48,7 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [token, setToken] = useState(null);
     const [loader, setLoader] = useState(false);
-
+    const backPage = [('Home', { screen: "Search" })]
     const forgothandler = () => {
         navigation.navigate("ForgotPassword")
     }
@@ -90,9 +92,6 @@ const Login = () => {
                     setLoader(false);
                 })
         }
-        //  else {
-        //     console.log("please fill the Details to proceed")
-        // }
     }, [data]);
 
     useEffect(() => {
@@ -103,10 +102,13 @@ const Login = () => {
                         setEmail("");
                         setPassword("");
                         const param = originalPromiseResult.data;
-                        navigation.navigate('Home', {
-                            screen: 'Dashboard',
-                            params: { param },
-                        });
+                        // navigation.navigate('Home', {
+                        //     screen: 'Dashboard',
+                        //     params: { param },
+                        // });
+                        if (route.route.params == "user") {
+                            navigation.navigate('Home', { screen: 'Profile' })
+                        }
                     } else {
                         setLoader(false);
                         Toast.show("Something Went Wrong please try again!", Toast.LONG);
@@ -114,14 +116,8 @@ const Login = () => {
                 })
                 .catch((rejectedValueOrSerializedError) => {
                     Toast.show("Something Went Wrong please try again!", Toast.LONG);
-                    // console.log(" Inside catch", rejectedValueOrSerializedError);
                 })
         }
-        // else {
-        //     console.log("No Token")
-        //     // Toast.show("Please fill the laid details to proceed!", Toast.LONG);
-        // }
-
     }, [token])
 
     const handleEmailBox = () => {
@@ -155,14 +151,12 @@ const Login = () => {
                 </View>
                 :
                 <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: metrices(100), width: "100%" }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
-                        {/* <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
-                            <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
-                        </TouchableOpacity> */}
+                    {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                         <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
-                            <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.black} />
+                            <MCIcon name="keyboard-backspace" size={RFValue(28)} color={COLORS.black} />
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
+                    <Top_Bar /* backPage={backPage} */ />
                     <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(4) }}>
                         <Image
                             source={icons.Edusitylogo}

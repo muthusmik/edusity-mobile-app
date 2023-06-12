@@ -7,16 +7,10 @@ import { userUrl } from '../../services/constant';
 
 
 export const userLoginHanlder = createAsyncThunk('posts/userLogincall', async (data, thunkAPI) => {
-    // console.log("Inside the api call", data);
-
-    const headers = {'Content-Type': 'application/json','Authorization':"Bearer "+ data}
-    // console.log(headers,"header")
-    return  await axios.get(userUrl,{ headers: headers }).then(response=> {
-    //  console.log("response")
-    //  console.log("finalData userLogin Api", response.data.error)
-  
-     return response.data
- })   
+    const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + data }
+    return await axios.get(userUrl, { headers: headers }).then(response => {
+        return response.data
+    })
 })
 
 export const userLoginHandleSlice = createSlice({
@@ -29,12 +23,8 @@ export const userLoginHandleSlice = createSlice({
     },
     reducers: {},
     extraReducers: (builder) => {
-        // Add reducers for additional action types here, and handle loading state as needed
-        // console.log(userLoginHanlder, "search response")
         builder.addCase(userLoginHanlder.fulfilled, (state, action) => {
             state.data = action.payload;
-            
-            // console.log("data in reducer hello", state);
         })
     },
 })
