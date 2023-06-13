@@ -53,11 +53,11 @@ const Dashboard = () => {
     useFocusEffect(
         React.useCallback(() => {
             return () => {
-                SplashScreen.hide();
+                setDropdownVisible(false);
             };
         }, [])
     );
-   
+
     // useEffect(() => {
     //     // console.log("done and dusted..........", LoginData)
     //     if (LoginData) {
@@ -128,7 +128,7 @@ const Dashboard = () => {
             }).catch((error) => { console.log("Catch error in UpcomingWebniars.........", error) })
         } else {
             setLoader(false);
-            navigation.navigate('Login');
+            navigation.navigate('Login', "Dashboard");
             BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
             return () => {
                 BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
@@ -202,6 +202,9 @@ const Dashboard = () => {
                                     {studentStatistics && <View style={{ height: metrices(48) }}><StudentDashboard username={LoginData?.data} studentStatistics={studentStatistics?.data} setDropdownVisible={setDropdownVisible} /></View>}
                                     {/* {courseAnnouncementDetails && <View style={{ height: SIZES.height - 610 }}><CourseAnnouncementDashboard announcement={courseAnnouncementDetails} setDropdownVisible={setDropdownVisible} /></View>} */}
                                     {upcomingWebniarDetails && <View style={{ height: metrices(20) }}><UpcomingWebniarDashboard upcomingWebinar={upcomingWebniarDetails} /></View>}
+                                    <TouchableOpacity onPress={() => navigation.navigate("TakeNotesScreen")}>
+                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular }}>Take notes</Text>
+                                    </TouchableOpacity>
                                     <View style={{ padding: "8%" }} />
                                 </Pressable>
                             </ScrollView> : null}

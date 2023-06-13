@@ -68,7 +68,7 @@ const MyCourse = () => {
                 }
                 else {
                     setLoader(false);
-                    navigation.navigate('Login');
+                    navigation.navigate('Login', "Mycourses");
                     BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
                     return () => {
                         BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);

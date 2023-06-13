@@ -23,6 +23,7 @@ import { setConstantValue } from 'typescript';
 import { verifyUrl } from '../../services/constant';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { metrices } from '../../constants/metrices';
+import Top_Bar from '../../components/topBar';
 
 const OtpPage = ({ route }) => {
 
@@ -80,12 +81,13 @@ const OtpPage = ({ route }) => {
             />
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+                {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                     <TouchableOpacity style={{ marginLeft: "4%" }} onPress={() => navigation.navigate('Home', { screen: 'Search' })}>
                         <MCIcon name="keyboard-backspace" size={RFValue(20)} color={COLORS.black} />
                     </TouchableOpacity>
-                </View>
-                <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(4) }}>
+                </View> */}
+                <Top_Bar />
+                <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(9) }}>
                     <Image
                         source={icons.Edusitylogo}
                         resizeMode="contain"
@@ -96,7 +98,7 @@ const OtpPage = ({ route }) => {
                     />
                 </View>
                 <View style={{ marginVertical: 14 }}>
-                    <Text style={{ color: COLORS.black, fontSize: RFValue(18, 580), ...FONTS.robotomedium, textAlign: "center", marginBottom: 12 }}>OTP Verification</Text>
+                    <Text style={{ color: COLORS.black, fontSize: RFValue(22), ...FONTS.robotomedium, textAlign: "center", marginBottom: 12 }}>OTP Verification</Text>
                     <Text style={styles.paragraph}>Please enter the OTP, which is received in your {route?.params?.data} registered email address.</Text>
                     <Text style={styles.paragraph}>If you’ve not received the verification email, please check your “Spam” folder. You can also click the resent button below to have another email sent to you.</Text>
                 </View>

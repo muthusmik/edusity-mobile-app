@@ -63,19 +63,19 @@ const validate = (details) => {
 
   if (details.firstName !== undefined) {
     if (details.firstName.length < 3) {
-      formErrors.firstName = "First Name must have minimun 3 characters!";
+      formErrors.firstName = "First Name should have minimun 3 characters!";
     }
     if (details.firstName.length > 15) {
-      formErrors.firstName = "First Name must not exceed more than 15 characters!";
+      formErrors.firstName = "First Name should not exceed more than 15 characters!";
     }
   }
 
   if (details.lastName !== undefined) {
     if (details.lastName.length < 3) {
-      formErrors.lastName = "Last Name must have minimun 3 characters!";
+      formErrors.lastName = "Last Name should have minimun 3 characters!";
     }
     if (details.lastName.length > 15) {
-      formErrors.lastName = "Last Name must not exceed more than 15 characters!";
+      formErrors.lastName = "Last Name should not exceed more than 15 characters!";
     }
   }
 

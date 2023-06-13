@@ -8,6 +8,7 @@ import {
     Text,
     TextInput,
     Image,
+    ActivityIndicator,
     TouchableOpacity,
     ImageBackground,
     KeyboardAvoidingView,
@@ -37,7 +38,7 @@ import { metrices } from '../../constants/metrices';
 import Top_Bar from '../../components/topBar';
 
 const Login = (route) => {
-    console.log("Login route..................", route.route.params)
+    console.log("Login route..................", route?.route?.params)
     const { handleChange, details, handleSubmit, formErrors, data, formValues } = useForm(validate);
     const dispatch = (useDispatch());
     const navigation = useNavigation();
@@ -48,26 +49,27 @@ const Login = (route) => {
     const [password, setPassword] = useState("");
     const [token, setToken] = useState(null);
     const [loader, setLoader] = useState(false);
-    const backPage = [('Home', { screen: "Search" })]
+    const [errorEmailText, setErrorEmailText] = useState("");
+    const [errorPasswordText, setErrorPasswordText] = useState("");
+    const [errorCommonText, setErrorCommonText] = useState("");
+
     const forgothandler = () => {
         navigation.navigate("ForgotPassword")
     }
 
-    // useEffect(() => {
-    //     console.log(Object.keys(formValues).length, "kk")
-    //     if (formErrors && Object.keys(formErrors).length > 0) {
-    //         if (formErrors && formErrors.emailorusername) {
-    //             setEmail(formErrors.emailorusername)
-    //             setErrorEmail(true);
-    //         } else if (formErrors && formErrors.loginpassword) {
-    //             console.log("password Validation failed")
-    //             setPassword(formErrors.loginpassword);
-    //             setErrorPassword(formErrors.loginpassword);
-    //         }
-    //     }
-    // }, [formErrors])
+    useEffect(() => {
+        if (formErrors && Object.keys(formErrors).length > 0) {
+            if (formErrors && formErrors.emailorusername) {
+                setErrorEmailText(formErrors.emailorusername)
+            } else if (formErrors && formErrors.loginpassword) {
+                setErrorPasswordText(formErrors.loginpassword)
+            } else if (formErrors && formErrors.loginundef) {
+                setErrorCommonText(formErrors.loginundef)
+            }
+        }
+    }, [formErrors])
 
-    // Api action only onchange of the username 
+    // Api action only in onchange of the username 
     useEffect(() => {
         if (data && Object.keys(data).length > 1) {
             setLoader(true);
@@ -102,12 +104,20 @@ const Login = (route) => {
                         setEmail("");
                         setPassword("");
                         const param = originalPromiseResult.data;
-                        // navigation.navigate('Home', {
-                        //     screen: 'Dashboard',
-                        //     params: { param },
-                        // });
-                        if (route.route.params == "user") {
+                        if (route?.route?.params == "user") {
                             navigation.navigate('Home', { screen: 'Profile' })
+                        }
+                        else if (route?.route?.params == "Mycourses") {
+                            navigation.navigate('Home', { screen: 'MyCourse' })
+                        }
+                        else if (route?.route?.params == "Dashboard") {
+                            navigation.navigate('Home', {
+                                screen: 'Dashboard',
+                                params: { param },
+                            });
+                        }
+                        else {
+                            navigation.navigate('Home', { screen: 'Search' })
                         }
                     } else {
                         setLoader(false);
@@ -120,17 +130,6 @@ const Login = (route) => {
         }
     }, [token])
 
-    const handleEmailBox = () => {
-        if (errorEmail) {
-            setEmail(""), setErrorEmail("");
-        }
-    }
-    const handlePasswordBox = () => {
-        if (errorPassword) {
-            setPassword(""), setErrorPassword("");
-        }
-    }
-
     return (
         <KeyboardAvoidingView style={styles.container}>
             <StatusBar
@@ -138,134 +137,125 @@ const Login = (route) => {
                 backgroundColor={COLORS.primary}
             />
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
-            {(loader) ?
-                <View style={{ height: "100%", width: "100%" }}>
-                    <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                        <LoaderKit
-                            style={{ width: 50, height: 50 }}
-                            name={'BallPulse'}
-                            size={50}
-                            color={COLORS.primary}
-                        />
-                    </ImageBackground>
-                </View>
-                :
-                <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: metrices(100), width: "100%" }}>
-                    {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+            <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: metrices(100), width: "100%" }}>
+                {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                         <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.navigate('Home', { screen: "Search" })}>
                             <MCIcon name="keyboard-backspace" size={RFValue(28)} color={COLORS.black} />
                         </TouchableOpacity>
                     </View> */}
-                    <Top_Bar /* backPage={backPage} */ />
-                    <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(4) }}>
-                        <Image
-                            source={icons.Edusitylogo}
-                            resizeMode="contain"
-                            style={{
-                                width: '50%',
-                                height: '64%'
+                <Top_Bar /* backPage={backPage} */ />
+                <View style={{ height: metrices(10), alignItems: 'center', justifyContent: 'center', marginTop: metrices(8) }}>
+                    <Image
+                        source={icons.Edusitylogo}
+                        resizeMode="contain"
+                        style={{
+                            width: '50%',
+                            height: '64%'
+                        }}
+                    />
+                </View>
+                <View style={{ height: metrices(8), alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22) }}>Sign In</Text>
+                </View>
+                <View style={{ alignItems: 'center' }}>
+                    <View style={styles.textBoxContainer}>
+                        <InputBox
+                            inputOutline
+                            label={"Email"}
+                            name={"Email"}
+                            value={email}
+                            customLabelStyle={[styles.textInput, { color: (errorLogin || errorEmail) ? "red" : COLORS.primary }]}
+                            style={styles.inputText}
+                            rightIcon={<FontAwesome5 name={'user-graduate'} size={20} style={{ color: COLORS.primary }} />}
+                            onChangeText={e => {
+                                handleChange(e, "emailorusername"),
+                                    setErrorLogin(""),
+                                    setErrorEmail(""),
+                                    setEmail(e),
+                                    setErrorEmailText(""),
+                                    setErrorCommonText("")
                             }}
+                            containerStyles={{ padding: "5%" }}
                         />
                     </View>
-                    <View style={{ height: metrices(8), alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 23 }}>Sign In</Text>
+                    {formErrors && errorEmailText ? <View style={styles.errorContainer}>
+                        <Text style={styles.ErrorText}>{errorEmailText}</Text>
+                    </View> : null}
+                    <View style={styles.textBoxContainer}>
+                        <InputBox
+                            inputOutline
+                            label={"Password"}
+                            name={"Password"}
+                            value={password}
+                            secureTextEntry={errorPassword ? false : true}
+                            customLabelStyle={[styles.textPassword, { color: (errorLogin || errorEmail) ? "red" : COLORS.primary }]}
+                            style={styles.inputText}
+                            rightIcon={<FontAwesome5 name={'eye'} size={18} style={{ color: COLORS.primary }} />}
+                            passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
+                            onChangeText={e => {
+                                handleChange(e, "loginpassword"),
+                                    setErrorLogin(""),
+                                    setPassword(e),
+                                    setErrorPassword(""),
+                                    setErrorPasswordText(""),
+                                    setErrorCommonText("")
+                            }}
+                            containerStyles={{ padding: "5%" }}
+                        />
                     </View>
-                    <View style={{ alignItems: 'center' }}>
-                        <View style={styles.textBoxContainer}>
-                            <Pressable onPressIn={() => handleEmailBox()}>
-                                <InputBox
-                                    inputOutLine
-                                    label={"Email"}
-                                    value={email}
-                                    style={styles.inputText}
-                                    rightIcon={<FontAwesome5 name={'user-graduate'} size={20} style={{ color: COLORS.primary }} />}
-                                    customLabelStyle={{ ...styles.textInput, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
-                                    onChangeText={e => { handleChange(e, "emailorusername"), setErrorLogin(""), setErrorEmail(""), setEmail(e) }}
-                                />
-                            </Pressable>
-                            <View style={styles.errorContainer}>
-                                {formErrors && formErrors.emailorusername ?
-                                    <Text style={styles.ErrorText}>{formErrors.emailorusername}</Text>
-                                    : null}
-                            </View>
-                        </View>
+                    <TouchableOpacity style={[styles.textBoxContainer, { alignItems: "flex-end" }]} onPress={() => forgothandler()}>
+                        <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}>Forgot Password?</Text>
+                    </TouchableOpacity>
+                    <View style={{ height: metrices(4), width: "80%", alignItems: "center" }}>
+                        {formErrors && errorPasswordText ? <Text style={styles.ErrorText}>{errorPasswordText}</Text> : null}
+                        {errorLogin ? <Text style={styles.ErrorText}>{errorLogin}</Text> : null}
+                        {formErrors && errorCommonText ? <Text style={styles.ErrorText}>{errorCommonText}</Text> : null}
+                    </View>
 
-                        <View style={styles.textBoxContainer}>
-                            <Pressable onPressIn={() => handlePasswordBox()} >
-                                <InputBox
-                                    inputOutLine
-                                    label={"Password"}
-                                    value={password}
-                                    secureTextEntry={errorPassword ? false : true}
-                                    style={styles.inputText}
-                                    rightIcon={<FontAwesome5 name={'eye'} size={18} style={{ color: COLORS.primary }} />}
-                                    passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
-                                    // labelStyle={{ fontSize: RFValue(12),color:"red" }}
-                                    showPasswordContainerStyle={{ height: 1900 }}
-                                    containerStyles={{ margin: "20%", height: "100%" }}
-                                    customLabelStyle={{ ...styles.textPassword, ...{ color: (errorLogin || errorEmail) ? "red" : COLORS.primary } }}
-                                    onChangeText={e => { handleChange(e, "loginpassword"), setErrorLogin(""), setPassword(e), setErrorPassword(null) }}
-                                />
-                            </Pressable>
-                        </View>
-                        <TouchableOpacity style={[styles.textBoxContainer, { alignItems: "flex-end" }]} onPress={() => forgothandler()}>
-                            <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}>Forgot Password?</Text>
-                        </TouchableOpacity>
-                        <View style={{ height: metrices(4), width: "80%", alignItems: "center" }}>
-                            {formErrors && formErrors.loginpassword ?
-                                <Text style={styles.ErrorText}>{formErrors.loginpassword}</Text>
-                                : null}
-                            {errorLogin ? (
-                                <View >
-                                    <Text style={styles.ErrorText}>{errorLogin}</Text>
-                                </View>) : null}
-                            {formErrors && formErrors.loginundef ? (<View><Text style={styles.ErrorText}>{formErrors.loginundef}</Text></View>) : null}
-                        </View>
-
-                        <TouchableOpacity
-                            style={{ width: '42%', height: 42, alignItems: 'center', justifyContent: 'center', marginTop: "1%" }}
-                            onPress={e => { handleSubmit(e, 1), Keyboard.dismiss }} disabled={false}
+                    <TouchableOpacity
+                        style={{ width: '42%', height: 42, alignItems: 'center', justifyContent: 'center', marginTop: "1%" }}
+                        onPress={e => { handleSubmit(e, 1), Keyboard.dismiss }} disabled={loader}
+                    >
+                        <LinearGradient
+                            style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
+                            colors={['#9494d6', '#AF2DF8']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
                         >
-                            <LinearGradient
-                                style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
-                                colors={['#9494d6', '#AF2DF8']}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                            >
-                                <Text style={{ color: COLORS.white, fontSize: 16, ...FONTS.robotoregular }}>Sign in</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                        <Pressable style={{ marginTop: "3%" }} onPress={() => navigation.navigate("SignUp")}>
-                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Don't have an account?
-                                <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign Up</Text></Text>
+                            {(!loader) ? <Text style={{ color: COLORS.white, fontSize: 16, ...FONTS.robotoregular }}>Sign in</Text> : <ActivityIndicator size="small" color="#ffff" />}
+                        </LinearGradient>
+                    </TouchableOpacity>
+                    <Pressable style={{ marginTop: "3%" }} onPress={() => navigation.navigate("SignUp")}>
+                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Don't have an account?
+                            <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign Up</Text></Text>
+                    </Pressable>
+
+                    {/* <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "1%" }}> Or</Text>
+                    <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "2%" }}> Connect with Social Media</Text>
+
+                    <View style={styles.socialMedia}>
+                        <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Facebook")}>
+                            <SocialIcon
+                                title='Sign In With Facebook'
+                                raised={true}
+                                type='facebook'
+                            />
                         </Pressable>
-
-                        {/* <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "1%" }}> Or</Text>
-                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular, top: "2%" }}> Connect with Social Media</Text>
-
-                        <View style={styles.socialMedia}>
-                            <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Facebook")}>
-                                <SocialIcon
-                                    title='Sign In With Facebook'
-                                    raised={true}
-                                    type='facebook'
-                                />
-                            </Pressable>
-                            <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Google")}>
-                                <SocialIcon
-                                    title='Sign In With Facebook'
-                                    raised={true}
-                                    type='google'
-                                />
-                            </Pressable>
-                            <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Apple")}>
-                                <AntIcons
-                                    name="apple1" size={50} color={COLORS.black} style={{ top: "8%" }}
-                                />
-                            </Pressable>
-                        </View> */}
-                    </View>
-                </ImageBackground>}
+                        <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Google")}>
+                            <SocialIcon
+                                title='Sign In With Facebook'
+                                raised={true}
+                                type='google'
+                            />
+                        </Pressable>
+                        <Pressable style={{ marginHorizontal: "1%" }} onPressIn={() => console.log("Apple")}>
+                            <AntIcons
+                                name="apple1" size={50} color={COLORS.black} style={{ top: "8%" }}
+                            />
+                        </Pressable>
+                    </View> */}
+                </View>
+            </ImageBackground>
         </KeyboardAvoidingView>
     );
 };
@@ -288,7 +278,8 @@ const styles = StyleSheet.create({
         width: "80%"
     },
     errorContainer: {
-        height: metrices(2)
+        height: metrices(2),
+        width: "76%"
     },
     label: {
         color: COLORS.black,
@@ -300,17 +291,12 @@ const styles = StyleSheet.create({
     textInput: {
         color: COLORS.black,
         backgroundColor: COLORS.white,
-        fontSize: RFValue(14),
-        width: "20%",
         ...FONTS.robotoregular,
     },
     textPassword: {
         color: COLORS.black,
         backgroundColor: COLORS.white,
-        width: "26%", borderWidth: 2,
-        fontSize: RFValue(14),
-        ...FONTS.robotoregular,
-        borderWidth: 0
+        ...FONTS.robotoregular
     },
     shadow: {
         shadowColor: "#000",
@@ -334,8 +320,7 @@ const styles = StyleSheet.create({
     ErrorText: {
         color: "red",
         ...FONTS.robotoregular,
-        fontSize: RFValue(10),
-        textAlign: "center"
+        fontSize: RFValue(10)
     }
 });
 

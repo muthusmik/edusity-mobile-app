@@ -8,6 +8,7 @@ import {
     Text,
     TextInput,
     Image,
+    ActivityIndicator,
     TouchableOpacity,
     ImageBackground,
     KeyboardAvoidingView,
@@ -27,6 +28,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Toast from 'react-native-simple-toast';
 import axios from 'axios';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Top_Bar from '../../components/topBar';
 
 const ForgotPassword = ({ navigation }) => {
     const { handleChange, details, handleSubmit, formErrors, data } = useForm(validate);
@@ -36,6 +38,7 @@ const ForgotPassword = ({ navigation }) => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [resendState, setResendState] = useState(false);
+    const [activity, setActivity] = useState(false);
 
     // useEffect(()=>{
     //     console.log(formErrors,"formErrors")
@@ -53,19 +56,22 @@ const ForgotPassword = ({ navigation }) => {
     }
 
     const handleForgotEmail = () => {
+        setActivity(true)
         if (email) {
             if (!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)) {
                 setError("Invalid email or format!")
+                setActivity(false)
             }
             else {
-                console.log("success");
                 let data = { "forgotemail": email }
                 dispatch(forgotPasswordHanlder(data)).then(unwrapResult).then((originalPromiseResult) => {
                     if (originalPromiseResult == "error") {
                         navigation.navigate("ServerError");
+                        setActivity(false)
                     }
                     else if (originalPromiseResult.error == true) {
                         setError(originalPromiseResult.message);
+                        setActivity(false)
                     }
                     else if (originalPromiseResult.error == false) {
                         setError("")
@@ -79,6 +85,7 @@ const ForgotPassword = ({ navigation }) => {
         }
         else if (email.length == 0) {
             setError("Please enter your email address!")
+            setActivity(false)
         }
     }
 
@@ -129,12 +136,13 @@ const ForgotPassword = ({ navigation }) => {
         <KeyboardAvoidingView style={styles.container}>
             {Platform.OS == 'ios' ? <View style={{ height: "5%" }} /> : null}
             <ImageBackground source={images.LoginBgImage} resizeMode="repeat" style={{ height: "100%", width: "100%" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
+                {/* <View style={{ flexDirection: "row", alignItems: "center", color: COLORS.black, height: metrices(8) }}>
                     <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => navigation.goBack()}>
                         <MCIcon name="keyboard-backspace" size={RFValue(28)} color={COLORS.black} />
                     </TouchableOpacity>
-                </View>
-                <View style={{ flex: 0.1, alignItems: 'center', justifyContent: 'center', top: "6%" }}>
+                </View> */}
+                <Top_Bar />
+                <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10), marginTop: metrices(13) }}>
                     <Image
                         source={icons.Edusitylogo}
                         resizeMode="contain"
@@ -144,14 +152,13 @@ const ForgotPassword = ({ navigation }) => {
                         }}
                     />
                 </View>
-                <View style={{ flex: 0.1, alignItems: 'center', top: "6%", justifyContent: 'center' }}>
-                    <View style={{ alignItems: 'center', marginHorizontal: SIZES.padding }}>
-                        <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: 23 }}>Forgot Password</Text>
-                    </View>
+                <View style={{ alignItems: 'center', paddingBottom: "1%", marginTop: "4%" }}>
+                    <Text style={{ ...FONTS.robotomedium, color: COLORS.black, fontSize: RFValue(22) }}>Forgot Password</Text>
                 </View>
+
                 {!resendState ?
-                    <View style={{ flex: 0.5, alignItems: 'center', }}>
-                        <View style={{ width: "90%", marginTop: "20%" }}>
+                    <View style={{ height: metrices(30), alignItems: 'center', marginTop: metrices(4) }}>
+                        <View style={{ width: "90%" }}>
                             <Text style={styles.label}>Please enter the valid email address, an OTP will be sent to your email to reset your password.</Text>
                             <InputBox
                                 inputOutline={borderStyle}
@@ -163,15 +170,15 @@ const ForgotPassword = ({ navigation }) => {
                             />
                         </View>
 
-                        <View style={{ height: "10%", width: "86%", marginTop: 2 }}>
+                        <View style={{ height: metrices(5), width: "86%", marginTop: 2 }}>
                             {formErrors && formErrors.forgotemail ? <View style={styles.ErrorCont}><Text style={styles.ErrorText}>{formErrors.forgotemail}</Text></View> : null}
                             {error ? <Text style={styles.errorText}>{error}</Text> : null}
                             {errorLogin ? (<View><Text style={{ color: "red", fontSize: RFValue(10), ...FONTS.robotoregular }}>{errorLogin}</Text></View>) : null}
                         </View>
 
                         <TouchableOpacity
-                            style={[styles.shadow, { width: '50%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "5%" }]}
-                            onPressOut={e => {/*  handleSubmit(e, 3), */ handleForgotEmail(), Keyboard.dismiss() }} disabled={false}
+                            style={[styles.shadow, { width: '50%', height: 40, alignItems: 'center', justifyContent: 'center' }]}
+                            onPressOut={e => {/*  handleSubmit(e, 3), */ handleForgotEmail(), Keyboard.dismiss() }} disabled={activity}
                         >
                             <LinearGradient
                                 style={{ height: '100%', width: '60%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
@@ -179,18 +186,22 @@ const ForgotPassword = ({ navigation }) => {
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                             >
-                                <Text style={{ color: COLORS.white, fontSize: 16, ...FONTS.robotoregular }}>Verify Email</Text>
+                                {(!activity) ?
+                                    <Text style={{ color: COLORS.white, fontSize: 16, ...FONTS.robotoregular }}>Verify Email</Text>
+                                    :
+                                    <ActivityIndicator size="small" color="#ffff" />
+                                }
                             </LinearGradient>
                         </TouchableOpacity>
                     </View> :
-                    <View style={{ flex: 0.5, alignItems: 'center', }}>
-                        <View style={{ width: "90%", marginTop: "20%" }}>
+                    <View style={{ height: metrices(30), alignItems: 'center', marginTop: metrices(4) }}>
+                        <View style={{ width: "90%" }}>
                             <Text style={styles.label}>Please check your email for a verification message. Click the link in the message to change your password.</Text>
                             <Text style={[styles.label, { ...FONTS.robotomedium }]}>Thank You !</Text>
                         </View>
                         <TouchableOpacity
                             style={[styles.shadow, { width: '86%', height: 40, alignItems: 'center', justifyContent: 'center', marginTop: "5%" }]}
-                            onPressOut={e => handleForgotEmail()} disabled={false}
+                            onPress={e => handleForgotEmail()} disabled={false}
                         >
                             <LinearGradient
                                 style={{ height: '100%', width: '60%', alignItems: 'center', justifyContent: 'center', borderRadius: 30 }}
@@ -224,8 +235,7 @@ const ForgotPassword = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.white,
-
+        backgroundColor: COLORS.white
     },
     errorText: {
         color: "red",

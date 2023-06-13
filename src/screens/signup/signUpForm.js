@@ -47,6 +47,14 @@ const Form = ({
     const [phone, setPhone] = useState("");
     const [verificationModal, setVerificationModal] = useState(false);
 
+    const [firstNameErrorText, setFirstNameErrorText] = useState("")
+    const [lastNameErrorText, setLastNameErrorText] = useState("")
+    const [emailErrorText, setEmailErrorText] = useState("")
+    const [userNameErrorText, setUserNameErrorText] = useState("")
+    const [phoneErrorText, setPhoneErrorText] = useState("")
+    const [passwordErrorText, setPasswordErrorText] = useState("")
+    const [confirmPasswordErrorText, setConfirmPasswordErrorText] = useState("")
+    const [commonSignErrorText, setCommonSignErrorText] = useState("")
     const { handleChange, details, handleSubmit, formErrors, data } = useForm(validate);
 
     const verificationLinkFunction = async (data) => {
@@ -67,6 +75,35 @@ const Form = ({
             Toast.show(verification.message, Toast.LONG)
         }
     }
+
+    useEffect(() => {
+        if (formErrors && Object.keys(formErrors).length > 0) {
+            if (formErrors && formErrors.firstName) {
+                setFirstNameErrorText(formErrors.firstName)
+            }
+            if (formErrors && formErrors.lastName) {
+                setLastNameErrorText(formErrors.lastName)
+            }
+            if (formErrors && formErrors.email) {
+                setEmailErrorText(formErrors.email)
+            }
+            if (formErrors && formErrors.phoneNumber) {
+                setPhoneErrorText(formErrors.phoneNumber)
+            }
+            if (formErrors && formErrors.userName) {
+                setUserNameErrorText(formErrors.userName)
+            }
+            if (formErrors && formErrors.password) {
+                setPasswordErrorText(formErrors.password)
+            }
+            if (formErrors && formErrors.password2) {
+                setConfirmPasswordErrorText(formErrors.password2)
+            }
+            if (formErrors && formErrors.signundef) {
+                setCommonSignErrorText(formErrors.signundef)
+            }
+        }
+    }, [formErrors])
 
     useEffect(() => {
         if (!!data || (data != null)) {
@@ -144,13 +181,19 @@ const Form = ({
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     name={"FirstName"}
                     //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}}  />}
-                    onChangeText={e => { handleChange(e, "firstName"), setFirstName(e), setErrorMessage("") }}
+                    onChangeText={e => {
+                        handleChange(e, "firstName"),
+                            setFirstName(e),
+                            setErrorMessage(""),
+                            setFirstNameErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
                     containerStyles={{ padding: "5%" }}
                 />
             </View>
-            {formErrors && formErrors.firstName ?
+            {formErrors && firstNameErrorText ?
                 <View style={styles.ErrorContainer}>
-                    <Text style={styles.ErrorText}>{formErrors.firstName}</Text>
+                    <Text style={styles.ErrorText}>{firstNameErrorText}</Text>
                 </View> : null}
             <View style={styles.inputContainer}>
                 <InputBox
@@ -160,11 +203,16 @@ const Form = ({
                     value={lastName}
                     name={"LastName"}
                     //leftIcon={<MCI name={'format-letter-case-lower'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
-                    onChangeText={e => { handleChange(e, "lastName"), setLastName(e) }}
+                    onChangeText={e => {
+                        handleChange(e, "lastName"),
+                            setLastName(e),
+                            setLastNameErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
                 />
             </View>
-            {formErrors && formErrors.lastName ? <View style={styles.ErrorContainer}>
-                <Text style={styles.ErrorText}>{formErrors.lastName}</Text>
+            {formErrors && lastNameErrorText ? <View style={styles.ErrorContainer}>
+                <Text style={styles.ErrorText}>{lastNameErrorText}</Text>
             </View> : null}
             <View style={styles.inputContainer}>
                 <InputBox
@@ -174,12 +222,56 @@ const Form = ({
                     name={"Email"}
                     customLabelStyle={{ ...FONTS.robotoregular }}
                     //leftIcon={<MCI name={'email'} size={38} style={{color:COLORS.primary,width:"150%",left:"40%"}} />}
-                    onChangeText={e => { handleChange(e, "email"), setEmail(e) }}
+                    onChangeText={e => {
+                        handleChange(e, "email"),
+                            setEmail(e),
+                            setEmailErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
                 />
             </View>
-            {formErrors && formErrors.email ? <View style={styles.ErrorContainer}>
-                <Text style={{ ...styles.ErrorText }}>{formErrors.email}</Text>
+            {formErrors && emailErrorText ? <View style={styles.ErrorContainer}>
+                <Text style={{ ...styles.ErrorText }}>{emailErrorText}</Text>
             </View> : null}
+
+            <View style={styles.inputContainer}>
+                <InputBox
+                    inputOutline
+                    label={'UserName'}
+                    value={userName}
+                    //leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
+                    customLabelStyle={{ ...FONTS.robotoregular }}
+                    onChangeText={e => {
+                        handleChange(e, "userName"),
+                            setUserName(e),
+                            setUserNameErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
+                />
+            </View>
+            {formErrors && userNameErrorText ? <View style={styles.ErrorContainer}>
+                <Text style={styles.ErrorText}>{userNameErrorText}</Text>
+            </View> : null}
+            <View style={{ width: "85%", }}>
+                <InputBox
+                    inputOutline
+                    label={'Phone'}
+                    value={phone}
+                    maxLength={10}
+                    // leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
+                    customLabelStyle={{ ...FONTS.robotoregular }}
+                    onChangeText={e => {
+                        handleChange(e, "phoneNumber"),
+                            setPhone(e),
+                            setPhoneErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
+                />
+            </View>
+            {formErrors && phoneErrorText ? <View style={styles.ErrorContainer}>
+                <Text style={styles.ErrorText}>{phoneErrorText}</Text>
+            </View> : null}
+
             <View style={styles.inputContainer}>
                 <InputBox
                     inputOutline
@@ -200,11 +292,16 @@ const Form = ({
                     //     }}
                     // />}
                     // passHideIcon={<FontAwesome  name={'eye-slash'} size={5}/>}
-                    onChangeText={e => { handleChange(e, "password"), setPassword(e) }}
+                    onChangeText={e => {
+                        handleChange(e, "password"),
+                            setPassword(e),
+                            setPasswordErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
                 />
             </View>
-            {formErrors && formErrors.password ? <View style={styles.ErrorContainer}>
-                <Text style={styles.ErrorText}>{formErrors.password}</Text>
+            {formErrors && passwordErrorText ? <View style={styles.ErrorContainer}>
+                <Text style={styles.ErrorText}>{passwordErrorText}</Text>
             </View> : null}
             <View style={styles.inputContainer}>
                 <InputBox
@@ -216,34 +313,12 @@ const Form = ({
                     // rightIcon={<FontAwesome5 name={'eye'} size={18} style={{color:COLORS.primary}} />}
                     passHideIcon={<FontAwesome5 name={'eye-slash'} size={18} style={{ color: COLORS.primary }} />}
                     customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "password2"), setConfirmPassword(e) }}
-                />
-            </View>
-            {formErrors && formErrors.password2 ? <View style={styles.ErrorContainer}>
-                <Text style={styles.ErrorText}>{formErrors.password2}</Text>
-            </View> : null}
-            <View style={styles.inputContainer}>
-                <InputBox
-                    inputOutline
-                    label={'UserName'}
-                    value={userName}
-                    //leftIcon={<FontAwesome5 name={'user-graduate'} size={18} style={{color:COLORS.primary}} />}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "userName"), setUserName(e) }}
-                />
-            </View>
-            {formErrors && formErrors.userName ? <View style={styles.ErrorContainer}>
-                <Text style={styles.ErrorText}>{formErrors.userName}</Text>
-            </View> : null}
-            <View style={{ width: "85%", }}>
-                <InputBox
-                    inputOutline
-                    label={'Phone'}
-                    value={phone}
-                    maxLength={10}
-                    // leftIcon={<FontAwesome5 name={'mobile'} size={18} style={{color:COLORS.primary}} />}
-                    customLabelStyle={{ ...FONTS.robotoregular }}
-                    onChangeText={e => { handleChange(e, "phoneNumber"), setPhone(e) }}
+                    onChangeText={e => {
+                        handleChange(e, "password2"),
+                            setConfirmPassword(e),
+                            setConfirmPasswordErrorText(""),
+                            setCommonSignErrorText("")
+                    }}
                 />
             </View>
 
@@ -258,8 +333,8 @@ const Form = ({
                 </TouchableOpacity >
             </View> */}
             <View style={styles.ErrorCont}>
-                {formErrors && formErrors.phoneNumber ? <Text style={styles.ErrorText}>{formErrors.phoneNumber}</Text> : null}
-                {formErrors && formErrors.signundef ? <Text style={styles.ErrorText}>{formErrors.signundef}</Text> : null}
+                {formErrors && confirmPasswordErrorText ? <Text style={styles.ErrorText}>{confirmPasswordErrorText}</Text> : null}
+                {formErrors && commonSignErrorText ? <Text style={styles.ErrorText}>{commonSignErrorText}</Text> : null}
                 {errorMessage ? <Text style={styles.ErrorText}>{errorMessage}</Text> : null}
             </View>
             <TouchableOpacity

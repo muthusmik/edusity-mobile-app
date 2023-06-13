@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { createStackNavigator, CardStyleInterpolators, } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { images, icons, COLORS, FONTS, SIZES } from "./constants";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -24,7 +24,7 @@ import MyWebinars from "./screens/myWebinars";
 // import VideoCall from "../jitsiVideoMeet";
 // import GeolocationFetcher from "./screens/geoLocation";
 import VideoCall from "./screens/sections/jitsiMeet";
-
+import TakeNotesScreen from "./screens/sections/dashboard/notesTaking";
 
 const theme = {
     ...DefaultTheme,
@@ -47,7 +47,7 @@ const App = () => {
             <Stack.Navigator
                 initialRouteName={'Splash'}
                 screenOptions={{
-                    cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid
+                    cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
                 }}
             >
                 {/* Screens */}
@@ -126,6 +126,11 @@ const App = () => {
                     options={{ headerShown: false }}
                 />
 
+                < Stack.Screen
+                    name="TakeNotesScreen"
+                    component={TakeNotesScreen}
+                    options={{ headerShown: false }}
+                />
 
                 {/* Tabs */}
                 < Stack.Screen

@@ -13,7 +13,6 @@ const useForm = (validate) => {
     // const { name, value } = e.target;
     console.log("formValues inside the useForm.js.............", formValues);
     setFormValues({ ...formValues, [name]: e });
-
   };
 
   const handleSubmit = (e, type) => {

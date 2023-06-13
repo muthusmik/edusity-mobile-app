@@ -61,7 +61,7 @@ const SignUp = ({ navigation }) => {
                             </TouchableOpacity>
                         </View> */}
                         <Top_Bar />
-                        <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10) }}>
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: metrices(10), marginTop: metrices(4) }}>
                             <Image
                                 source={icons.Edusitylogo}
                                 resizeMode="contain"
@@ -82,7 +82,7 @@ const SignUp = ({ navigation }) => {
                                 errorMessage={errorMessage}
                                 setErrorMessage={setErrorMessage}
                             />
-                            <Pressable onPress={() => navigation.navigate("Login")}>
+                            <Pressable onPress={() => navigation.navigate("OtpPage")}>
                                 <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
                                     <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign In</Text></Text>
                             </Pressable>
