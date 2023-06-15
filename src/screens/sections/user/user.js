@@ -47,7 +47,6 @@ const Profile = () => {
             setKey(token)
             setUserDetails([LoginDetails?.data?.data])
         } else {
-            console.log("User.js to Login............");
             navigation.navigate('Login', "user");
             BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
             return () => {
@@ -129,8 +128,13 @@ const Profile = () => {
             activeColor="yellow"
             inactiveColor={COLORS.white}
             scrollEnabled={true}
+            indicatorStyle={{
+                backgroundColor: "yellow",
+                borderWidth: 1.8,
+                borderColor: "yellow"
+            }}
             labelStyle={{ ...FONTS.robotoregular }}
-            style={{ backgroundColor: COLORS.primary, margintop: 100 }}
+            style={{ backgroundColor: COLORS.primary }}
         />
     )
 
@@ -176,24 +180,21 @@ const Profile = () => {
                             renderTabBar={renderTabBar}
                             onIndexChange={setIndex}
                         />
-
                     </View>
-
                 </View> :
                 <View style={{ height: "100%", width: "100%", alignItems: "center", justifyContent: "center" }}>
                     <LoaderKit
                         style={{ width: 50, height: 50, justifyContent: 'center' }}
-                        name={'BallPulse'} // Optional: see list of animations below
-                        size={50} // Required on iOS
-                        color={COLORS.primary} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                        name={'BallPulse'}
+                        size={50}
+                        color={COLORS.primary}
                     />
                 </View>
             }
-
         </>
-
     );
 }
+
 export default Profile;
 const styles = StyleSheet.create({
     iconStyle: {

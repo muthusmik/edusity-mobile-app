@@ -17,7 +17,6 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { viewCourseHandler } from '../../../store/redux/viewCourse';
 import { cartHandler } from '../../../store/redux/cart';
 import { PopUpFilterModal } from './filterModal';
-import { Divider } from '@rneui/base';
 import { FloatingAction } from "react-native-floating-action";
 import { addtoCart } from '../../../services/cartService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -528,10 +527,15 @@ const CourseList = ({ allCourses, cartData }) => {
                             }
                             onEndReachedThreshold={0.2}
                             onEndReached={refresh}
-                        /></> : <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
-                        <Image source={images.NoData} resizeMode="contain" style={{ height: "30%", width: "40%" }} />
-                        <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotoregular }}>No Courses Found!</Text>
-                    </View>}
+                        />
+                    </> :
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.white }}>
+                        <View style={{ width: "60%", height: "30%" }}>
+                            <Image source={images.noCourseGif} resizeMode="contain" style={{ height: "100%", width: "100%" }} />
+                        </View>
+                        <Text style={styles.emptyTextStyle}>We regret to inform you that there are currently no courses available matching your search.</Text>
+                    </View>
+                }
 
                 <FloatingAction
                     actions={actions}
@@ -649,6 +653,13 @@ const styles = StyleSheet.create({
     },
     coulmnImage: {
         width: "100%"
+    },
+    emptyTextStyle: {
+        color: COLORS.black,
+        fontSize: RFValue(16),
+        ...FONTS.robotoregular,
+        width: "80%",
+        textAlign: "center"
     }
 });
 

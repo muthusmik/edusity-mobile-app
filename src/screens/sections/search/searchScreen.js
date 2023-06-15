@@ -8,6 +8,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 import { viewCourseHandler } from "../../../store/redux/viewCourse"
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { baseUrl } from '../../../services/constant'
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -61,7 +62,6 @@ const SearchScreen = ({ setIsSearchLoader, cartCount }) => {
 
             }
             initialLoading();
-            // console.log("cartData2.........................................................................");
         }
     }, [cartData, cartCount, isFocused])
 
@@ -212,8 +212,7 @@ const SearchScreen = ({ setIsSearchLoader, cartCount }) => {
                     Platform.select({ ios: { zIndex: 1 } }),
                 ]}>
                     <TouchableOpacity style={{ alignItems: 'center', flexDirection: "row", borderWidth: 0, justifyContent: "center", borderColor: COLORS.white, borderRadius: 10 }} onPress={() => handlecart()}>
-                        <FontAwesome name="shopping-cart" size={RFValue(35)} color="white" style={{ flexDirection: "column" }} />
-                        {/* {console.log("hi,",keyToken)} */}
+                        <MCIcon name="cart" size={RFValue(35)} color="white" style={{ flexDirection: "column" }} />
                         {(Data && keyToken) ? <View style={styles.circle}>
                             <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.robotomedium, }}>{(Data?.Courses)?.length}</Text>
                         </View> : null}
@@ -264,16 +263,16 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     circle: {
-        flexDirection: "column", borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+        flexDirection: "column",
+        borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
         width: Dimensions.get('window').width * 0.05,
         height: Dimensions.get('window').width * 0.05,
         backgroundColor: "red",
         justifyContent: 'center',
         alignItems: 'center',
-        // marginLeft:"8%"
         position: "absolute",
-        bottom: "54%",
-        left: "41%",
+        bottom: "56%",
+        left: "37%",
         borderWidth: 1,
         borderColor: "red"
     }

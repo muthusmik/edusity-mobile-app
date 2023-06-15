@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
     View,
     Text,
-    TextInput,
     StyleSheet,
     TouchableOpacity,
     ToastAndroid,
@@ -16,17 +15,20 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useNavigation } from '@react-navigation/native';
 import { metrices } from '../../../constants/metrices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TextInput } from 'react-native-paper';
 
 const ProfileInput = (props) => {
     const { placeholder, value, settedValue, setError } = props;
     return (
-        <View style={{ borderBottomWidth: 1, width: "100%", justifyContent: "center" }}>
+        <View style={{ width: "100%", borderRadius: 20, justifyContent: "center" }}>
             <TextInput
+                theme={{ fonts: { regular: { fontFamily: 'Roboto-Regular' } }, colors: { primary: COLORS.primary, background: COLORS.white, text: COLORS.black, placeholder: COLORS.gray } }}
+                mode='outlined'
+                label={"Email"}
                 placeholder={placeholder}
-                style={{ ...FONTS.robotoregular, color: COLORS.black }}
+                style={{ width: "100%", height: metrices(5.5) }}
                 value={value}
                 placeholderTextColor={COLORS.gray}
-                selectionColor={COLORS.blue}
                 onChangeText={e => { settedValue(e), setError("") }} />
         </View>
     )
@@ -80,7 +82,7 @@ const Security = () => {
     }
 
     return (
-        <>
+        <View style={{ height: metrices(56.5), backgroundColor: COLORS.white }}>
             <View style={{ margin: "3%" }}>
                 <Text style={{ color: COLORS.primary, fontSize: RFValue(14), ...FONTS.robotomedium }}>Update Password</Text>
                 <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular }}>Update or Change your password for your account</Text>
@@ -89,7 +91,7 @@ const Security = () => {
             <View style={{ margin: "3%" }}>
                 <View style={{ width: "100%" }}>
                     <ProfileInput placeholder="Enter your Email" value={updatePassword} settedValue={setUpdatePassword} setError={setError} />
-                    <View style={{ height: metrices(5) }}>
+                    <View style={{ height: metrices(5), paddingLeft: 10 }}>
                         {error ? <Text style={styles.errorText}>{error}</Text> : null}
                     </View>
                 </View>
@@ -97,7 +99,7 @@ const Security = () => {
             <TouchableOpacity style={styles.sendButton} activeOpacity={0.7} onPressIn={() => { handleUpdate(), dismissKeyboard() }}>
                 <Text style={{ color: COLORS.white, ...FONTS.robotoregular, textAlign: "center" }}>Send Email</Text>
             </TouchableOpacity>
-        </>
+        </View>
     );
 }
 

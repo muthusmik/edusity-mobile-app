@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     textBoxContainer: {
-        width: "80%"
+        width: "84%"
     },
     errorContainer: {
         height: metrices(2),

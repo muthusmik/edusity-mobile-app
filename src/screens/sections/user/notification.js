@@ -2,17 +2,14 @@ import React from 'react';
 import {
   View,
   Text,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity, Image,
+  StyleSheet
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Colors } from 'react-native-paper';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { icons, COLORS, FONTS } from '../../../constants';
-import { Avatar } from '@rneui/themed';
 import { useState } from 'react';
+import { metrices } from '../../../constants/metrices';
+
 const Notifications = () => {
   const CheckBoxes = (props) => {
     const [isSelected, setSelection] = useState(false);
@@ -30,7 +27,7 @@ const Notifications = () => {
   }
 
   return (
-    <>
+    <View style={{ height: metrices(56.5), backgroundColor: COLORS.white }}>
       <View style={{ margin: "3%" }}>
         <Text style={{ color: COLORS.primary, fontSize: RFValue(14), ...FONTS.robotomedium }}>Notifications Center</Text>
         <Text style={{ color: COLORS.black, fontSize: RFValue(10), ...FONTS.robotoregular }}>Choose what notifications you receive from Edusity</Text>
@@ -39,13 +36,12 @@ const Notifications = () => {
       <CheckBoxes label="Communication and announcements from the Instructors for the courses you are enrolled in." />
       <CheckBoxes label="Please DO NOT send me any communication and / or promotions.
                                 you will still continue to receive only essential communication , links to download purchase receipts etc." />
-    </>
-
-
-
+    </View>
   );
 }
+
 export default Notifications;
+
 const styles = StyleSheet.create({
   iconStyle: {
     fontSize: 40,
@@ -54,7 +50,7 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 10,
     marginHorizontal: "2%",
     width: "90%"
   },

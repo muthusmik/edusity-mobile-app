@@ -219,7 +219,7 @@ const ViewCourse = () => {
                                         <MCIcon name="share-variant" size={RFValue(18)} color={COLORS.white} />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={{ margin: "0%" }} onPress={() => handleNavigation("Go to Cart")}>
-                                        <MCIcon name="cart-variant" size={RFValue(20)} color={COLORS.white} />
+                                        <MCIcon name="cart" size={RFValue(20)} color={COLORS.white} />
                                     </TouchableOpacity>
                                 </View>
                             </View>

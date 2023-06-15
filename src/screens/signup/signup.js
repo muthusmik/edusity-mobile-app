@@ -82,7 +82,7 @@ const SignUp = ({ navigation }) => {
                                 errorMessage={errorMessage}
                                 setErrorMessage={setErrorMessage}
                             />
-                            <Pressable onPress={() => navigation.navigate("OtpPage")}>
+                            <Pressable onPress={() => navigation.navigate("Login")}>
                                 <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Already have an account?
                                     <Text style={{ color: COLORS.edusity, ...FONTS.robotoregular }}> Sign In</Text></Text>
                             </Pressable>

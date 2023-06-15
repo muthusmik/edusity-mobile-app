@@ -107,7 +107,6 @@ const Search = ({ navigation }) => {
             <StatusBar
                 animated={true}
                 backgroundColor={COLORS.primary}
-                style={{ marginBottom: "2%" }}
             />
             {Platform.OS == 'ios' ? <View style={{ backgroundColor: COLORS.primary, height: "1%" }} /> : null}
             {

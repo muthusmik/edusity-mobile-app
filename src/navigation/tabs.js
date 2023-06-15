@@ -56,11 +56,11 @@ const Tabs = () => {
                     switch (route.name) {
                         case "Dashboard":
                             return (
-                                <Icon name="dashcube" size={30} color={tintColor} />
+                                <MCIcon name="view-dashboard" size={34} color={tintColor} />
                             );
                         case "Search":
                             return (
-                                <BrandIcons name="search-circle-sharp" size={40} color={tintColor} />
+                                <BrandIcons name="home" size={32} color={tintColor} />
                             );
                         case "MyCourse":
                             return (
@@ -68,7 +68,7 @@ const Tabs = () => {
                             );
                         case "Profile":
                             return (
-                                <EntypoIcons name="user" size={30} color={tintColor} />
+                                <EntypoIcons name="user" size={32} color={tintColor} />
                             );
 
                     }
