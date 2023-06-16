@@ -16,7 +16,7 @@ import { Colors } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const NoCourse = ({data}) => {
+const NoCourse = ({ data }) => {
     const navigation = useNavigation();
 
     return (
@@ -27,26 +27,27 @@ const NoCourse = ({data}) => {
                 </TouchableOpacity>
                 <Text style={{ color: COLORS.white, marginLeft: "2%", fontSize: RFValue(18), ...FONTS.robotoregular }}>Cart</Text>
             </View> */}
-            <KeyboardAvoidingView style={styles.mainContainer}>
-                <Image source={images.noCourseGif} resizeMode="cover" style={{ height: 200, width: 200 }} />
-                <View style={{ width: "80%", margin: "5%", alignItems:"center" }}>
-                    <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium,textAlign:"center" }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Course List is currently empty!</Text>
-                    <Pressable onPress={() => navigation.navigate("Home",{screen:'Search'})}>
-                        <Text style={{ color: COLORS.primary, fontSize: RFValue(10), ...FONTS.robotoregular }}>Here's where you might find something you need</Text>
+            <View style={styles.mainContainer}>
+                <View style={{ height: "40%", width: "60%" }}>
+                    <Image source={images.noCourseGif} resizeMode="cover" style={{ height: "100%", width: "100%" }} />
+                </View>
+                <View style={{ width: "80%", margin: "5%", alignItems: "center" }}>
+                    <Text style={{ color: COLORS.black, fontSize: RFValue(16), ...FONTS.robotomedium, textAlign: "center" }}>Hey<Text style={{ color: COLORS.primary }}> {data}</Text>, Your Course List is currently empty!</Text>
+                    <Pressable onPress={() => navigation.navigate("Home", { screen: 'Search' })}>
+                        <Text style={{ color: COLORS.primary, fontSize: RFValue(10), ...FONTS.robotoregular, textDecorationLine: "underline" }}>Here's where you might find something you need</Text>
                     </Pressable>
                 </View>
-            </KeyboardAvoidingView>
+            </View>
         </>
     );
 }
 const styles = StyleSheet.create({
     mainContainer: {
         height: "100%",
-        width: "100%",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor:"white",
+        backgroundColor: "white",
     }
-    
+
 });
 export default NoCourse;

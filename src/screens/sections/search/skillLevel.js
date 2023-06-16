@@ -21,9 +21,7 @@ import { Divider } from '@rneui/themed';
 export const SkillLevel = (props) => {
 
     const { selectedLevel, setSelectedLevel } = props;
-    console.log("Selected level inside the skill level");
     const handleSelect = (level) => {
-        console.log("Selected level inside the skill level...........", level);
         if (selectedLevel == level) {
             setSelectedLevel(null);
         }
@@ -35,8 +33,8 @@ export const SkillLevel = (props) => {
     const SkillQuota = ({ icon, level }) => {
         return (
             <TouchableOpacity
-                style={{ ...styles.mapContent, ...{ backgroundColor: (selectedLevel == level) ? COLORS.primary : COLORS.white, } }}
-                onPressIn={() => handleSelect(level)}>
+                style={{ ...styles.mapContent, ...{ backgroundColor: (selectedLevel == level) ? COLORS.primary : COLORS.white } }}
+                onPress={() => handleSelect(level)}>
                 <View style={{ justifyContent: "center", flexDirection: "column", backgroundColor: (selectedLevel == level) ? COLORS.primary : COLORS.white, width: "30%", }}>
                     <Image source={icon} resizeMode="cover" style={{ height: 30, width: 30 }} />
                 </View>
@@ -49,7 +47,7 @@ export const SkillLevel = (props) => {
 
     return (
         <>
-            <View style={{ flexDirection: "row", width: "94%", marginHorizontal: "2%", marginVertical: "2%", justifyContent: "space-between" }}>
+            <View style={styles.rowStyle}>
                 <View style={{ flexDirection: "column", width: "45%" }}>
                     <SkillQuota icon={icons.begginner} level={"Beginner"} />
                 </View>
@@ -57,7 +55,7 @@ export const SkillLevel = (props) => {
                     <SkillQuota icon={icons.intermediate} level={"Intermediate"} />
                 </View>
             </View>
-            <View style={{ flexDirection: "row", width: "94%", marginHorizontal: "2%", marginVertical: "2%", justifyContent: "space-between" }}>
+            <View style={styles.rowStyle}>
                 <View style={{ flexDirection: "column", width: "45%" }}>
                     <SkillQuota icon={icons.pro} level={"Pro"} />
                 </View>
@@ -65,7 +63,7 @@ export const SkillLevel = (props) => {
                     <SkillQuota icon={icons.expert} level={"Expert"} />
                 </View>
             </View>
-            <View style={{ flexDirection: "row", width: "94%", marginHorizontal: "2%", marginVertical: "2%", justifyContent: "space-between" }}>
+            <View style={styles.rowStyle}>
                 <View style={{ flexDirection: "column", width: "45%" }}>
                     <SkillQuota icon={icons.high} level={"High"} />
                 </View>
@@ -89,5 +87,11 @@ const styles = StyleSheet.create({
         // justifyContent:"space-between",
         padding: "10%"
     },
-
+    rowStyle: {
+        flexDirection: "row",
+        width: "94%",
+        marginHorizontal: "2%",
+        marginVertical: "2%",
+        justifyContent: "space-between"
+    }
 })

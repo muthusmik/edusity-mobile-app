@@ -530,10 +530,10 @@ const CourseList = ({ allCourses, cartData }) => {
                         />
                     </> :
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: COLORS.white }}>
-                        <View style={{ width: "60%", height: "30%" }}>
+                        <View style={{ width: "60%", height: "40%" }}>
                             <Image source={images.noCourseGif} resizeMode="contain" style={{ height: "100%", width: "100%" }} />
                         </View>
-                        <Text style={styles.emptyTextStyle}>We regret to inform you that there are currently no courses available matching your search.</Text>
+                        <Text style={styles.emptyTextStyle}>We regret to inform you that there are currently no courses available.</Text>
                     </View>
                 }
 

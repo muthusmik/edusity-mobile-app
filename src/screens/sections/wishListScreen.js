@@ -159,57 +159,57 @@ const WishListScreen = () => {
                 />
                 {addLoader ? <OverlayLoader /> : null}
                 <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
-                    <>
-                        <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>No of WishLists: {Data.length}</Text>
-                    </>
-                    {(Data.length >= 1) ?
-                        <FlatList
-                            data={Data}
-                            // ref={ScrollRef}
-                            // onScroll={event => {
-                            //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
-                            // }}
-                            scrollEnabled={true}
-                            keyExtractor={item => item.ID}
-                            // extraData={flalistRefresh}
-                            overScrollMode={'never'}
-                            renderItem={({ item }) => (
-                                <View style={styles.flatListContainer}>
-                                    <View style={{ width: "100%", flexDirection: "row", padding: 10 }}>
-                                        <View style={styles.coulmnImage}>
-                                            <Image
-                                                source={{ uri: "https://cdn.edusity.com/" + item.fileName }}
-                                                resizeMode="contain"
-                                                style={{
-                                                    width: "100%",
-                                                    height: 120,
-                                                    borderRadius: 8,
-                                                }}
-                                            />
-                                        </View>
-                                        <View style={styles.columnDetails}>
-                                            <Text style={{ color: COLORS.primary, ...FONTS.robotomedium, fontSize: 16 }}>{item.CourseName}</Text>
-                                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular, fontSize: 14 }}>{item.Category}</Text>
-                                            <View style={styles.buttonContainer}>
-                                                {!(cartArray.includes(item.ID)) ?
-                                                    <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.primary }]} onPressIn={() => { addToCart(item.ID) }}>
-                                                        <Text style={styles.buttonText}>Add to Cart</Text>
-                                                    </TouchableOpacity> :
-                                                    <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.gray }]} onPressIn={() => { navigation.navigate("Cart") }}>
-                                                        <Text style={styles.buttonText}>View Cart</Text>
+                    {(Data && Data?.length >= 1) ?
+                        <>
+                            <Text style={{ color: COLORS.primary, marginHorizontal: "5%", marginVertical: "2%", ...FONTS.robotoregular }}>No of WishLists: {Data?.length}</Text>
+                            <FlatList
+                                data={Data}
+                                // ref={ScrollRef}
+                                // onScroll={event => {
+                                //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
+                                // }}
+                                scrollEnabled={true}
+                                keyExtractor={item => item.ID}
+                                // extraData={flalistRefresh}
+                                overScrollMode={'never'}
+                                renderItem={({ item }) => (
+                                    <View style={styles.flatListContainer}>
+                                        <View style={{ width: "100%", flexDirection: "row", padding: 10 }}>
+                                            <View style={styles.coulmnImage}>
+                                                <Image
+                                                    source={{ uri: "https://cdn.edusity.com/" + item.fileName }}
+                                                    resizeMode="contain"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: 120,
+                                                        borderRadius: 8,
+                                                    }}
+                                                />
+                                            </View>
+                                            <View style={styles.columnDetails}>
+                                                <Text style={{ color: COLORS.primary, ...FONTS.robotomedium, fontSize: 16 }}>{item.CourseName}</Text>
+                                                <Text style={{ color: COLORS.black, ...FONTS.robotoregular, fontSize: 14 }}>{item.Category}</Text>
+                                                <View style={styles.buttonContainer}>
+                                                    {!(cartArray.includes(item.ID)) ?
+                                                        <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.primary }]} onPressIn={() => { addToCart(item.ID) }}>
+                                                            <Text style={styles.buttonText}>Add to Cart</Text>
+                                                        </TouchableOpacity> :
+                                                        <TouchableOpacity style={[styles.button, { backgroundColor: COLORS.gray }]} onPressIn={() => { navigation.navigate("Cart") }}>
+                                                            <Text style={styles.buttonText}>View Cart</Text>
+                                                        </TouchableOpacity>
+                                                    }
+                                                    <TouchableOpacity style={[styles.button, { backgroundColor: "red" }]} onPressIn={() => { removeFromList(item.ID) }}>
+                                                        <Text style={styles.buttonText}>Remove</Text>
                                                     </TouchableOpacity>
-                                                }
-                                                <TouchableOpacity style={[styles.button, { backgroundColor: "red" }]} onPressIn={() => { removeFromList(item.ID) }}>
-                                                    <Text style={styles.buttonText}>Remove</Text>
-                                                </TouchableOpacity>
+                                                </View>
                                             </View>
                                         </View>
                                     </View>
-                                </View>
-                            )}
-                        // onEndReachedThreshold={0.2}
-                        // onEndReached={refresh}
-                        /> :
+                                )}
+                            // onEndReachedThreshold={0.2}
+                            // onEndReached={refresh}
+                            />
+                        </> :
                         <View>
                             <NoWishList data={username} />
                         </View>

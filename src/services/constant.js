@@ -49,3 +49,5 @@ export const studentStatisticsUrl = baseUrl + "student/statistics";
 export const upcommingWebniarsUrl = baseUrl + "webinar/upcomming";
 // https://dev-login.edusity.com/test/list
 export const testListUrl = baseUrl + "test/list";
+//https://dev-payment.edusity.com/forum
+export const forumUrl = baseUrl_payment + "forum";

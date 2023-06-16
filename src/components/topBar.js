@@ -12,7 +12,7 @@ import { COLORS, FONTS } from '../constants';
 import { RFValue } from "react-native-responsive-fontsize";
 
 const Top_Bar = ({ backPage, stylesFromPage, title }) => {
-    console.log("Back page...........", backPage, stylesFromPage, title)
+    // console.log("Back page...........", backPage, stylesFromPage, title)
     const styleContent = stylesFromPage ? stylesFromPage : ""
     const navigation = useNavigation();
     const handleNavigation = () => {

@@ -21,7 +21,6 @@ import { cartHandler } from '../../../store/redux/cart';
 import { images, icons, COLORS, FONTS, SIZES } from '../../../constants';
 import StudentDashboard from './studentDashboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SelectDropdown from 'react-native-select-dropdown';
 import { useIsFocused } from "@react-navigation/core";
 import Toast from 'react-native-simple-toast';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -40,8 +39,6 @@ const Dashboard = () => {
     const navigation = useNavigation();
     // const logiParam = route.params;
     const [loader, setLoader] = useState(false);
-    const [userName, setUserName] = useState();
-    const [drop, setDrop] = useState(false);
     const LoginData = useSelector(state => state.userLoginHandle.data)
     const isFocused = useIsFocused();
     const [network, setNetwork] = useState('')
@@ -125,7 +122,7 @@ const Dashboard = () => {
             let testResults = await getTestList(token).then(data => {
                 setTestResults(data?.data)
                 setLoader(false);
-            }).catch((error) => { console.log("Catch error in UpcomingWebniars.........", error) })
+            }).catch((error) => { console.log("Catch error in testResults.........", error) })
         } else {
             setLoader(false);
             navigation.navigate('Login', "Dashboard");
@@ -202,8 +199,19 @@ const Dashboard = () => {
                                     {studentStatistics && <View style={{ height: metrices(48) }}><StudentDashboard username={LoginData?.data} studentStatistics={studentStatistics?.data} setDropdownVisible={setDropdownVisible} /></View>}
                                     {/* {courseAnnouncementDetails && <View style={{ height: SIZES.height - 610 }}><CourseAnnouncementDashboard announcement={courseAnnouncementDetails} setDropdownVisible={setDropdownVisible} /></View>} */}
                                     {upcomingWebniarDetails && <View style={{ height: metrices(20) }}><UpcomingWebniarDashboard upcomingWebinar={upcomingWebniarDetails} /></View>}
+                                    {testResults && testResults?.data && Array.isArray(testResults?.data) && testResults?.data.length == 0 ?
+                                        <View style={styles.examResults}>
+                                            <TouchableOpacity style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }} onPress={() => navigation.navigate("TestResult")}>
+                                                <Text style={{ fontSize: 16, ...FONTS.robotomedium, color: COLORS.black }}>For Exam results</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        : null
+                                    }
                                     <TouchableOpacity onPress={() => navigation.navigate("TakeNotesScreen")}>
-                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular }}>Take notes</Text>
+                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Take notes</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => navigation.navigate("ForumScreen")}>
+                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Forum Screen</Text>
                                     </TouchableOpacity>
                                     <View style={{ padding: "8%" }} />
                                 </Pressable>
@@ -249,6 +257,21 @@ const styles = StyleSheet.create({
         left: metrices(1.3),
         borderWidth: 1,
         borderColor: "red"
+    },
+    examResults: {
+        width: "91%",
+        alignSelf: "center",
+        height: metrices(6),
+        backgroundColor: "white",
+        borderRadius: 10,
+        alignItems: "center",
+        shadowOffset: { width: -2, height: 4 },
+        shadowColor: COLORS.primary,
+        shadowOpacity: 5,
+        shadowRadius: 3,
+        elevation: 5,
+        justifyContent: "center",
+        marginTop: 10
     }
 });
 

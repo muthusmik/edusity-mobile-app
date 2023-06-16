@@ -4,7 +4,6 @@ import {
     Text,
     StatusBar, TouchableOpacity, FlatList, Image, StyleSheet, BackHandler
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import LoaderKit from 'react-native-loader-kit'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,8 +18,7 @@ import WebView from 'react-native-render-html';
 import { useIsFocused } from "@react-navigation/core";
 import NoCourse from '../Exceptions/noPurchasedCourse';
 import NetInfo from '@react-native-community/netinfo';
-import FeatherIcon from "react-native-vector-icons/Feather"
-import { ScrollView } from 'react-native-gesture-handler';
+import FeatherIcon from "react-native-vector-icons/Feather";
 
 const MyCourse = () => {
     const dispatch = useDispatch();
@@ -110,7 +108,6 @@ const MyCourse = () => {
         }
     }
 
-
     const handleViewNavigation = (item) => {
         console.log(item, "ID")
         setLoader(true)
@@ -133,75 +130,75 @@ const MyCourse = () => {
                     animated={true}
                     backgroundColor={COLORS.primary}
                 />
-                <View style={{ height: "100%", backgroundColor: COLORS.lightGray }}>
-                    <View style={{ flexDirection: "row", padding: "2%", alignItems: "center", justifyContent: "center" }}>
-                        <View style={{ width: "70%", flexDirection: 'column' }}>
-                            <Text style={{ color: COLORS.primary, marginHorizontal: "5%", ...FONTS.robotoregular }}>No of Courses: {CoursesCount}</Text>
-                        </View>
-
-                        <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.primary, padding: 6, borderRadius: 5, alignItems: "center", justifyContent: "space-between" }} onPress={() => navigation.navigate("MyWebinars")}>
-                            <FeatherIcon name="play-circle" size={18} color={"white"} />
-                            <Text style={{ color: COLORS.white, ...FONTS.robotoregular }}> My Webinars</Text>
-                        </TouchableOpacity>
-
-                    </View>
+                <View style={{ height: "100%", width: "100%", backgroundColor: COLORS.lightGray }}>
                     {(CoursesCount > 0) ?
-                        <FlatList
-                            data={Data}
-                            // ref={ScrollRef}
-                            // onScroll={event => {
-                            //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
-                            // }}
-                            scrollEnabled={true}
-                            keyExtractor={item => item.ID}
-                            extraData={flalistRefresh}
-                            overScrollMode={'never'}
-                            renderItem={({ item }) => (
-                                <View style={{ backgroundColor: COLORS.white, marginHorizontal: 10, marginBottom: 10, borderRadius: 10 }}>
-                                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
-                                        <View style={styles.coulmnImage}>
-                                            {(item.imageFiles.length > 0) ?
-                                                <Image
-                                                    source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
-                                                    resizeMode="contain"
-                                                    style={styles.flalistImages}
-                                                /> : <Image
-                                                    source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
-                                                    resizeMode="contain"
-                                                    style={styles.flalistImages}
-                                                />}
+                        <>
+                            <View style={{ flexDirection: "row", padding: "2%", alignItems: "center", justifyContent: "center" }}>
+                                <View style={{ width: "70%", flexDirection: 'column' }}>
+                                    <Text style={{ color: COLORS.primary, marginHorizontal: "5%", ...FONTS.robotoregular }}>No of Courses: {CoursesCount}</Text>
+                                </View>
+
+                                <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.primary, padding: 6, borderRadius: 5, alignItems: "center", justifyContent: "space-between" }} onPress={() => navigation.navigate("MyWebinars")}>
+                                    <FeatherIcon name="play-circle" size={18} color={"white"} />
+                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular }}> My Webinars</Text>
+                                </TouchableOpacity>
+
+                            </View>
+                            <FlatList
+                                data={Data}
+                                // ref={ScrollRef}
+                                // onScroll={event => {
+                                //     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
+                                // }}
+                                scrollEnabled={true}
+                                keyExtractor={item => item.ID}
+                                extraData={flalistRefresh}
+                                overScrollMode={'never'}
+                                renderItem={({ item }) => (
+                                    <View style={{ backgroundColor: COLORS.white, width: "95%", marginBottom: 10, borderRadius: 10, alignSelf: "center" }}>
+                                        <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
+                                            <View style={styles.coulmnImage}>
+                                                {(item.imageFiles.length > 0) ?
+                                                    <Image
+                                                        source={{ uri: "https://cdn.edusity.com/" + item.imageFiles[0].fileName }}
+                                                        resizeMode="contain"
+                                                        style={styles.flalistImages}
+                                                    /> : <Image
+                                                        source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
+                                                        resizeMode="contain"
+                                                        style={styles.flalistImages}
+                                                    />}
+                                            </View>
+                                            <View style={styles.coulmnImage}>
+                                                <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
+                                                <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
+                                                <TouchableOpacity style={styles.startNowButton}
+                                                    onPressIn={() => { handleViewNavigation(item.ID) }}>
+                                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Start Now</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
-                                        <View style={styles.coulmnImage}>
-                                            <Text style={{ color: COLORS.primary, ...FONTS.robotoregular }}>{item.CourseName}</Text>
-                                            <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>{item.Category}</Text>
-                                            <TouchableOpacity style={styles.startNowButton}
-                                                onPressIn={() => { handleViewNavigation(item.ID) }}>
-                                                <Text style={{ color: COLORS.white, ...FONTS.robotoregular, fontSize: RFValue(10) }}>Start Now</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    <View style={{ paddingHorizontal: "2%" }}>
-                                        <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(14) }}>Description:</Text>
-                                        <WebView
-                                            source={{ html: item.Description }}
-                                            contentWidth="100%"
-                                            baseStyle={{ fontSize: 14, fontFamily: "Roboto-Regular", color: COLORS.black }}
-                                            renderersProps={{ p: { style: { marginLeft: 0 } } }}
-                                        />
-                                        {/* <WebView style={{ height: 200, width: "100%", flex: 1 }}
+                                        <View style={{ paddingHorizontal: "2%" }}>
+                                            <Text style={{ color: COLORS.black, ...FONTS.robotomedium, fontSize: RFValue(14) }}>Description:</Text>
+                                            <WebView
+                                                source={{ html: item.Description }}
+                                                contentWidth="100%"
+                                                baseStyle={{ fontSize: 14, fontFamily: "Roboto-Regular", color: COLORS.black }}
+                                                renderersProps={{ p: { style: { marginLeft: 0 } } }}
+                                            />
+                                            {/* <WebView style={{ height: 200, width: "100%", flex: 1 }}
                                             scalesPageToFit={false}
                                             source={{ html: `<style>h4{font-size:30px}p{font-size:40px;}</style>${item.Description}` }}
                                         /> */}
+                                        </View>
                                     </View>
-                                </View>
-                            )}
-                            onEndReachedThreshold={0.2}
-                            onEndReached={refresh}
-                        /> :
+                                )}
+                                onEndReachedThreshold={0.2}
+                                onEndReached={refresh}
+                            />
+                        </> :
                         <>
-                            <View>
-                                <NoCourse data={username} />
-                            </View>
+                            <NoCourse data={username} />
                         </>
                     }
                     {(!refreshList) ?

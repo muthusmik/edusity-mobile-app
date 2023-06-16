@@ -1,5 +1,5 @@
 import axios from "axios";
-import { webinarListUrl, generateWebinarTokenUrl, courseAnnouncementUrl, testListUrl, upcommingWebniarsUrl, studentStatisticsUrl, baseUrl } from "./constant";
+import { webinarListUrl, generateWebinarTokenUrl, courseAnnouncementUrl, testListUrl, upcommingWebniarsUrl, studentStatisticsUrl, baseUrl, forumUrl } from "./constant";
 import moment from "moment/moment";
 
 export const getWebinars = async (Token, page) => {
@@ -78,3 +78,12 @@ export const getTestList = async (Token) => {
       console.log("Catch inside the testListUrl.......", error);
     })
 }
+
+export const getForumData = async (Token) => {
+  return await axios.get(`${forumUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
+    .then(response => {
+      return response.data
+    }).catch((error) => {
+      console.log("Catch inside the testListUrl.......", error);
+    })
+} 

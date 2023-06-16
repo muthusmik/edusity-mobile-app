@@ -25,6 +25,8 @@ import MyWebinars from "./screens/myWebinars";
 // import GeolocationFetcher from "./screens/geoLocation";
 import VideoCall from "./screens/sections/jitsiMeet";
 import TakeNotesScreen from "./screens/sections/dashboard/notesTaking";
+import TestResult from "./screens/sections/dashboard/testResult";
+import ForumScreen from "./screens/sections/dashboard/forumPage";
 
 const theme = {
     ...DefaultTheme,
@@ -47,7 +49,13 @@ const App = () => {
             <Stack.Navigator
                 initialRouteName={'Splash'}
                 screenOptions={{
-                    cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
+                    cardStyle: { backgroundColor: 'white' },
+                    cardStyleInterpolator: ({ current }) => ({
+                        cardStyle: {
+                            opacity: current.progress,
+                        },
+                    }),
+                    // cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid
                 }}
             >
                 {/* Screens */}
@@ -129,6 +137,18 @@ const App = () => {
                 < Stack.Screen
                     name="TakeNotesScreen"
                     component={TakeNotesScreen}
+                    options={{ headerShown: false }}
+                />
+
+                < Stack.Screen
+                    name="TestResult"
+                    component={TestResult}
+                    options={{ headerShown: false }}
+                />
+
+                < Stack.Screen
+                    name="ForumScreen"
+                    component={ForumScreen}
                     options={{ headerShown: false }}
                 />
 

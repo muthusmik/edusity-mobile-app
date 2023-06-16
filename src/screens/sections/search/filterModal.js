@@ -18,7 +18,6 @@ import { RFValue } from "react-native-responsive-fontsize";
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SkillLevel } from "./skillLevel";
 import { CategoryFilter } from "./categoryFilter";
-import { Divider } from '@rneui/themed';
 
 export const PopUpFilterModal = forwardRef((props, ref) => {
 
@@ -64,29 +63,24 @@ export const PopUpFilterModal = forwardRef((props, ref) => {
                                 <MCIcon name="close-circle" size={30} color={COLORS.white} />
                             </Pressable>
                         </View>
-                        <Divider />
-                        <ScrollView style={{ height: "80%", backgroundColor: COLORS.lightGray }}>
-                            <View style={{ width: "90%", justifyContent: "space-around", left: "5%", marginVertical: "5%" }}>
+                        <ScrollView style={{ height: "82%", backgroundColor: COLORS.lightGray }}>
+                            <View style={styles.containerStyle}>
                                 <Text style={styles.filtertypeHeader}>Skill Level</Text>
                                 <SkillLevel selectedLevel={selectedLevel} setSelectedLevel={setSelectedLevel} />
                             </View>
-                            <View style={{ width: "90%", justifyContent: "space-around", left: "5%", }}>
+                            <View style={styles.containerStyle}>
                                 <Text style={styles.filtertypeHeader}>Category</Text>
                                 <CategoryFilter selectedCtaegory={selectedCategory} setSelectedCategory={setSelectedCategory} />
                             </View>
                         </ScrollView>
-                        <View style={{ height: "10%", }}>
+                        <View style={{ height: "10%" }}>
                             <View style={styles.bottom}>
-                                < Pressable onPress={() => { setShowModelComment(false), setanimateModal(false) }} style={styles.bottomCancel}>
-                                    <View >
-                                        <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Cancel</Text>
-                                    </View>
-                                </Pressable>
-                                <Pressable style={styles.bottomProceed} onPress={() => handleProceed()}>
-                                    <View >
-                                        <Text style={{ color: COLORS.white, ...FONTS.robotoregular }}>OK</Text>
-                                    </View>
-                                </Pressable>
+                                <TouchableOpacity onPress={() => { setShowModelComment(false), setanimateModal(false), setSelectedLevel(null), setSelectedCategory(null) }} style={styles.bottomCancel}>
+                                    <Text style={{ color: COLORS.black, ...FONTS.robotoregular }}>Cancel</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.bottomProceed} onPress={() => handleProceed()}>
+                                    <Text style={{ color: COLORS.white, ...FONTS.robotoregular }}>OK</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -96,6 +90,8 @@ export const PopUpFilterModal = forwardRef((props, ref) => {
                     setShowModelComment(false);
                     setanimateModal(false);
                     setSubmission(false);
+                    setSelectedLevel(null);
+                    setSelectedCategory(null)
                 }}
             />
         </View>
@@ -203,5 +199,10 @@ const styles = StyleSheet.create({
         width: "30%",
         padding: "1%",
         textAlign: "center"
+    },
+    containerStyle: {
+        width: "90%",
+        alignSelf: "center",
+        marginTop: 10
     }
 })

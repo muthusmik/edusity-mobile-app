@@ -253,7 +253,7 @@ const Cart = () => {
         if (Geolocation.countryCode == "IN") {
             const session = Data[0].SessionID;
             setDataSession(session);
-            console.log("session", session, Geolocation)
+            console.log("session and Geolocation.................", session, Geolocation)
             let pricing = Data[0].TotalAmount * 100
             // let pricing = 1 * 100
             var options = {
@@ -273,7 +273,6 @@ const Cart = () => {
 
             RazorpayCheckout.open(options)
                 .then(async (result) => {
-                    // alert(`Success: ${result.razorpay_payment_id}`);
                     let Token = await AsyncStorage.getItem("loginToken");
                     var sessionId = { "sessionId": result.razorpay_payment_id }
                     const response = await axios.post(checkoutUrl + "?country=IN", sessionId, {
@@ -287,19 +286,17 @@ const Cart = () => {
                         Toast.show("something went wrong in your payment process, so please try again later", Toast.LONG);
                         console.log("err in Razorpay............", err)
                     });
-                    // console.log(sessionId,"im th echeckout token.................", Token);
-                    // console.log("im the response of checkout data.......", response);
                 })
                 .catch(error => {
-                    // Toast.show(error, "RazorPay Rejection", Toast.LONG);
-                    alert(`Error: ${error.description}`);
+                    console.log("im the checkout error.................", error);
+                    Alert.alert(error.error.code, error.error.description);
                     navigation.goBack();
-                    // console.log("im th echeckout error.................", error);
                 });
         }
         else {
             const { error } = await presentPaymentSheet();
             if (error) {
+                console.log("Error...................", error)
                 Alert.alert(`Error code: ${error.code}`, error.message);
                 console.log("session", Data[0].SessionID);
             } else {
@@ -313,7 +310,6 @@ const Cart = () => {
                     }
                 }).then(result => {
                     console.log(result, "result stripe", result);
-
                     navigation.navigate('Checkout')
                 }).catch(err => {
                     console.log("err in removal", err)
@@ -403,7 +399,7 @@ const Cart = () => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                     </TouchableOpacity>
-                    <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, marginLeft: 14 }}>Cart</Text>
+                    <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, width: "80%", textAlign: "center" }}>Cart</Text>
                 </View>
                 {addLoader ? <OverlayLoader /> : null}
                 {(!loader) ?
@@ -513,7 +509,7 @@ const styles = StyleSheet.create({
         borderBottomStartRadius: 30,
         borderBottomEndRadius: 30,
         alignItems: "center",
-        paddingHorizontal: 18
+        paddingHorizontal: 20
     },
     flatlistContainerstyle: {
         color: COLORS.black,

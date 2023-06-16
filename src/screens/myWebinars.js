@@ -242,20 +242,18 @@ const MyWebinars = ({ data }) => {
         }
     }
     return (
-        (!loader) ?
-            <View style={{ height: "100%" }}>
-                {platformUsing === 'ios' ? <View style={{ height: "5%" }} /> : null}
-                <View style={{ height: 60, backgroundColor: COLORS.primary, flexDirection: "row", alignItems: "center" }} >
-                    {/* <View style={{ flexDirection: "column", width: "30%", marginHorizontal: "2%", marginVertical: "3%", }}> */}
-                    <TouchableOpacity style={{ marginLeft: 20, borderWidth: 0 }} onPress={() => navigation.goBack()}>
-                        <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
-                    </TouchableOpacity>
-                    {/* </View> */}
-                    <View style={{ flexDirection: "column", width: "75%", alignItems: "center" }}>
-                        <Text style={{ fontSize: RFValue(20), color: COLORS.white, ...FONTS.robotoregular }}>My Webinars</Text>
-                    </View>
+        <View style={{ height: "100%" }}>
+            {platformUsing === 'ios' ? <View style={{ height: "5%" }} /> : null}
+            <View style={styles.topBar} >
+                <TouchableOpacity style={{ marginLeft: 20, borderWidth: 0 }} onPress={() => navigation.goBack()}>
+                    <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
+                </TouchableOpacity>
+                <View style={{ flexDirection: "column", width: "75%", alignItems: "center" }}>
+                    <Text style={{ fontSize: RFValue(20), color: COLORS.white, ...FONTS.robotoregular }}>My Webinars</Text>
                 </View>
-                {(Data?.length > 0) ?
+            </View>
+            {(!loader) ?
+                (Data && Data?.length > 0) ?
                     <View style={{ paddingTop: 6, paddingHorizontal: 10, height: height - 60 }}>
                         <Text style={{ fontSize: RFValue(14), color: COLORS.black, ...FONTS.robotoregular, marginBottom: 6 }}>Upcoming Webinars: <Text style={{ color: COLORS.primary }}>{Data.length}</Text></Text>
                         <FlatList
@@ -380,22 +378,20 @@ const MyWebinars = ({ data }) => {
                             </Modal>
                         </View>
                     </View> :
-                    <>
-                        <View>
-                            <NoWebinars data={username} />
-                        </View>
-                    </>
-                }
-            </View>
-            :
-            <View style={{ height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <LoaderKit
-                    style={{ width: 50, height: 50 }}
-                    name={'BallPulse'}
-                    size={50}
-                    color={COLORS.primary}
-                />
-            </View>
+                    <View>
+                        <NoWebinars data={username} />
+                    </View>
+                :
+                <View style={{ height: "100%", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                    <LoaderKit
+                        style={{ width: 50, height: 50 }}
+                        name={'BallPulse'}
+                        size={50}
+                        color={COLORS.primary}
+                    />
+                </View>
+            }
+        </View>
     )
 }
 const styles = StyleSheet.create({
@@ -423,6 +419,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         // backgroundColor: 'rgba(0,0,0,0.6)'
+    },
+    topBar: {
+        width: "100%",
+        flexDirection: "row",
+        backgroundColor: COLORS.primary,
+        alignItems: "center",
+        borderBottomStartRadius: 30,
+        borderBottomEndRadius: 30,
+        height: 60
     },
     modalView: {
         width: "100%",
