@@ -26,10 +26,10 @@ function handleBackButton() {
 
 const Search = ({ navigation }) => {
     const dispatch = useDispatch();
-    const allCourses = useSelector((state) => state.courseList?.data.data)
-    const cartData = useSelector((state) => state.cartList?.data.data)
+    const allCourses = useSelector((state) => state?.courseList?.data.data)
+    const cartData = useSelector((state) => state?.cartList?.data.data)
     const [isSearchLoader, setIsSearchLoader] = useState(false);
-    const cartCount = useSelector((state) => state.cartList?.data.data);
+    const cartCount = useSelector((state) => state?.cartList?.data.data);
     const [network, setNetwork] = useState('')
     const isFocused = useIsFocused();
 
@@ -63,6 +63,7 @@ const Search = ({ navigation }) => {
                 .catch((rejectedValueOrSerializedError) => {
                     ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.CENTER, ToastAndroid.LONG)
                     console.log("Inside the catch of cartHandler", rejectedValueOrSerializedError);
+                    navigation.navigate("ServerError");
                 })
         }
 

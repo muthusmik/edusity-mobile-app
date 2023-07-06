@@ -148,8 +148,10 @@ const General = () => {
                     twitterProfile: twitter ? twitter : null,
                     youtubeProfile: youtube ? youtube : null,
                 }
+                // console.log("Payload..............", Payload);
                 let updateprofile = await updateProfile(Token, Payload).then(data => {
-                    if (originalPromiseResult == "error") {
+                    // console.log("data..............", data);
+                    if (data == "error") {
                         navigation.navigate("ServerError");
                     }
                     else if (data && data.error == true) {
@@ -178,7 +180,7 @@ const General = () => {
                     }
                 }).catch((rejectedValueOrSerializedError) => {
                     setAddLoader(false)
-                    ToastAndroid.showWithGravity("Something went wrong, please try again later!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
+                    ToastAndroid.showWithGravity("Something went wrong, please try again later!!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
                 })
             } else {
                 setAddLoader(false)
@@ -319,7 +321,7 @@ const General = () => {
     return (
         <View style={{ height: metrices(56.5), backgroundColor: COLORS.white }}>
             {addLoader ? <OverlayLoader /> : null}
-            <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: isKeyboardOpen ? metrices(14) : 0 }}
+            <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: isKeyboardOpen ? metrices(26) : metrices(10) }}
                 ref={scrollRef}
                 onScroll={event => {
                     setContentVerticalOffset(event.nativeEvent.contentOffset.y);
@@ -413,12 +415,14 @@ const General = () => {
                         {(Error?.twitter) ? <Text style={styles.errorText}>{Error?.twitter}</Text> : null}
                     </View>
                 </View>
+                <View style={[styles.deleteButton, { backgroundColor: COLORS.edusity }]}>
+                    <TouchableOpacity style={{ width: "100%", height: "100%" }}
+                        onPressIn={() => { handleSave() }}
+                    >
+                        <Text style={styles.buttonText}>Save Details</Text>
+                    </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity style={[styles.deleteButton, { backgroundColor: COLORS.edusity }]}
-                    onPressIn={() => { handleSave() }}
-                >
-                    <Text style={styles.buttonText}>Save Details</Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity style={[styles.deleteButton, { marginBottom: 12 }]}
                     onPressIn={() => { deactivateTwoButtonAlert() }}

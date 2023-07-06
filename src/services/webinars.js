@@ -72,6 +72,7 @@ export const getUpcommingWebniars = async (Token) => {
 export const getTestList = async (Token) => {
   return await axios.get(`${testListUrl}`, { headers: { Authorization: `Bearer ${Token}` } })
     .then(response => {
+      // console.log("getList..............", response);
       return response.data
     })
     .catch((error) => {
@@ -84,6 +85,16 @@ export const getForumData = async (Token) => {
     .then(response => {
       return response.data
     }).catch((error) => {
-      console.log("Catch inside the testListUrl.......", error);
+      console.log("Catch inside the getForumData.......", error);
     })
-} 
+}
+
+export const getForumComment = async (Token, valueId) => {
+  let url = forumUrl + "/" + `${valueId}`;
+  return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${Token}` } })
+    .then(response => {
+      return response.data
+    }).catch((error) => {
+      console.log("Catch inside the getForumComment.......", error);
+    })
+}

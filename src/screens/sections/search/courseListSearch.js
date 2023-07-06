@@ -159,8 +159,6 @@ const CourseList = ({ allCourses, cartData }) => {
     useEffect(() => {
         if (page > 1 && page <= totalPage && !selectedLevel && !selectedCategory) {
             const addData = async () => {
-                // console.log(key, "...........................token")
-                // var Url = "https://livelogin.edusity.com/course?page=" + page;
                 var Url = `${baseUrl_payment}v1/course?page=${page}`;
                 console.log("Url...........", Url)
                 const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + key }
@@ -179,19 +177,15 @@ const CourseList = ({ allCourses, cartData }) => {
             addData();
         } else if (filterPageNo > 1 && filterPageNo <= totalFilterPage && (selectedLevel || selectedCategory)) {
             const addData = async () => {
-                // console.log(filterPageNo, "filterpageno")
                 if (!selectedCategory) {
-                    // console.log(selectedLevel, "level Only")
                     var Url = `${baseUrl}course?level=${selectedLevel}&page=${filterPageNo}`;
                 } else if (!selectedLevel) {
-                    //  console.log(selectedCategory, "category Only")
                     if (selectedCategory.url == "AllCourses") {
                         var Url = `${baseUrl}course?page=${filterPageNo}`;
                     } else {
                         var Url = `${baseUrl}course?category=${selectedCategory.url}&page=${filterPageNo}`;
                     }
                 } else {
-                    // console.log(selectedCategory, selectedLevel, "Both")
                     var Url = `${baseUrl}course?category=${selectedCategory.url}&level=${selectedLevel}&page=${filterPageNo}`;
                     if (selectedCategory.url == "AllCourses") {
                         var Url = `${baseUrl}course?level=${selectedLevel}&page=${filterPageNo}`;
@@ -200,7 +194,6 @@ const CourseList = ({ allCourses, cartData }) => {
                 const headers = { 'Content-Type': 'application/json', 'Authorization': "Bearer " + key }
                 const callData = await axios.get(Url, { headers: headers }).then(response => {
                     const newdata = response.data.data.data
-                    //  console.log(response.data.data.data, "newdata")
                     console.log("3 setdatasde");
                     setData(Data.concat(newdata));
                     setRefreshList(false);
@@ -398,7 +391,7 @@ const CourseList = ({ allCourses, cartData }) => {
             </View> :
             <View style={styles.mainContainer}>
                 {cartBtnLoader ? <OverlayLoader /> : null}
-                {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, margin: "1%" }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
+                {(Data?.length != 0) ? <Text style={{ color: COLORS.black, fontSize: RFValue(12, 580), ...FONTS.robotoregular, paddingVertical: 4, paddingLeft: 10 }}>All Courses({(selectedLevel || selectedCategory) ? filteredCount : totalCourses})</Text> : null}
                 {(Data?.length !== 0) ?
                     <>
                         <FlatList
@@ -412,8 +405,8 @@ const CourseList = ({ allCourses, cartData }) => {
                             extraData={flalistRefresh}
                             renderItem={({ item, index }) => (
                                 <View style={styles.mainStyle}>
-                                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
-                                        <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "45%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
+                                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                                        <TouchableOpacity style={{ backgroundColor: COLORS.white, width: "28%", flexDirection: "column", justifyContent: "center" }} onPress={() => handleViewNavigation(item)}>
                                             <View style={styles.coulmnImage}>
                                                 {(item?.imageFiles?.fileName) ?
                                                     <Image
@@ -421,7 +414,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                         resizeMode="stretch"
                                                         style={{
                                                             width: "100%",
-                                                            height: 130,
+                                                            height: 100,
                                                             borderRadius: 8
                                                         }}
                                                     /> : <Image
@@ -436,7 +429,7 @@ const CourseList = ({ allCourses, cartData }) => {
                                                     />}
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={{ width: "55%", paddingLeft: metrices(1) }}>
+                                        <View style={{ width: "70%", paddingLeft: metrices(1) }}>
                                             <View style={{ width: "100%" }}>
                                                 <Text style={{ fontSize: RFValue(16), color: COLORS.black, ...FONTS.robotomedium }}>{(item.CourseName) ? item.CourseName : "N/A"}{"\n"}
                                                     <Text style={{ fontSize: RFValue(10), color: COLORS.black, ...FONTS.robotoregular }}>{(item.Category) ? item.Category : "N/A"}</Text></Text>
@@ -547,8 +540,12 @@ const CourseList = ({ allCourses, cartData }) => {
                     onPressItem={name => { handleFiltertype(name) }}
                 />
 
-                <View style={{ width: "100%", alignItems: "center" }}>
-                    {(!refreshList) ? (Data?.length != 0) ? <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular, }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text> : null
+                <View style={{ width: "100%", height: 25, alignItems: "center", justifyContent: "center" }}>
+                    {(!refreshList) ?
+                        (Data?.length != 0) ?
+                            <View style={{ height: "100%", justifyContent: "center" }}>
+                                <Text style={{ color: COLORS.gray, fontSize: RFValue(10, 580), ...FONTS.robotoregular }}>-------Total of {(selectedLevel || selectedCategory) ? filteredCount : totalCourses} Courses-------</Text>
+                            </View> : null
                         : <LoaderKit
                             style={{ width: 50, height: 25, marginLeft: "6%" }}
                             name={'BallPulse'}

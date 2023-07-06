@@ -3,13 +3,14 @@ import { Image, Text, Button, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import Dashboard from "../screens/sections/dashboard/dashboard";
+import DrawerScreen from "../screens/dashDrawer";
 import MyCourse from "../screens/sections/myCourse";
 import MyCourseWishListTab from "../screens/sections/wishListTab";
 import Search from "../screens/sections/search/search";
 import Profile from "../screens/sections/user/user";
 import { icons, COLORS, FONTS } from "../constants";
 import Icon from 'react-native-vector-icons/FontAwesome'
-import BrandIcons from "react-native-vector-icons/Ionicons"
+import BrandIcons from "react-native-vector-icons/Ionicons";
 import EntypoIcons from "react-native-vector-icons/Entypo";
 import { color } from "@rneui/base";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -42,7 +43,7 @@ const tabOptions = {
 const Tabs = () => {
 
     const navigation = useNavigation();
-   
+
     return (
         <Tab.Navigator
             initialRouteName={'Search'}
@@ -161,7 +162,6 @@ const Tabs = () => {
                     }
                 }}
             />
-
         </Tab.Navigator>
     );
 };

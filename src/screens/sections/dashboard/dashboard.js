@@ -32,6 +32,7 @@ import UpcomingWebniarDashboard from "./upcomingWebniar";
 import NotificationScreen from '../../../components/notificationScreen';
 import { metrices } from '../../../constants/metrices';
 import { useFocusEffect } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/compat';
 
 const Dashboard = () => {
 
@@ -210,7 +211,7 @@ const Dashboard = () => {
                                     <TouchableOpacity onPress={() => navigation.navigate("TakeNotesScreen")}>
                                         <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Take notes</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => navigation.navigate("ForumScreen")}>
+                                    <TouchableOpacity onPress={ /*() => navigation.dispatch(DrawerActions.openDrawer())*/ () => navigation.navigate("ForumScreen")}>
                                         <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Forum Screen</Text>
                                     </TouchableOpacity>
                                     <View style={{ padding: "8%" }} />
