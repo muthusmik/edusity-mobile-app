@@ -7,30 +7,40 @@ import {
   Text
 } from 'react-native';
 import { DrawerActions } from '@react-navigation/compat';
+import { COLORS, FONTS } from '../../../constants';
+import { useNavigation } from '@react-navigation/native';
 
 const Sidebar = (props) => {
+  const navigation = useNavigation();
+
   const handlePage = (router, params = {}) => {
-    if (!navigation) {
-      return null;
-    }
     navigation.dispatch(DrawerActions.closeDrawer());
-    navigation.navigate(router, params);
+    if (router == "Course") {
+      navigation.navigate('Home', { screen: 'MyCourse' });
+    }
+    else if (router == "Wishlist") {
+      navigation.navigate('Home', { screen: 'MyCourse', params: { screen: 'Wish Lists' } });
+    }
+    else if (router && router != "Course" && "Wishlist") {
+      navigation.navigate(router);
+    }
   };
+
   const dataHelpInfo = [
     {
       id: '1',
-      name: "Home",
-      // router: homeTabs.home_drawer,
+      name: "My Courses",
+      router: "Course"
     },
     {
       id: '2',
-      name: "WishList",
-      // router: mainStack.blogs,
+      name: "My Wishlist",
+      router: "Wishlist",
     },
     {
       id: '3',
-      name: "Wishlist",
-      // router: mainStack.about,
+      name: "My webinars",
+      router: "MyWebinars",
       // params: {
       //   type: 'page',
       //   id: configs.getIn(['about', language]),
@@ -38,7 +48,7 @@ const Sidebar = (props) => {
     },
     {
       id: '4',
-      name: "WishList",
+      name: "Results",
       // router: mainStack.term,
       // params: {
       //   type: 'page',
@@ -47,8 +57,8 @@ const Sidebar = (props) => {
     },
     {
       id: '5',
-      name: "Wish",
-      // router: mainStack.privacy,
+      name: "Notes",
+      router: "TakeNotesScreen",
       // params: {
       //   type: 'page',
       //   id: configs.getIn(['policy', language]),
@@ -56,42 +66,77 @@ const Sidebar = (props) => {
     },
     {
       id: '6',
-      name: "List",
-      // router: mainStack.contact,
+      name: "Forum",
+      router: "ForumScreen",
     },
+    {
+      id: '7',
+      name: "Achievements"
+    },
+    {
+      id: '8',
+      name: "Announcements"
+    },
+    {
+      id: '9',
+      name: "View Awards"
+    },
+    {
+      id: '10',
+      name: "Quiz Result"
+    }
   ];
 
-
   return (
-    <ScrollView>
-      <Text>Dashboard</Text>
-      {dataHelpInfo.map(value => (
-        <View key={value.id}>
-          <TouchableOpacity onPress={() => handlePage(value.router, value.params)}>
-            <Text>{value.name}</Text>
-
-          </TouchableOpacity>
-          {/* containerStyle={styles.item} */}
-          {/* onPress={() => handlePage(value.router, value.params)}
-        /> */}
+    <>
+      <View style={styles.titleContainer}>
+        <Text style={[styles.title, { fontSize: 20 }]}>Dashboard</Text>
+      </View>
+      <ScrollView>
+        <View>
+          {dataHelpInfo.map(value => (
+            <>
+              <View key={value.id} style={styles.mapViewContainer}>
+                <TouchableOpacity onPress={() => handlePage(value.router, value.params)} style={styles.buttonstyle}>
+                  <Text style={[styles.title, { color: COLORS.primary }]}>{value.name}</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ))}
         </View>
-      ))}
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  // title: {
-  //   marginTop: margin.big + 4,
-  //   marginBottom: margin.small + 1,
-  //   paddingHorizontal: padding.large,
-  // },
-  // titleHead: {
-  //   paddingTop: getStatusBarHeight(),
-  // },
-  // item: {
-  //   paddingHorizontal: padding.large,
-  // },
+  titleContainer: {
+    height: 46,
+    backgroundColor: COLORS.primary,
+    justifyContent: "center"
+  },
+  title: {
+    ...FONTS.robotoregular,
+    color: COLORS.white,
+    fontSize: 16,
+    textAlign: "center"
+  },
+  mapViewContainer: {
+    width: "94%",
+    height: 40,
+    alignItems: "center",
+    backgroundColor: COLORS.lightGray,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 8
+  },
+  buttonstyle: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center"
+  }
 });
 
 export default Sidebar;

@@ -21,6 +21,7 @@ import OverlayLoader from '../../../components/overlayLoader';
 import moment from 'moment';
 import { TextInput } from 'react-native-paper';
 import Entypo from 'react-native-vector-icons/Entypo';
+import FunctionToShowComments from './comments';
 
 const ForumScreen = () => {
     const isFocused = useIsFocused();
@@ -31,6 +32,7 @@ const ForumScreen = () => {
     const [modalText, setModalText] = useState({});
     const [description, setDescription] = useState("");
     const [comments, setComments] = useState();
+
     const stylesFromPage = {
         height: metrices(8),
         flexDirection: "row",
@@ -66,7 +68,6 @@ const ForumScreen = () => {
                 if (data.error == false && data.errorCode == "") {
                     setLoader(false)
                     setforumData(data.data)
-                    console.log("Forum screen...............", data.data)
                 }
                 else if (data.errorCode != "") {
                     setLoader(false)
@@ -77,13 +78,13 @@ const ForumScreen = () => {
     }
 
     const handleModalView = (valueFromReply) => {
-        console.log("ValueFromReply................", valueFromReply);
+        // console.log("ValueFromReply................", valueFromReply);
         setModalText(valueFromReply)
         setModalShow(true)
     }
 
     const handleFile = (value) => {
-        console.log("Value.................", value)
+        // console.log("Value.................", value)
         const fileData = value;
         if (Array.isArray(fileData) && fileData.length > 0) {
             const fileInfo = fileData[0];
@@ -95,49 +96,37 @@ const ForumScreen = () => {
                 // const returnValue = { fileName, objectKey, uploadedId }
                 return fileName;
             } else {
-                console.log("File information is empty");
+                // console.log("File information is empty");
                 return "One"
             }
         } else {
             return "One"
         }
     }
+
     const handleViewPdf = (value) => {
-        console.log("dddddddddddddddddddddd", value)
+        // console.log("dddddddddddddddddddddd", value)
     }
+
     const handleComments = async (value) => {
-        console.log("dddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa....value.id", value.id);
+        setLoader(true)
         let valueId = value.id;
         let gettingComments = await getForumComment(token, valueId).then(data => {
-            console.log("React.................", data);
+            // console.log("React.................", data);
             if (data.error == false && data.errorCode == "") {
                 setLoader(false)
                 setComments(data.data)
-                console.log("Forum screen...............", data.data)
+                // console.log("Forum screen...............", data.data)
             }
             else if (data.errorCode != "") {
                 setLoader(false)
                 ToastAndroid.show("Something went wrong, please try again later!!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
             }
-        }).catch((error) => { console.log("Catch error in forumScreenData.........", error) })
-    }
-    useEffect(() => {
-        // console.log("ddddddsasasaasa...............", comments.post[0].id);
-    }, [comments])
-
-    const functionToShowComments = () => {
-        return (
-            <>
-                {comments.replies.map((item, index) => {
-                    return (
-                        <View>
-                            <Text>{item.description}</Text>
-                        </View>
-                    )
-                })
-                }
-            </>
-        )
+        }).catch((error) => {
+            setLoader(false)
+            ToastAndroid.show("Something went wrong, please try again later!!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
+            console.log("Catch error in forumScreenData.........", error)
+        })
     }
 
     return (
@@ -165,7 +154,7 @@ const ForumScreen = () => {
                                                 }}
                                             /> : <Image
                                                 source={{ uri: "https://cdn.edusity.com/" + "courses/2382/85883a4c-c61f-456f-953f-01b94482088d.png" }}
-                                                resizeMode="stretch"
+                                                resizeMode="contain"
                                                 style={{
                                                     width: 50,
                                                     height: 50,
@@ -183,7 +172,7 @@ const ForumScreen = () => {
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 8 }}>
                                     <View style={{ width: "70%", justifyContent: "center" }}>
                                         <Text style={styles.textStyle}>Description: {item.description}</Text>
                                         {item?.replies != 0 && <TouchableOpacity onPress={() => handleComments(item)}><Text style={[styles.textStyle, { color: COLORS.primary, textDecorationLine: "underline" }]}>Comments: {item.replies}</Text></TouchableOpacity>}
@@ -202,12 +191,14 @@ const ForumScreen = () => {
                                         }
                                     </View>
                                 </View>
-                                {comments && (item.id == comments?.post[0]?.id) ? functionToShowComments() : null}
+                                {comments && (item.id == comments?.post[0]?.id) ? <FunctionToShowComments comments={comments} token={token} setLoader={setLoader} />/* functionToShowComments() */ : null}
                             </View>
                         )}
                     /> : null
                 }
             </View>
+
+
             {modalShow &&
                 <View style={styles.centeredView}>
                     <Modal
@@ -240,12 +231,36 @@ const ForumScreen = () => {
                                         placeholderTextColor={COLORS.gray}
                                         onChangeText={e => { setDescription(e) }}
                                     />
+                                    <View style={styles.uploadContainer}>
+                                        <View style={{ width: "78%", borderWidth: 1, borderColor: COLORS.gray, borderRadius: 4 }}>
+                                            <Text style={{ fontSize: 16, ...FONTS.robotoregular, color: COLORS.gray, paddingVertical: 8, paddingLeft: 6 }}>Enter url here...</Text>
+                                        </View>
+                                        <View style={[styles.buttonStyle, { width: "20%", backgroundColor: COLORS.primary, borderWidth: 0 }]}>
+                                            <TouchableOpacity style={styles.touchButtonStyle}>
+                                                <Text style={{ fontSize: 16, ...FONTS.robotoregular, color: COLORS.white }}>Upload</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={styles.buttonContainer}>
+                                        <View style={styles.buttonStyle}>
+                                            <TouchableOpacity style={styles.touchButtonStyle}>
+                                                <Text style={{ fontSize: 16, ...FONTS.robotoregular, color: "red" }}>Cancel</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View style={[styles.buttonStyle, { backgroundColor: COLORS.lightGray }]}>
+                                            <TouchableOpacity style={styles.touchButtonStyle}>
+                                                <Text style={{ fontSize: 16, ...FONTS.robotoregular, color: COLORS.primary }}>Submit</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
                                 </ScrollView>
                             </View>
                         </View>
                     </Modal>
                 </View>
             }
+
+
         </>
     );
 };
@@ -294,7 +309,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         width: "95%",
-        height: "60%",
+        // height:"80%",
         padding: 6,
         backgroundColor: 'white',
         borderRadius: 8,
@@ -313,6 +328,33 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: COLORS.black
     },
+    uploadContainer: {
+        width: "96%",
+        marginTop: 14,
+        alignSelf: "center",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexDirection: "row"
+    },
+    buttonContainer: {
+        width: "76%",
+        marginVertical: 14,
+        alignSelf: "center",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    buttonStyle: {
+        width: "46%",
+        borderWidth: 1,
+        height: 38,
+        borderRadius: 10
+    },
+    touchButtonStyle: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center"
+    }
 })
 
 export default ForumScreen;

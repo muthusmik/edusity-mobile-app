@@ -23,6 +23,7 @@ import StudentDashboard from './studentDashboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from "@react-navigation/core";
 import Toast from 'react-native-simple-toast';
+import IonIcon from "react-native-vector-icons/Ionicons";
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
@@ -38,7 +39,6 @@ const Dashboard = () => {
 
     const dispatch = useDispatch();
     const navigation = useNavigation();
-    // const logiParam = route.params;
     const [loader, setLoader] = useState(false);
     const LoginData = useSelector(state => state.userLoginHandle.data)
     const isFocused = useIsFocused();
@@ -174,8 +174,12 @@ const Dashboard = () => {
                         <TouchableOpacity onPress={() => { navigation.goBack() }}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
                         </TouchableOpacity>
-                        <View>
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular }}>Dashboard</Text>
+                        <View style={{ flexDirection: "row", width: "80%" }}>
+                            <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                                <IonIcon name="options" size={RFValue(25)} color={COLORS.white} />
+                            </TouchableOpacity>
+
+                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, marginLeft: 8 }}>Dashboard</Text>
                         </View>
                         <TouchableOpacity onPress={() => handleNotificationClick()}>
                             <MaterialCommunityIcons name="bell-badge" size={RFValue(25)} color={COLORS.white} />
@@ -208,12 +212,6 @@ const Dashboard = () => {
                                         </View>
                                         : null
                                     }
-                                    <TouchableOpacity onPress={() => navigation.navigate("TakeNotesScreen")}>
-                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Take notes</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={ /*() => navigation.dispatch(DrawerActions.openDrawer())*/ () => navigation.navigate("ForumScreen")}>
-                                        <Text style={{ fontSize: 16, ...FONTS.robotoregular, marginTop: 10 }}>Forum Screen</Text>
-                                    </TouchableOpacity>
                                     <View style={{ padding: "8%" }} />
                                 </Pressable>
                             </ScrollView> : null}

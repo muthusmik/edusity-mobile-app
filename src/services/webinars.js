@@ -96,5 +96,17 @@ export const getForumComment = async (Token, valueId) => {
       return response.data
     }).catch((error) => {
       console.log("Catch inside the getForumComment.......", error);
+      return "error"
+    })
+}
+
+export const getForumCommentDelete = async (Token, valueId) => {
+  let url = forumUrl + "/" + `${valueId}`;
+  return await axios.delete(`${url}`, { headers: { Authorization: `Bearer ${Token}` } })
+    .then(response => {
+      return response.data
+    }).catch((error) => {
+      console.log("Catch inside the getForumCommentDelete.......", error);
+      return "error"
     })
 }

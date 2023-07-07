@@ -9,7 +9,7 @@ import Sidebar from './sections/dashboard/Sidebar';
 const DrawerScreen = () => {
   const Drawer = createDrawerNavigator();
   const { width } = Dimensions.get('window');
-  const WIDTH_DRAWER = width * 0.78;
+  const WIDTH_DRAWER = width / 2;
   const drawerStyle = {
     width: WIDTH_DRAWER,
   };

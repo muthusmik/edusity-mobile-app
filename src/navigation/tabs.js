@@ -55,7 +55,7 @@ const Tabs = () => {
                     const tintColor = focused ? "yellow" : COLORS.white;
 
                     switch (route.name) {
-                        case "Dashboard":
+                        case "DrawerScreen":
                             return (
                                 <MCIcon name="view-dashboard" size={34} color={tintColor} />
                             );
@@ -92,8 +92,8 @@ const Tabs = () => {
             // }}}
             />
             <Tab.Screen
-                name="Dashboard"
-                component={Dashboard}
+                name="DrawerScreen"
+                component={DrawerScreen}
                 options={{ headerShown: false }}
             // title: "Dashboard",
             // headerStyle: {

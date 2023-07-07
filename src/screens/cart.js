@@ -18,7 +18,7 @@ import { cartListUrl, checkoutUrl, intentPayment } from '../services/constant';
 import { cartHandler } from '../store/redux/cart';
 import { viewCourseHandler } from '../store/redux/viewCourse';
 import NoData from './Exceptions/noCartData';
-import { razorpayKeyLive, stripepayKeyLive, STRIPE_PUBLIC_KEY } from '../services/constant';
+import { razorpayKeyLive, razorPayDevKeyId, stripepayKeyLive, STRIPE_PUBLIC_KEY } from '../services/constant';
 import OverlayLoader from '../components/overlayLoader';
 import Toast from 'react-native-simple-toast';
 
@@ -260,7 +260,8 @@ const Cart = () => {
                 name: "Edusity",
                 description: "Test Transaction",
                 image: "../assets/icons/edusity-logo.png",
-                key: razorpayKeyLive,
+                key: razorPayDevKeyId,
+                // key: razorpayKeyLive,
                 order_id: dataSession,
                 currency: 'INR',
                 amount: pricing,

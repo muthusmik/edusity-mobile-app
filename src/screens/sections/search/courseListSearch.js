@@ -98,12 +98,12 @@ const CourseList = ({ allCourses, cartData }) => {
     }
 
     const handleAddCart = async (id) => {
-        // console.log("Id...........", id)
+        console.log("Id...........", id)
         setCartBtnLoader(true);
         if (network) {
             if (key) {
                 let result = await addtoCart(id, key).then(response => {
-                    // console.log("Response for add to cart...........", response)
+                    console.log("Response for add to cart...........", response)
                     if (response.error) { ToastAndroid.showWithGravity(response.message, ToastAndroid.TOP, ToastAndroid.LONG) }
                     dispatch(cartHandler(key))
                 }).catch((error) => {
