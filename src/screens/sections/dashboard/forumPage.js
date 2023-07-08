@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
     View,
-    Button,
     Text,
     Image,
     StyleSheet,
@@ -32,6 +31,9 @@ const ForumScreen = () => {
     const [modalText, setModalText] = useState({});
     const [description, setDescription] = useState("");
     const [comments, setComments] = useState();
+    const [deleteInnerReply, setDeleteInnerReply] = useState();
+
+    const todayDate = new Date();
 
     const stylesFromPage = {
         height: metrices(8),
@@ -140,7 +142,6 @@ const ForumScreen = () => {
                         keyExtractor={item => item.id}
                         renderItem={({ item, index }) => (
                             <View style={{ marginBottom: 10, width: "100%", backgroundColor: COLORS.lightGray, borderRadius: 10, padding: 10 }}>
-                                {/* {console.log("Item...............", item.files)} */}
                                 <View style={{ flexDirection: "row", width: "100%", alignItems: "center" }}>
                                     <View style={styles.coulmnImage}>
                                         {(item?.profileImage) ?
@@ -168,13 +169,13 @@ const ForumScreen = () => {
                                             <Text style={styles.textStyle}>Title: {item.title}</Text>
                                         </View>
                                         <View>
-                                            <Text style={styles.textStyle}>{moment(item.createdat).format("DD/MM/YYYY")}</Text>
+                                            <Text style={[styles.textStyle, { fontSize: 12 }]}>{moment(todayDate).format("MM/DD/YYYY")}</Text>
                                         </View>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 8 }}>
                                     <View style={{ width: "70%", justifyContent: "center" }}>
-                                        <Text style={styles.textStyle}>Description: {item.description}</Text>
+                                        <Text style={styles.textStyle}>{item.description}</Text>
                                         {item?.replies != 0 && <TouchableOpacity onPress={() => handleComments(item)}><Text style={[styles.textStyle, { color: COLORS.primary, textDecorationLine: "underline" }]}>Comments: {item.replies}</Text></TouchableOpacity>}
                                     </View>
                                     <View style={{ width: "30%", alignItems: "center", justifyContent: "center" }}>
@@ -191,7 +192,17 @@ const ForumScreen = () => {
                                         }
                                     </View>
                                 </View>
-                                {comments && (item.id == comments?.post[0]?.id) ? <FunctionToShowComments comments={comments} token={token} setLoader={setLoader} />/* functionToShowComments() */ : null}
+                                {comments && (item.id == comments?.post[0]?.id) ?
+                                    <FunctionToShowComments
+                                        comments={comments}
+                                        token={token}
+                                        setLoader={setLoader}
+                                        todayDate={todayDate}
+                                        deleteInnerReply={deleteInnerReply}
+                                        setDeleteInnerReply={setDeleteInnerReply}
+                                    />
+                                    : null
+                                }
                             </View>
                         )}
                     /> : null
@@ -243,7 +254,7 @@ const ForumScreen = () => {
                                     </View>
                                     <View style={styles.buttonContainer}>
                                         <View style={styles.buttonStyle}>
-                                            <TouchableOpacity style={styles.touchButtonStyle}>
+                                            <TouchableOpacity style={styles.touchButtonStyle} onPress={() => setModalShow(false)} >
                                                 <Text style={{ fontSize: 16, ...FONTS.robotoregular, color: "red" }}>Cancel</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -255,9 +266,9 @@ const ForumScreen = () => {
                                     </View>
                                 </ScrollView>
                             </View>
-                        </View>
-                    </Modal>
-                </View>
+                        </View >
+                    </Modal >
+                </View >
             }
 
 
