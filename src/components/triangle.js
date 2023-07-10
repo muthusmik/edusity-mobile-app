@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { COLORS } from '../constants';
 
-const Triangle = ({ area }) => {
+const Triangle = ({ area, triSection }) => {
     return (
         <View style={{
             width: 0,
@@ -12,7 +12,7 @@ const Triangle = ({ area }) => {
             zIndex: 2,
             borderRightWidth: area / 2,
             borderBottomWidth: area,
-            bottom: 64,
+            bottom: triSection == 0 ? 38 : 64,
             alignSelf: "flex-end",
             right: 8,
             borderLeftColor: 'transparent',

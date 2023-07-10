@@ -62,6 +62,7 @@
     "react-native-otp-textinput": "^0.0.9",
     "react-native-pager-view": "^6.1.2",
     "react-native-paper": "^4.12.5",
+    "react-native-pell-rich-editor": "^1.9.0",
     "react-native-permissions": "^3.8.0",
     "react-native-ratings": "^8.1.0",
     "react-native-razorpay": "^2.3.0",

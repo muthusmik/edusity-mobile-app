@@ -18,13 +18,22 @@ import { getForumCommentDelete, getForumComment } from "../../../services/webina
 import InnerReplyFunction from "./innerReplyScreen";
 import Triangle from "../../../components/triangle";
 
-const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteInnerReply, setDeleteInnerReply }) => {
+const FunctionToShowComments = ({
+    comments,
+    token,
+    setLoader,
+    todayDate,
+    deleteInnerReply,
+    setDeleteInnerReply,
+    reloadForumId,
+    setReloadForumId,
+    setReloadMain
+}) => {
     const [modalShow, setModalShow] = useState(false);
     const [modalText, setModalText] = useState({});
     const [description, setDescription] = useState("");
     const [showEdit, setShowEdit] = useState("");
     const [innerReplies, setInnerReplies] = useState();
-    const [reloadForumId, setReloadForumId] = useState();
 
     const handleFile = (value) => {
         // console.log("Value.................", value)
@@ -44,7 +53,12 @@ const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteI
 
     const handleEditDelete = (value) => {
         if (showEdit) {
-            setShowEdit();
+            if (showEdit == value.id) {
+                setShowEdit();
+            }
+            else {
+                setShowEdit(value.id);
+            }
         }
         else {
             setShowEdit(value.id)
@@ -59,15 +73,20 @@ const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteI
         }
     }, [deleteInnerReply])
 
-    const handleDeleteComments = async (valueId) => {
+    const handleDeleteComments = async (valueId, type) => {
         setLoader(true)
+        if (type == "comments") {
+            console.log("Type...........comments")
+            setReloadMain("One")
+        }
         console.log("handle delete..................", valueId, token);
         await getForumCommentDelete(token, valueId).then(data => {
-            // console.log("React.................", data);
+            console.log("React.................", data);
             if (data.error == false && data.errorCode == "") {
-                setLoader(false)
                 setInnerReplies();
                 setDeleteInnerReply();
+                setShowEdit();
+                setLoader(false)
                 ToastAndroid.show(data.message, ToastAndroid.BOTTOM, ToastAndroid.LONG)
             }
             else if (data.errorCode != "") {
@@ -93,15 +112,16 @@ const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteI
         if (fromWhere) {
             setDescription(valueFromReply.description)
         }
+        setShowEdit()
         setModalText(valueFromReply)
         setModalShow(true)
     }
 
     const handleInnerReply = async (value) => {
         setLoader(true)
-        console.log("Inner ...................reply", value);
+        console.log("handleInnerReply ...................reply", value);
         await getForumComment(token, value).then(data => {
-            // console.log("React.................", data);
+            console.log("handleInnerReply.................data", data);
             if (data.error == false && data.errorCode == "") {
                 setLoader(false)
                 setInnerReplies(data.data)
@@ -167,8 +187,7 @@ const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteI
                         </View>
                         {(item.id == showEdit) ?
                             <View style={styles.editDeleteContainerStyle}>
-                                <Triangle area={16} />
-
+                                <Triangle area={16} triSection={(item.replies) == 0 ? 1 : 0} />
                                 {(item.replies) == 0 ?
                                     <View style={{ backgroundColor: COLORS.primary, borderRadius: 8, height: metrices(3) }}>
                                         <TouchableOpacity style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
@@ -180,7 +199,7 @@ const FunctionToShowComments = ({ comments, token, setLoader, todayDate, deleteI
                                 }
                                 <View style={{ backgroundColor: "red", borderRadius: 8, height: metrices(3), marginTop: (item?.replies) == 0 ? 4 : 0 }}>
                                     <TouchableOpacity style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
-                                        onPress={() => handleDeleteComments(item.id)}
+                                        onPress={() => handleDeleteComments(item.id, "comments")}
                                     >
                                         <Text style={{ ...FONTS.robotoregular, color: COLORS.white, fontSize: 10 }}>Delete</Text>
                                     </TouchableOpacity>

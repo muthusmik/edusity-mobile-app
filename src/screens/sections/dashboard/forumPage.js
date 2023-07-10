@@ -32,7 +32,9 @@ const ForumScreen = () => {
     const [description, setDescription] = useState("");
     const [comments, setComments] = useState();
     const [deleteInnerReply, setDeleteInnerReply] = useState();
-
+    const [reloadForumId, setReloadForumId] = useState();
+    const [mainId, setMainId] = useState();
+    const [reloadMain, setReloadMain] = useState();
     const todayDate = new Date();
 
     const stylesFromPage = {
@@ -62,20 +64,27 @@ const ForumScreen = () => {
         if (token) {
             initialLoading();
         }
-    }, [token])
+    }, [token, reloadMain])
 
     const initialLoading = async () => {
         if (token) {
             let forumScreenData = await getForumData(token).then(data => {
                 if (data.error == false && data.errorCode == "") {
-                    setLoader(false)
                     setforumData(data.data)
+                    setReloadMain()
+                    setComments()
+                    setLoader(false)
                 }
                 else if (data.errorCode != "") {
+                    setReloadMain()
                     setLoader(false)
                     ToastAndroid.show("Something went wrong, please try again later!!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
                 }
-            }).catch((error) => { console.log("Catch error in forumScreenData.........", error) })
+            }).catch((error) => {
+                setLoader(false)
+                ToastAndroid.show("Something went wrong, please try again later!!", ToastAndroid.BOTTOM, ToastAndroid.LONG)
+                console.log("Catch error in forumScreenData.........", error)
+            })
         }
     }
 
@@ -110,10 +119,20 @@ const ForumScreen = () => {
         // console.log("dddddddddddddddddddddd", value)
     }
 
+    useEffect(() => {
+        if (reloadForumId) {
+            // console.log("reloadForumId in forum page.................", reloadForumId)
+            handleComments(mainId)
+        }
+        else if (reloadMain == "One") {
+            handleComments(mainId)
+        }
+    }, [reloadForumId, reloadMain])
+
     const handleComments = async (value) => {
+        // console.log("Value for handleComments in forum page................", value);
         setLoader(true)
-        let valueId = value.id;
-        let gettingComments = await getForumComment(token, valueId).then(data => {
+        let gettingComments = await getForumComment(token, value).then(data => {
             // console.log("React.................", data);
             if (data.error == false && data.errorCode == "") {
                 setLoader(false)
@@ -176,7 +195,7 @@ const ForumScreen = () => {
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 8 }}>
                                     <View style={{ width: "70%", justifyContent: "center" }}>
                                         <Text style={styles.textStyle}>{item.description}</Text>
-                                        {item?.replies != 0 && <TouchableOpacity onPress={() => handleComments(item)}><Text style={[styles.textStyle, { color: COLORS.primary, textDecorationLine: "underline" }]}>Comments: {item.replies}</Text></TouchableOpacity>}
+                                        {item?.replies != 0 && <TouchableOpacity onPress={() => { handleComments(item.id), setMainId(item.id) }}><Text style={[styles.textStyle, { color: COLORS.primary, textDecorationLine: "underline" }]}>Comments: {item.replies}</Text></TouchableOpacity>}
                                     </View>
                                     <View style={{ width: "30%", alignItems: "center", justifyContent: "center" }}>
                                         <View style={{ width: "100%", height: metrices(4), borderRadius: 8, backgroundColor: "#580587" }}>
@@ -200,6 +219,9 @@ const ForumScreen = () => {
                                         todayDate={todayDate}
                                         deleteInnerReply={deleteInnerReply}
                                         setDeleteInnerReply={setDeleteInnerReply}
+                                        reloadForumId={reloadForumId}
+                                        setReloadForumId={setReloadForumId}
+                                        setReloadMain={setReloadMain}
                                     />
                                     : null
                                 }

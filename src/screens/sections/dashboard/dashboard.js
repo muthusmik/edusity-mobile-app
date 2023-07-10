@@ -171,15 +171,15 @@ const Dashboard = () => {
                         backgroundColor={COLORS.primary}
                     />
                     <View style={styles.topBarStyle}>
-                        <TouchableOpacity onPress={() => { navigation.goBack() }}>
+                        {/* <TouchableOpacity onPress={() => { navigation.goBack() }}>
                             <MCIcon name="keyboard-backspace" size={RFValue(25)} color={COLORS.white} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <View style={{ flexDirection: "row", width: "80%" }}>
                             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                                 <IonIcon name="options" size={RFValue(25)} color={COLORS.white} />
                             </TouchableOpacity>
 
-                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, marginLeft: 8 }}>Dashboard</Text>
+                            <Text style={{ color: COLORS.white, fontSize: RFValue(16, 580), ...FONTS.robotoregular, marginLeft: 25 }}>Dashboard</Text>
                         </View>
                         <TouchableOpacity onPress={() => handleNotificationClick()}>
                             <MaterialCommunityIcons name="bell-badge" size={RFValue(25)} color={COLORS.white} />

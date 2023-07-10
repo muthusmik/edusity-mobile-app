@@ -70,6 +70,7 @@ const InnerReplyFunction = ({ innerReplies, token, setLoader, todayDate, setDele
         if (fromWhere) {
             setDescription(valueFromReply.description)
         }
+        setShowEdit()
         setModalText(valueFromReply)
         setModalShow(true)
     }

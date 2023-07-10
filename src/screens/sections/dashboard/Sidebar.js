@@ -28,17 +28,17 @@ const Sidebar = (props) => {
 
   const dataHelpInfo = [
     {
-      id: '1',
+      id: 1,
       name: "My Courses",
       router: "Course"
     },
     {
-      id: '2',
+      id: 2,
       name: "My Wishlist",
       router: "Wishlist",
     },
     {
-      id: '3',
+      id: 3,
       name: "My webinars",
       router: "MyWebinars",
       // params: {
@@ -47,7 +47,7 @@ const Sidebar = (props) => {
       // },
     },
     {
-      id: '4',
+      id: 4,
       name: "Results",
       // router: mainStack.term,
       // params: {
@@ -56,7 +56,7 @@ const Sidebar = (props) => {
       // },
     },
     {
-      id: '5',
+      id: 5,
       name: "Notes",
       router: "TakeNotesScreen",
       // params: {
@@ -65,34 +65,34 @@ const Sidebar = (props) => {
       // },
     },
     {
-      id: '6',
+      id: 6,
       name: "Forum",
       router: "ForumScreen",
     },
     {
-      id: '7',
+      id: 7,
       name: "Achievements"
     },
     {
-      id: '8',
+      id: 8,
       name: "Announcements"
     },
     {
-      id: '9',
+      id: 9,
       name: "View Awards"
     },
     {
-      id: '10',
+      id: 10,
       name: "Quiz Result"
     }
   ];
 
   return (
-    <>
+    <View style={{ backgroundColor: COLORS.lightGray }}>
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, { fontSize: 20 }]}>Dashboard</Text>
+        <Text style={[styles.title, { fontSize: 20, textAlign: "center" }]}>Dashboard</Text>
       </View>
-      <ScrollView>
+      <ScrollView style={styles.scrollViewContainer}>
         <View>
           {dataHelpInfo.map(value => (
             <>
@@ -105,36 +105,33 @@ const Sidebar = (props) => {
           ))}
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   titleContainer: {
-    height: 46,
+    height: "8%",
     backgroundColor: COLORS.primary,
     justifyContent: "center"
+  },
+  scrollViewContainer: {
+    height: "92%"
   },
   title: {
     ...FONTS.robotoregular,
     color: COLORS.white,
-    fontSize: 16,
-    textAlign: "center"
+    fontSize: 16
   },
   mapViewContainer: {
     width: "94%",
     height: 40,
-    alignItems: "center",
-    backgroundColor: COLORS.lightGray,
-    borderRadius: 8,
-    justifyContent: "center",
     alignSelf: "center",
-    marginTop: 8
+    marginBottom: 4
   },
   buttonstyle: {
     width: "100%",
     height: "100%",
-    alignItems: "center",
     justifyContent: "center"
   }
 });
