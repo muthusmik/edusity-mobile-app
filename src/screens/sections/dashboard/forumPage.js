@@ -139,7 +139,7 @@ const ForumScreen = () => {
         // console.log("Value for handleComments in forum page................", value);
         setLoader(true)
         let gettingComments = await getForumComment(token, value).then(data => {
-            console.log("handleComments.................", data);
+            // console.log("handleComments.................", data);
             if (data.error == false && data.errorCode == "") {
                 setComments(data.data)
                 setReloadMain()
