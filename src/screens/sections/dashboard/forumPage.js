@@ -24,6 +24,8 @@ import FunctionToShowComments from './comments';
 
 const ForumScreen = () => {
     const isFocused = useIsFocused();
+    const todayDate = new Date();
+
     const [token, setToken] = useState();
     const [loader, setLoader] = useState(false);
     const [forumData, setforumData] = useState([]);
@@ -35,7 +37,6 @@ const ForumScreen = () => {
     const [reloadForumId, setReloadForumId] = useState();
     const [mainId, setMainId] = useState();
     const [reloadMain, setReloadMain] = useState();
-    const todayDate = new Date();
 
     const stylesFromPage = {
         height: metrices(8),
@@ -62,6 +63,9 @@ const ForumScreen = () => {
 
     useEffect(() => {
         if (token) {
+            if (reloadMain) {
+                console.log("Inside token useEffect...............", reloadMain);
+            }
             initialLoading();
         }
     }, [token, reloadMain])
@@ -71,7 +75,6 @@ const ForumScreen = () => {
             let forumScreenData = await getForumData(token).then(data => {
                 if (data.error == false && data.errorCode == "") {
                     setforumData(data.data)
-                    setReloadMain()
                     setComments()
                     setLoader(false)
                 }
@@ -125,6 +128,9 @@ const ForumScreen = () => {
             handleComments(mainId)
         }
         else if (reloadMain == "One") {
+            if (reloadMain) {
+                console.log("Inside reloadForumId useEffect...............", reloadMain);
+            }
             handleComments(mainId)
         }
     }, [reloadForumId, reloadMain])
@@ -133,10 +139,11 @@ const ForumScreen = () => {
         // console.log("Value for handleComments in forum page................", value);
         setLoader(true)
         let gettingComments = await getForumComment(token, value).then(data => {
-            // console.log("React.................", data);
+            console.log("handleComments.................", data);
             if (data.error == false && data.errorCode == "") {
-                setLoader(false)
                 setComments(data.data)
+                setReloadMain()
+                setLoader(false)
                 // console.log("Forum screen...............", data.data)
             }
             else if (data.errorCode != "") {
@@ -211,6 +218,7 @@ const ForumScreen = () => {
                                         }
                                     </View>
                                 </View>
+                                {comments && (mainId == comments?.post[0]?.id) ? <Text>vfddvdfvdvd</Text> : null}
                                 {comments && (item.id == comments?.post[0]?.id) ?
                                     <FunctionToShowComments
                                         comments={comments}

@@ -73,10 +73,12 @@ const FunctionToShowComments = ({
         }
     }, [deleteInnerReply])
 
-    const handleDeleteComments = async (valueId, type) => {
+    const handleDeleteComments = async (valueId, type, itemDetails) => {
+        
         setLoader(true)
         if (type == "comments") {
-            console.log("Type...........comments")
+            console.log("Type...........comments");
+            console.log("Item details................", itemDetails);
             setReloadMain("One")
         }
         console.log("handle delete..................", valueId, token);
@@ -199,7 +201,7 @@ const FunctionToShowComments = ({
                                 }
                                 <View style={{ backgroundColor: "red", borderRadius: 8, height: metrices(3), marginTop: (item?.replies) == 0 ? 4 : 0 }}>
                                     <TouchableOpacity style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}
-                                        onPress={() => handleDeleteComments(item.id, "comments")}
+                                        onPress={() => handleDeleteComments(item.id, "comments", item)}
                                     >
                                         <Text style={{ ...FONTS.robotoregular, color: COLORS.white, fontSize: 10 }}>Delete</Text>
                                     </TouchableOpacity>
